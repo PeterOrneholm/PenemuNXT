@@ -2,29 +2,29 @@ import java.io.*;
 import lejos.nxt.*;
 import lejos.nxt.comm.*;
 
-
 public class USBConnTC {
-	public static void main(String [] args) throws Exception 
-	{
-		LCD.drawString("waiting", 0, 0);
-		USBConnection conn = USB.waitForConnection();
+	public static void main(String[] args) throws Exception {
+		LCD.drawString("Waiting...", 0, 0);
+		LCD.refresh();
+		NXTConnection conn = USB.waitForConnection();
+
+		
 		DataOutputStream dOut = conn.openDataOutputStream();
 		DataInputStream dIn = conn.openDataInputStream();
-		
-		while (true) 
-		{
-            int b;
-            try
-            {
-                b = dIn.readInt();
-            }
-            catch (EOFException e) 
-            {
-                break;
-            }         
-			dOut.writeInt(-b);
+
+		TouchSensor TS = new TouchSensor(SensorPort.S1);
+		SoundSensor SS = new SoundSensor(SensorPort.S2);
+
+		LCD.clear();
+		LCD.drawString("Connected!", 0, 0);
+		LCD.refresh();
+
+		while (!TS.isPressed()) {
+			dOut.writeInt(SS.readValue());
 			dOut.flush();
-	        LCD.drawInt((int)b,8,0,1);
 		}
+
+		dOut.writeInt(101);
+		dOut.flush();
 	}
 }
