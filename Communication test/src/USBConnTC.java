@@ -7,8 +7,7 @@ public class USBConnTC {
 	public static void main(String[] args) throws Exception {
 		LCD.drawString("Waiting...", 0, 0);
 		LCD.refresh();
-		USBConnection conn = USB.waitForConnection();
-
+		BTConnection conn = Bluetooth.waitForConnection();
 		
 		DataOutputStream outDat = conn.openDataOutputStream();
 		DataInputStream inDat = conn.openDataInputStream();
