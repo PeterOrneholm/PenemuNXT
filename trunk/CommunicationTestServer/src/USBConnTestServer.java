@@ -1,74 +1,129 @@
 import lejos.pc.comm.*;
 
-import java.applet.Applet;
+import java.applet.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
 import java.io.*;
 
-public class USBConnTestServer extends Applet implements Runnable {
-	int x, y, lasty, lastx, i;
-	public void start(){
+import javax.swing.JFrame;
+
+public class USBConnTestServer extends Applet implements Runnable, ActionListener {
+	int x;
+	SensorValues SSV;
+	SensorValues USSV;
+	int status;
+
+	public static void main(String[] args){
+		Applet NXTGraph = new USBConnTestServer();
+		NXTGraph.init();
+
+		JFrame mainFrame = new JFrame();
+		mainFrame.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent we){
+				System.exit(0);
+			}
+		});
+		mainFrame.add(NXTGraph);
+		mainFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setUndecorated(true);
+		mainFrame.pack();
+		mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		mainFrame.setVisible(true);
+		
+		NXTGraph.start();
+	}
+	
+	public void start() {
 		Thread t = new Thread(this);
 		t.start();
 	}
-	
-	public void paint(Graphics g){
-		//g.fillOval(x, y, 10, 10);
-		System.out.println("bu");
-		}
 
+	public void paint(Graphics g) {
+	}
+
+	public void init(){
+		Button btnExit = new Button("Exit");
+		btnExit.addActionListener(this);
+		this.add(btnExit);
+	}
+	
 	@Override
 	public void run() {
 		NXTConnector conn = new NXTConnector();
-
-		boolean res = conn.connectTo("usb://");
-		System.out.println(res);
-		if (!res){
+		if (!conn.connectTo("usb://")) {
 			System.err.println("No NXT find using USB");
 			System.exit(1);
 		}
 
 		DataInputStream inDat = conn.getDataIn();
 		DataOutputStream outDat = conn.getDataOut();
+
+		SSV = new SensorValues();
+		USSV = new SensorValues();
+
+		status = 0;
 		
-		int LastValue = 0;
-		int CurrentValue = 0;
-		
-		while(CurrentValue!=101)
-		{
+		while (status!=1) {
 			try {
-				CurrentValue = inDat.readInt();
-	        } catch (IOException ioe) {
-	           System.err.println("IO Exception reading reply");
-	        }
-	        
-	        x++;
-	        i++;
-	        
-	        y= (int) (this.getHeight() - ((CurrentValue/100.0) * this.getHeight()));
-	        lasty = (int) (this.getHeight() - ((LastValue/100.0) * this.getHeight()));
-	        
-	        
-	        if(CurrentValue != LastValue){
-	        	System.out.println("Value: " + String.valueOf(CurrentValue));
-		        Graphics2D g = (Graphics2D) this.getGraphics();
-		        g.setStroke(new BasicStroke(3));
-		        if(x%this.getWidth()>(lastx)%this.getWidth()){
-		        	g.drawLine((lastx)%this.getWidth(), lasty, x%this.getWidth(), y);	
-		        }
-		        
-		        LastValue = CurrentValue;
-		        lastx=x;
+				SSV.CurrentValue = inDat.readInt();
+				USSV.CurrentValue = inDat.readInt();
+			} catch (IOException ioe) {
+				System.err.println("IO Exception reading reply");
+			}
 
-		   
-	        }
-	        
-	        
-	        if(i%this.getWidth()==0)repaint();
+			x++;
 
-	
+			SSV.CurrentY = (int) (this.getHeight() - ((SSV.CurrentValue / 100.0) * this
+					.getHeight()));
+			USSV.CurrentY = (int) (this.getHeight() - ((Math.min(
+					USSV.CurrentValue, 200) / 200.0) * this.getHeight()));
 
+			Graphics2D g = (Graphics2D) this.getGraphics();
+			
+			if (SSV.CurrentY != SSV.LastY) {
+				g.setColor(new Color(0,255,0));
+				g.setStroke(new BasicStroke(3));
+
+				if ((x % this.getWidth()) > (SSV.LastX % this.getWidth())) {
+					g.drawLine((SSV.LastX % this.getWidth()), SSV.LastY,
+							(x % this.getWidth()), SSV.CurrentY);
+				}
+
+				SSV.LastY = SSV.CurrentY;
+				SSV.LastX = x;
+			}
+
+			if (USSV.CurrentY != USSV.LastY) {
+				g.setColor(new Color(255,0,0));
+				g.setStroke(new BasicStroke(3));
+
+				if ((x % this.getWidth()) > (USSV.LastX % this.getWidth())) {
+					g.drawLine((USSV.LastX % this.getWidth()), USSV.LastY,
+							(x % this.getWidth()), USSV.CurrentY);
+				}
+
+				USSV.LastY = USSV.CurrentY;
+				USSV.LastX = x;
+			}
+
+			try {
+				outDat.writeInt(status);
+				outDat.flush();
+			} catch (IOException ioe) {
+				System.err.println("IO Exception reading reply");
+			}
+
+			if ((x % this.getWidth()) == 0){
+				repaint();				
+			}
+			
+			if(SSV.CurrentValue == 1001 || USSV.CurrentValue == 1001){
+				status = 1;
+			}
 		}
-		
+
 		try {
 			inDat.close();
 			outDat.close();
@@ -76,13 +131,27 @@ public class USBConnTestServer extends Applet implements Runnable {
 		} catch (IOException ioe) {
 			System.err.println("IO Exception Closing connection");
 		}
-		
+
 		try {
 			conn.close();
 			System.out.println("Closed connection");
 		} catch (IOException ioe) {
 			System.err.println("IO Exception Closing connection");
 		}
-
+		
+		System.exit(0);
 	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		status = 1;
+		
+	}
+}
+
+class SensorValues {
+	public int LastX;
+	public int LastY;
+	public int CurrentY;
+	public int CurrentValue;
 }
