@@ -1,10 +1,25 @@
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
+import lejos.nxt.*;
 
+public class Main implements Runnable {
+	public static void main(String[] args) throws InterruptedException {
+		Main m = new Main();
+		m.run();
+	}
 
-public class Main {
-	public static void main(String[] args) throws InterruptedException{
-		LCD.drawString("Hej", 1, 1);
-		Button.ESCAPE.waitForPressAndRelease();
+	@Override
+	public void run() {
+		UltrasonicSensor sensor = new UltrasonicSensor(SensorPort.S1);
+
+		while(!Button.ESCAPE.isPressed()) {
+			LCD.clear();
+			LCD.drawInt((sensor.getDistance()), 1, 1);
+			System.out.println(sensor.getDistance());
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+			}
+			//LCD.refresh();
+		}
+		
 	}
 }
