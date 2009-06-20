@@ -6,6 +6,7 @@ public class HelloWorld {
 	public static void main(String args[]) throws InterruptedException{
 		LCD.drawString("Hello World!", 1, 1);
 		LCD.drawString("Second line", 1, 2);
+		LCD.drawString("Third line", 1, 3);
 		Button.ESCAPE.waitForPressAndRelease();
 	}
 }
