@@ -3,7 +3,6 @@ import lejos.pc.comm.*;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class USScannerServer extends Applet implements Runnable, ActionListener 
 	Button btnExit;
 	Button btnClear;
 
-	final int ConnectionMode = NXTCommFactory.USB;
+	final int ConnectionMode = NXTCommFactory.BLUETOOTH;
 
 	public static void main(String[] args) {
 
@@ -57,6 +56,7 @@ public class USScannerServer extends Applet implements Runnable, ActionListener 
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawOval(0, 0, this.getWidth(), this.getHeight() * 2);
+		g2.setStroke(new BasicStroke(5));
 
 		for (int i = 0; i < Points.size(); i++) {
 			if (i != 0) {
