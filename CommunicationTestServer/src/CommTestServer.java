@@ -8,7 +8,7 @@ import java.io.*;
 
 import javax.swing.JFrame;
 
-public class USBConnTestServer extends Applet implements Runnable,
+public class CommTestServer extends Applet implements Runnable,
 		ActionListener {
 	int x, i;
 	SensorValues SSV;
@@ -16,7 +16,7 @@ public class USBConnTestServer extends Applet implements Runnable,
 	int status;
 
 	public static void main(String[] args) {
-		Applet NXTGraph = new USBConnTestServer();
+		Applet NXTGraph = new CommTestServer();
 		NXTGraph.init();
 
 		JFrame mainFrame = new JFrame();
