@@ -1,20 +1,21 @@
 import java.io.*;
 
 import lejos.nxt.*;
+import lejos.nxt.addon.OpticalDistanceSensor;
 import lejos.nxt.comm.*;
 
 public class CommTestClient {
 	public static void main(String[] args) throws Exception {
-		LCD.drawString("Waiting...", 0, 0);
+		LCD.drawString("Waiting....", 0, 0);
 		LCD.refresh();
 		BTConnection conn = Bluetooth.waitForConnection();
 		
 		DataOutputStream outDat = conn.openDataOutputStream();
 		DataInputStream inDat = conn.openDataInputStream();
 
-		TouchSensor TS = new TouchSensor(SensorPort.S1);
-		SoundSensor SS = new SoundSensor(SensorPort.S2);
-		UltrasonicSensor USS = new UltrasonicSensor(SensorPort.S3);
+		//TouchSensor TS = new TouchSensor(SensorPort.S1);
+		//SoundSensor SS = new SoundSensor(SensorPort.S2);
+		OpticalDistanceSensor USS = new OpticalDistanceSensor(SensorPort.S2);
 
 		int status = 0;
 		
@@ -22,9 +23,9 @@ public class CommTestClient {
 		LCD.drawString("Connected!", 0, 0);
 		LCD.refresh();
 
-		while (!TS.isPressed() && status!=1) {
+		while (/*!TS.isPressed() && */status!=1) {
 			try {
-				outDat.writeInt(SS.readValue());
+				//outDat.writeInt(SS.readValue());
 				outDat.writeInt(USS.getDistance());
 
 				outDat.flush();
