@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 
 public class USScannerServer extends Applet implements Runnable, ActionListener {
-	final int ULTRASONIC_SENSOR_MAX_DISTANCE = 200;
+	final int ULTRASONIC_SENSOR_MAX_DISTANCE = 1000;
 
 	SensorValues USSV;
 	SensorValues MAV;
