@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 
 public class USScannerServer extends Applet implements Runnable, ActionListener {
-	final int ULTRASONIC_SENSOR_MAX_DISTANCE = 1000;
+	final int ULTRASONIC_SENSOR_MAX_DISTANCE = 1500;
 
 	SensorValues USSV;
 	SensorValues MAV;
@@ -24,7 +24,7 @@ public class USScannerServer extends Applet implements Runnable, ActionListener 
 	Button btnExit;
 	Button btnClear;
 
-	final int ConnectionMode = NXTCommFactory.BLUETOOTH;
+	final int ConnectionMode = NXTCommFactory.USB;
 
 	public static void main(String[] args) {
 
