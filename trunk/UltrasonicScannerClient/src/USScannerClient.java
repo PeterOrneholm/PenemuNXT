@@ -3,18 +3,20 @@ import java.io.*;
 import javax.microedition.io.Connection;
 
 import lejos.nxt.*;
+import lejos.nxt.addon.OpticalDistanceSensor;
 import lejos.nxt.comm.*;
 
 public class USScannerClient{
 	public static void main(String[] args) throws Exception {
+		RConsole.openBluetooth(10000);
 		LCD.drawString("Waiting...", 0, 0);
 		LCD.refresh();
-		USBConnection conn = USB.waitForConnection();
+		BTConnection conn = Bluetooth.waitForConnection();
 
 		DataOutputStream outDat = conn.openDataOutputStream();
 		DataInputStream inDat = conn.openDataInputStream();
 
-		UltrasonicSensor USS = new UltrasonicSensor(SensorPort.S1);
+		OpticalDistanceSensor USS = new OpticalDistanceSensor(SensorPort.S2);
 
 		int ClientStatus = 0;
 		int ServerStatus = 0;
@@ -34,7 +36,7 @@ public class USScannerClient{
 			}
 			try {
 				outDat.writeInt(ClientStatus);
-				outDat.writeInt(Motor.A.getTachoCount());
+				outDat.writeInt(Motor.C.getTachoCount());
 				outDat.writeInt(USS.getDistance());
 
 				outDat.flush();
@@ -65,28 +67,29 @@ public class USScannerClient{
 		}
 		HR.interrupt();
 		System.out.println("interrupted");
-		Motor.A.stop();
+		Motor.C.stop();
 		conn.close();
-		Motor.A.rotateTo(0);
+		Motor.C.rotateTo(0);
 		System.exit(0);
 
+		RConsole.close();
 	}
 }
 
 class HeadRotator extends Thread {
 	@Override
 	public void run() {
-		Motor.A.setSpeed(40);
+		Motor.C.setSpeed(40);
 		while (!isInterrupted()) {
-			Motor.A.rotateTo(-100, true);
-			while(Motor.A.getTachoCount() >=-90 && !this.isInterrupted()){
+			Motor.C.rotateTo(-100, true);
+			while(Motor.C.getTachoCount() >=-90 && !this.isInterrupted()){
 			}
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 			}
-			Motor.A.rotateTo(100, true);
-			while(Motor.A.getTachoCount() <= 90 && !this.isInterrupted()){
+			Motor.C.rotateTo(100, true);
+			while(Motor.C.getTachoCount() <= 90 && !this.isInterrupted()){
 			}
 			try {
 				Thread.sleep(200);
