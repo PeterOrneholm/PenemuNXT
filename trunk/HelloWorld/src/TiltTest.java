@@ -3,7 +3,7 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.addon.TiltSensor;
 
 public class TiltTest {
-	public void run() {
+	public static void main(String args[]) throws InterruptedException{
 		TiltSensor TS = new TiltSensor(SensorPort.S3);
 		while (true){
 			LCD.drawInt(TS.getXAccel(), 2, 1);
