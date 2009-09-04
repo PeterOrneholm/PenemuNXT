@@ -181,10 +181,7 @@ class NXTDataExchange extends Thread {
 						NXTCommunicationData.DATA_EMPTY_DATA);
 			}
 			try {
-				this.DataOut.writeInt(DataItem.OverallStatus);
-				this.DataOut.writeInt(DataItem.DataStatus);
-				this.DataOut.writeInt(DataItem.Param1);
-				this.DataOut.writeInt(DataItem.Param2);
+
 				this.DataOut.flush();
 			} catch (IOException ioe) {
 				System.err.println("Data write error");
