@@ -6,7 +6,7 @@ import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 
 public class NXTCommunicationTest {
-	final static int ConnectionMode = NXTCommFactory.USB;
+	final static int ConnectionMode = NXTCommFactory.BLUETOOTH;
 	static boolean Active = true;
 	public static void main(String args[]) {
 		NXTConnector conn = new NXTConnector();
