@@ -1,17 +1,9 @@
+package Communication;
 import java.util.ArrayList;
 
-public class NXTCommunicationQueue<CommDataT extends NXTCommunicationData> {
-	boolean Locked;
+public class NXTCommunicationQueue<CommDataT extends INXTCommunicationData> {
 	ArrayList<CommDataT> DataQueue;
-
-	public boolean isLocked() {
-		return Locked;
-	}
-
-	public void setLocked(boolean locked) {
-		Locked = locked;
-	}
-
+	
 	public ArrayList<CommDataT> getDataQueue() {
 		return DataQueue;
 	}
@@ -21,6 +13,16 @@ public class NXTCommunicationQueue<CommDataT extends NXTCommunicationData> {
 	}
 
 	public void add(CommDataT DataItem){
+		if(DataItem!=null){
+			if(DataItem.isPrioritated()){
+				this.addPrioritated(DataItem);
+			}else{
+				this.addNormal(DataItem);
+			}
+		}
+	}
+
+	public void addNormal(CommDataT DataItem){
 		this.DataQueue.add(DataItem);
 	}
 	
@@ -47,22 +49,8 @@ public class NXTCommunicationQueue<CommDataT extends NXTCommunicationData> {
 	public int getQueueSize(){
 		return this.DataQueue.size();
 	}
-	
-	public boolean StartUse() {
-		if (this.isLocked()) {
-			return false;
-		} else {
-			this.setLocked(true);
-			return true;
-		}
-	}
-
-	public void EndUse() {
-		this.setLocked(false);
-	}
 
 	public NXTCommunicationQueue() {
-		this.setLocked(false);
 		this.setDataQueue(new ArrayList<CommDataT>());
 	}
 }
