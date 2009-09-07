@@ -6,8 +6,9 @@ import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 
 public class NXTCommunicationTest {
-	final static int ConnectionMode = NXTCommFactory.BLUETOOTH;
+	final static int ConnectionMode = NXTCommFactory.USB;
 	static boolean Active = true;
+
 	public static void main(String args[]) {
 		NXTConnector conn = new NXTConnector();
 
@@ -33,29 +34,51 @@ public class NXTCommunicationTest {
 		int V2 = 0;
 		int V3 = 0;
 		int V4 = 0;
+		boolean P = false;
 
 		while (Active) {
 			try {
+				P = inDat.readBoolean();
 				V1 = inDat.readInt();
 				V2 = inDat.readInt();
-				V3 = inDat.readInt();
-				V4 = inDat.readInt();
+				if (V2 != 0) {
+					V3 = inDat.readInt();
+					V4 = inDat.readInt();
+				}
 			} catch (IOException ioe) {
 				System.err.println("IO Exception reading reply");
 			}
-
-			System.err.println(V1 + "," + V2 + "," + V3 + "," + V4);
 			
+			if(V1==200){
+				V1 = 210;
+				P = true;
+				Active = false;
+			}else{
+				P = false;
+			}
+
+			if (V2 != 0) {
+				System.out.println(V1 + "," + V2 + "," + V3 + "," + V4 + ";"
+						+ (V3 + V4));
+			} else {
+				System.out.println(V1 + "," + V2);
+			}
+
 			try {
-				outDat.writeInt(-V1);
-				outDat.writeInt(-V2);
-				outDat.writeInt(-V3);
-				outDat.writeInt(-V4);
+				outDat.writeBoolean(P);
+				outDat.writeInt(V1);
+				outDat.writeInt(V2);
+				if (V2 != 0) {
+					outDat.writeInt(V4 + V3);
+				}
 				outDat.flush();
 			} catch (IOException ioe) {
 				System.err.println("IO Exception writing reply");
 			}
-			Thread.yield();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
 		}
 
 		try {
