@@ -34,6 +34,7 @@ public class NXTCommunicationData {
 	}
 
 	public void WriteData(DataOutputStream DataOut) throws IOException {
+		NXTDebug.WriteMessageAndWait("Write super");
 		DataOut.writeInt(this.MainStatus);
 		DataOut.writeInt(this.DataStatus);
 	}

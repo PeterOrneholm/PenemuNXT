@@ -10,12 +10,11 @@ public class NXTCommTest implements Runnable {
 
 	@Override
 	public void run() {
-		//RConsole.openBluetooth(10000);
+		// RConsole.openBluetooth(10000);
 
-		LCD.drawInt(0, 1, 1);
 		NXTCommunication NXTComm = new NXTCommunication();
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.Bluetooth);
-		LCD.drawInt(1, 1, 1);
+		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB);
+
 		NXTComm.DataSendQueue.add(new NXTCommunicationTestData(
 				NXTCommunicationData.STATUS_NORMAL,
 				NXTCommunicationData.DATA_NORMAL_DATA, 1, 5));
@@ -25,19 +24,23 @@ public class NXTCommTest implements Runnable {
 		NXTComm.DataSendQueue.add(new NXTCommunicationTestData(
 				NXTCommunicationData.STATUS_NORMAL,
 				NXTCommunicationData.DATA_NORMAL_DATA, 343, 534));
+
+		NXTDebug.WriteMessageAndWait("Data added");
+
 		while (!Button.ESCAPE.isPressed()) {
-			LCD.clear();
+			// LCD.drawInt(NXTComm.DataRetrievedQueue.size(), 1, 1);
+			
+			/*NXTDebug.WriteMessageAndWait("Retrieved");
+			NXTDebug.WriteMessageAndWait("Get next item");
+			NXTCommunicationTestData DataItem = (NXTCommunicationTestData)  NXTComm.DataRetrievedQueue.getNextItem();
+			if (DataItem!=null) {
+				NXTDebug.WriteMessageAndWait("Try read retr");
 
-			NXTCommunicationTestData DataItem = (NXTCommunicationTestData) NXTComm.DataRetrievedQueue
-					.get(0);
-
-			LCD.drawInt(NXTComm.DataRetrievedQueue.size(), 1, 1);
-			if (NXTComm.DataRetrievedQueue.size() > 0) {
 				LCD.drawInt(DataItem.MainStatus, 1, 3);
 				LCD.drawInt(DataItem.DataStatus, 1, 4);
 				LCD.drawInt(DataItem.Param1, 1, 5);
 				LCD.drawInt(DataItem.Param2, 1, 6);
-			}
+			}*/
 
 			try {
 				Thread.sleep(50);
