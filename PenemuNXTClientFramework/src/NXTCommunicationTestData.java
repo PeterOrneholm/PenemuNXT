@@ -11,6 +11,7 @@ public class NXTCommunicationTestData extends NXTCommunicationData {
 
 	public void WriteData(DataOutputStream DataOut) throws IOException {
 		super.WriteData(DataOut);
+		NXTDebug.WriteMessageAndWait("Write sub");
 		DataOut.writeInt(this.Param1);
 		DataOut.writeInt(this.Param2);
 	}
@@ -39,5 +40,13 @@ public class NXTCommunicationTestData extends NXTCommunicationData {
 		super(OverallStatus, DataStatus);
 		this.Param1 = Param1;
 		this.Param2 = Param2;
+	}
+
+	public NXTCommunicationTestData() {
+		super();
+	}
+
+	public NXTCommunicationTestData(int MainStatus, int DataStatus) {
+		super(MainStatus, DataStatus);
 	}
 }

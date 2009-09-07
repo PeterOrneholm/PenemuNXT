@@ -3,35 +3,38 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.comm.*;
 
-public class NXTCommunication {
+public class NXTCommunication<CommDataT extends NXTCommunicationData> {
 	boolean m_isConnected = false;
 
-	NXTDataExchange NXTDE = null;
+	NXTDataExchange<CommDataT> NXTDE = null;
 	NXTConnection m_Connection = null;
 
 	DataOutputStream DataOut = null;
 	DataInputStream DataIn = null;
 
-	ArrayList<NXTCommunicationData> DataRetrievedQueue = new ArrayList<NXTCommunicationData>();
-	ArrayList<NXTCommunicationData> DataSendQueue = new ArrayList<NXTCommunicationData>();
+	NXTCommunicationQueue<CommDataT> DataRetrievedQueue;
+	NXTCommunicationQueue<CommDataT> DataSendQueue;
 
-	public ArrayList<NXTCommunicationData> getDataRetrievedQueue() {
+	boolean DataRetrievedQueueIsLocked = false;
+	boolean DataSendQueueIsLocked = false;
+
+	public NXTCommunicationQueue<CommDataT> getDataRetrievedQueue() {
 		return DataRetrievedQueue;
 	}
 
-	public void setDataRetrievedQueue(
-			ArrayList<NXTCommunicationData> dataRetrievedQueue) {
+	public void setDataRetrievedQueue(NXTCommunicationQueue<CommDataT> dataRetrievedQueue) {
 		DataRetrievedQueue = dataRetrievedQueue;
 	}
 
-	public ArrayList<NXTCommunicationData> getDataSendQueue() {
+	public NXTCommunicationQueue<CommDataT> getDataSendQueue() {
 		return DataSendQueue;
 	}
 
-	public void setDataSendQueue(ArrayList<NXTCommunicationData> dataSendQueue) {
+	public void setDataSendQueue(NXTCommunicationQueue<CommDataT> dataSendQueue) {
 		DataSendQueue = dataSendQueue;
 	}
 
@@ -103,64 +106,68 @@ public class NXTCommunication {
 	}
 
 	public void StartExchangeData() {
-		if(this.isConnected()){
-			NXTDE = new NXTDataExchange(DataOut, DataIn,
-					DataRetrievedQueue, DataSendQueue);
+		if (this.isConnected()) {
+			NXTDebug.WriteMessageAndWait("NXTDE");
+			NXTDE = new NXTDataExchange<CommDataT>(DataOut, DataIn, DataRetrievedQueue,
+					DataSendQueue);
+			NXTDE.start();
 		}
 	}
 
 	public void StopExchangeData() {
-		 NXTDE.End();
-		 NXTDE = null;
+		NXTDE.End();
+		NXTDE = null;
 	}
-	
+
 	public void ConnectAndStartAll(NXTConnectionModes ConnMode) {
 		this.Connect(ConnMode);
+		// NXTDebug.WriteMessageAndWait("Con F");
 		this.OpenStreams();
+		NXTDebug.WriteMessageAndWait("Streams O");
 		this.StartExchangeData();
+		NXTDebug.WriteMessageAndWait("Data ex");
 	}
-	
+
 	public void StopAll() {
 		this.Disconnect();
 		this.CloseStreams();
 		this.StopExchangeData();
 	}
-	
+
 	public NXTCommunication() {
-		DataRetrievedQueue = new ArrayList<NXTCommunicationData>();
-		DataSendQueue = new ArrayList<NXTCommunicationData>();
+		DataRetrievedQueue = new NXTCommunicationQueue<CommDataT>();
+		DataSendQueue = new NXTCommunicationQueue<CommDataT>();
 	}
 }
 
-class NXTDataExchange extends Thread {
+class NXTDataExchange<CommDataT extends NXTCommunicationData> extends Thread {
 	boolean Active;
 
 	DataOutputStream DataOut = null;
 	DataInputStream DataIn = null;
 
-	ArrayList<NXTCommunicationData> DataRetrievedQueue;
-	ArrayList<NXTCommunicationData> DataSendQueue;
+	NXTCommunicationQueue<CommDataT> DataRetrievedQueue;
+	NXTCommunicationQueue<CommDataT> DataSendQueue;
 
-	public ArrayList<NXTCommunicationData> getDataRetrievedQueue() {
+	public NXTCommunicationQueue<CommDataT> getDataRetrievedQueue() {
 		return DataRetrievedQueue;
 	}
 
-	public void setDataRetrievedQueue(
-			ArrayList<NXTCommunicationData> dataRetrievedQueue) {
+	public void setDataRetrievedQueue(NXTCommunicationQueue<CommDataT> dataRetrievedQueue) {
 		DataRetrievedQueue = dataRetrievedQueue;
 	}
 
-	public ArrayList<NXTCommunicationData> getDataSendQueue() {
+	public NXTCommunicationQueue<CommDataT> getDataSendQueue() {
 		return DataSendQueue;
 	}
 
-	public void setDataSendQueue(ArrayList<NXTCommunicationData> dataSendQueue) {
+	public void setDataSendQueue(NXTCommunicationQueue<CommDataT> dataSendQueue) {
 		DataSendQueue = dataSendQueue;
 	}
 
 	public NXTDataExchange(DataOutputStream DataOut, DataInputStream DataIn,
-			ArrayList<NXTCommunicationData> DataRetrievedQueue,
-			ArrayList<NXTCommunicationData> DataSendQueue) {
+			NXTCommunicationQueue<CommDataT> DataRetrievedQueue,
+			NXTCommunicationQueue<CommDataT> DataSendQueue) {
 		this.DataOut = DataOut;
 		this.DataIn = DataIn;
 		this.DataRetrievedQueue = DataRetrievedQueue;
@@ -174,30 +181,37 @@ class NXTDataExchange extends Thread {
 
 	public void run() {
 		while (this.Active) {
-			NXTCommunicationData DataItem;
+			CommDataT DataItem;
+
+			NXTDebug.WriteMessageAndWait("Write section");
+			NXTDebug.WriteMessageAndWait("Listsize "
+					+ String.valueOf(this.getDataSendQueue().getQueueSize()));
 
 			// Write
-			if (this.getDataSendQueue().size() > 0) {
-				DataItem = this.getDataSendQueue().get(0);
+			if (this.getDataSendQueue().getQueueSize() > 0) {
+				NXTDebug.WriteMessageAndWait("From List");
+				DataItem = this.getDataSendQueue().getAndDeleteNextItem();
 			} else {
-				DataItem = new NXTCommunicationData(
+				NXTDebug.WriteMessageAndWait("From Empty");
+				DataItem = (CommDataT) new NXTCommunicationData(
 						NXTCommunicationData.STATUS_NORMAL,
 						NXTCommunicationData.DATA_EMPTY_DATA);
 			}
 			try {
+				NXTDebug.WriteMessageAndWait("Try write");
 				DataItem.WriteData(DataOut);
+				NXTDebug.WriteMessageAndWait("Flush");
 				this.DataOut.flush();
+				NXTDebug.WriteMessageAndWait("Flushed");
 			} catch (IOException ioe) {
 				System.err.println("Data write error");
-			}
-			if (this.getDataSendQueue().size() > 0) {
-				this.getDataSendQueue().remove(DataItem);
 			}
 			DataItem = null;
 
 			// Read
-			DataItem = new NXTCommunicationData();
+			DataItem = new NXTCommunicationTestData();
 			try {
+				NXTDebug.WriteMessageAndWait("Try read");
 				DataItem.ReadData(DataIn);
 			} catch (IOException ioe) {
 				System.err.println("Data read error");
@@ -205,8 +219,20 @@ class NXTDataExchange extends Thread {
 			if (DataItem != null
 					&& DataItem.DataStatus != NXTCommunicationData.DATA_EMPTY_DATA) {
 				this.DataRetrievedQueue.add(DataItem);
+
+				NXTDebug.WriteMessageAndWait("Try writeretreaved");
+				
+				NXTDebug.WriteMessageAndWait("MainStatus");
+				LCD.drawInt(DataItem.MainStatus, 1, 3);
+				NXTDebug.WriteMessageAndWait("DataStatus");
+				LCD.drawInt(DataItem.DataStatus, 1, 4);
+				NXTDebug.WriteMessageAndWait("Param1");
+				LCD.drawInt(((NXTCommunicationTestData) DataItem).Param1, 1, 5);
+				NXTDebug.WriteMessageAndWait("Param2");
+				LCD.drawInt(((NXTCommunicationTestData) DataItem).Param2, 1, 6);
+				
+				Button.ENTER.waitForPressAndRelease();
 			}
-			
 			Thread.yield();
 		}
 	}
