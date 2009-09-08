@@ -4,14 +4,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import Debug.NXTDebug;
-
-
-class NXTDataExchange<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData> extends Thread {
+class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData>
+		extends Thread {
 	boolean Active;
-
 	boolean WriteBeforeRead = true;
-	
+
 	INXTCommunicationDataFactory CommDataInFactory = null;
 	INXTCommunicationDataFactory CommDataOutFactory = null;
 
@@ -34,11 +31,13 @@ class NXTDataExchange<CommDataInT extends INXTCommunicationData, CommDataOutT ex
 		return DataSendQueue;
 	}
 
-	public void setDataSendQueue(NXTCommunicationQueue<CommDataOutT> dataSendQueue) {
+	public void setDataSendQueue(
+			NXTCommunicationQueue<CommDataOutT> dataSendQueue) {
 		DataSendQueue = dataSendQueue;
 	}
 
-	public NXTDataExchange(boolean WriteBeforeRead, DataOutputStream DataOut, DataInputStream DataIn,
+	public NXTDataExchanger(boolean WriteBeforeRead, DataOutputStream DataOut,
+			DataInputStream DataIn,
 			NXTCommunicationQueue<CommDataInT> DataRetrievedQueue,
 			NXTCommunicationQueue<CommDataOutT> DataSendQueue,
 			INXTCommunicationDataFactory CommDataInFactory,
@@ -58,55 +57,94 @@ class NXTDataExchange<CommDataInT extends INXTCommunicationData, CommDataOutT ex
 	}
 
 	public void run() {
+		final int WaitMilliseconds[] = { 0, 100, 250, 500, 1000, 1500, 2000,
+				2500, 3000, 5000 };
+		int WaitPos = 0;
+		boolean ResetWaitPos;
+
 		while (this.Active) {
-			if(this.WriteBeforeRead){
-				this.Write();
-				this.Read();
+			ResetWaitPos = false;
+
+			if (this.WriteBeforeRead) {
+				if (this.Write()) {
+					ResetWaitPos = true;
+				}
+				if (this.Read()) {
+					ResetWaitPos = true;
+				}
 			} else {
-				this.Read();
-				this.Write();
+				if (this.Read()) {
+					ResetWaitPos = true;
+				}
+				if (this.Write()) {
+					ResetWaitPos = true;
+				}
 			}
-			
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
+
+			if (WaitMilliseconds[WaitPos] == 0) {
+				Thread.yield();
+			} else {
+				try {
+					Thread.sleep(WaitMilliseconds[WaitPos]);
+				} catch (InterruptedException e) {
+				}
+			}
+
+			if (ResetWaitPos) {
+				WaitPos = 0;
+			} else if (WaitPos < (WaitMilliseconds.length - 1)) {
+				WaitPos += 1;
 			}
 		}
 	}
-	
-	private void Write(){
-		CommDataOutT DataItemOut = (CommDataOutT) CommDataOutFactory.getEmptyInstance();
+
+	private boolean Write() {
+		boolean RealData;
+		CommDataOutT DataItemOut = (CommDataOutT) CommDataOutFactory
+				.getEmptyInstance();
 
 		// Write
 		if (this.getDataSendQueue().getQueueSize() > 0) {
 			DataItemOut = this.getDataSendQueue().getAndDeleteNextItem();
+			RealData = true;
+		} else {
+			RealData = false;
 		}
-		
+
 		try {
 			DataItemOut.WriteData(DataOut);
 			this.DataOut.flush();
 		} catch (IOException ioe) {
-			//System.err.println("Data write error");
+			// System.err.println("Data write error");
 		}
-		
+
 		DataItemOut = null;
+
+		return RealData;
 	}
-	
-	private void Read(){
-		CommDataInT DataItemIn = (CommDataInT) CommDataInFactory.getEmptyInstance();
-		
+
+	private boolean Read() {
+		boolean RealData;
+		CommDataInT DataItemIn = (CommDataInT) CommDataInFactory
+				.getEmptyInstance();
+
 		// Read
 		try {
 			DataItemIn.ReadData(DataIn);
 		} catch (IOException ioe) {
-			//System.err.println("Data read error");
+			// System.err.println("Data read error");
 		}
-		
+
 		if (DataItemIn != null
 				&& DataItemIn.getDataStatus() != NXTCommunicationData.DATA_STATUS_EMPTY) {
 			this.DataRetrievedQueue.add(DataItemIn);
+			RealData = true;
+		} else {
+			RealData = false;
 		}
-		
+
 		DataItemIn = null;
+
+		return RealData;
 	}
 }
