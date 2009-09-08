@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import Communication.INXTCommunicationData;
 import Communication.NXTCommunicationData;
-import Debug.NXTDebug;
 
 public class DistanceData extends NXTCommunicationData implements
 		INXTCommunicationData {

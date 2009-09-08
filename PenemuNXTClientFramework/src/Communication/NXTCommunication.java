@@ -3,8 +3,6 @@ package Communication;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-import Debug.NXTDebug;
-
 import lejos.nxt.LCD;
 import lejos.nxt.comm.*;
 
@@ -16,7 +14,7 @@ public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDat
 	INXTCommunicationDataFactory CommDataInFactory = null;
 	INXTCommunicationDataFactory CommDataOutFactory = null;
 	
-	NXTDataExchange<CommDataInT, CommDataOutT> NXTDE = null;
+	NXTDataExchanger<CommDataInT, CommDataOutT> NXTDE = null;
 	NXTConnection m_Connection = null;
 
 	DataOutputStream DataOut = null;
@@ -113,7 +111,7 @@ public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDat
 
 	public void StartExchangeData() {
 		if (this.isConnected()) {
-			NXTDE = new NXTDataExchange<CommDataInT, CommDataOutT>(WriteBeforeRead, DataOut, DataIn, DataRetrievedQueue,
+			NXTDE = new NXTDataExchanger<CommDataInT, CommDataOutT>(WriteBeforeRead, DataOut, DataIn, DataRetrievedQueue,
 					DataSendQueue, CommDataInFactory, CommDataOutFactory);
 			NXTDE.start();
 		}

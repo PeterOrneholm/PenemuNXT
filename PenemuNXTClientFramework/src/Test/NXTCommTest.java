@@ -6,11 +6,27 @@ import Communication.NXTConnectionModes;
 import Debug.NXTDebug;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import lejos.nxt.comm.RConsole;
 
 public class NXTCommTest implements Runnable {
 	boolean Active;
 
+	private void sendNormalData(
+			NXTCommunication<ProcessedData, DistanceData> NXTComm, int Param1,
+			int Param2) {
+		NXTComm.getDataSendQueue()
+				.add(
+						new DistanceData(
+								NXTCommunicationData.MAIN_STATUS_NORMAL,
+								NXTCommunicationData.DATA_STATUS_NORMAL,
+								Param1, Param2));
+	}
+
+	private void ShutDown(NXTCommunication<ProcessedData, DistanceData> NXTComm) {
+		NXTComm.getDataSendQueue().add(
+				new DistanceData(NXTCommunicationData.MAIN_STATUS_SHUT_DOWN,
+						NXTCommunicationData.DATA_STATUS_ONLY_STATUS, true));
+	}
+	
 	public static void main(String[] args) {
 		NXTCommTest NXTCT = new NXTCommTest();
 		NXTCT.run();
@@ -25,25 +41,16 @@ public class NXTCommTest implements Runnable {
 				true, new ProcessedDataFactory(), new DistanceDataFactory());
 		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB);
 
-		// Setup a dataprocessor
+		// Setup a data processor
 		DataProcessor DP = new DataProcessor(NXTComm);
 
 		// Add some data to send
-		NXTComm.getDataSendQueue().add(
-				new DistanceData(NXTCommunicationData.MAIN_STATUS_NORMAL,
-						NXTCommunicationData.DATA_STATUS_NORMAL, 1, 5));
-		NXTComm.getDataSendQueue().add(
-				new DistanceData(NXTCommunicationData.MAIN_STATUS_NORMAL,
-						NXTCommunicationData.DATA_STATUS_NORMAL, 6, 789));
-		NXTComm.getDataSendQueue().add(
-				new DistanceData(NXTCommunicationData.MAIN_STATUS_NORMAL,
-						NXTCommunicationData.DATA_STATUS_NORMAL, 343, 534));
-		NXTComm.getDataSendQueue().add(
-				new DistanceData(NXTCommunicationData.MAIN_STATUS_NORMAL,
-						NXTCommunicationData.DATA_STATUS_NORMAL, 258, 3218));
-		NXTComm.getDataSendQueue().add(
-				new DistanceData(NXTCommunicationData.MAIN_STATUS_NORMAL,
-						NXTCommunicationData.DATA_STATUS_NORMAL, 3, 2));
+		this.sendNormalData(NXTComm, 1, 5);
+		this.sendNormalData(NXTComm, 7, 2);
+		this.sendNormalData(NXTComm, 55, 120);
+		this.sendNormalData(NXTComm, 358, 88);
+		this.sendNormalData(NXTComm, 25, 10);
+		this.sendNormalData(NXTComm, 3, 85);
 
 		// Handle retrieved data
 		DP.start();
@@ -52,11 +59,10 @@ public class NXTCommTest implements Runnable {
 		while (Active) {
 			LCD.clear();
 
-			LCD.drawString("-CommTest-", 1,1);
-			LCD.drawString("TS:"
-					+ DP.TotalSum, 1, 2);
-			LCD.drawString("LSO:"
-					+ NXTComm.getDataSendQueue().getQueueSize(), 1, 3);
+			LCD.drawString("-CommTest-", 1, 1);
+			LCD.drawString("TS:" + DP.TotalSum, 1, 2);
+			LCD.drawString("LSO:" + NXTComm.getDataSendQueue().getQueueSize(),
+					1, 3);
 			LCD.drawString("LSI:"
 					+ NXTComm.getDataRetrievedQueue().getQueueSize(), 1, 4);
 
@@ -69,11 +75,9 @@ public class NXTCommTest implements Runnable {
 			}
 
 			if (Button.RIGHT.isPressed()) {
-				NXTComm.getDataSendQueue().add(
-						new DistanceData(NXTCommunicationData.MAIN_STATUS_NORMAL,
-								NXTCommunicationData.DATA_STATUS_NORMAL, 1256, 2158));
+				this.sendNormalData(NXTComm, 10, 20);
 			}
-			
+
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
@@ -83,13 +87,5 @@ public class NXTCommTest implements Runnable {
 		NXTComm.Disconnect();
 		NXTDebug.WriteMessageAndWait("Finished!");
 		System.exit(0);
-	}
-	
-	private void ShutDown(NXTCommunication<ProcessedData, DistanceData> NXTComm){
-		NXTComm.getDataSendQueue().add(
-				new DistanceData(
-						NXTCommunicationData.MAIN_STATUS_SHUT_DOWN,
-						NXTCommunicationData.DATA_STATUS_ONLY_STATUS,
-						true));
 	}
 }
