@@ -1,10 +1,11 @@
+package org.penemunxt.nxtclient.projects.communicationtest;
 import java.io.*;
 
 import lejos.nxt.*;
 import lejos.nxt.addon.OpticalDistanceSensor;
 import lejos.nxt.comm.*;
 
-public class CommTestClient {
+public class CommTestClientOld {
 	public static void main(String[] args) throws Exception {
 		LCD.drawString("Waiting....", 0, 0);
 		LCD.refresh();
