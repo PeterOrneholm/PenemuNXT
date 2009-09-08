@@ -1,4 +1,4 @@
-package Communication;
+package org.penemunxt.nxtclient.communication;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

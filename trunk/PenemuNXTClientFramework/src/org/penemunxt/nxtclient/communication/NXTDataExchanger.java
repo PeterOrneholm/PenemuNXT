@@ -1,4 +1,4 @@
-package Communication;
+package org.penemunxt.nxtclient.communication;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -58,8 +58,8 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 
 	public void run() {
 		final int WaitMilliseconds[] = { 0, 100, 250, 500, 1000, 1500, 2000,
-				2500, 3000, 5000 };
-		int WaitPos = 0;
+				2500, 3000, 5000, 7000 };
+		int WaitPos = -1;
 		boolean ResetWaitPos;
 
 		while (this.Active) {
@@ -81,6 +81,13 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 				}
 			}
 
+			if (ResetWaitPos) {
+				WaitPos = -1;
+			}
+			if (WaitPos < (WaitMilliseconds.length - 1)) {
+				WaitPos += 1;
+			}
+
 			if (WaitMilliseconds[WaitPos] == 0) {
 				Thread.yield();
 			} else {
@@ -88,12 +95,6 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 					Thread.sleep(WaitMilliseconds[WaitPos]);
 				} catch (InterruptedException e) {
 				}
-			}
-
-			if (ResetWaitPos) {
-				WaitPos = 0;
-			} else if (WaitPos < (WaitMilliseconds.length - 1)) {
-				WaitPos += 1;
 			}
 		}
 	}

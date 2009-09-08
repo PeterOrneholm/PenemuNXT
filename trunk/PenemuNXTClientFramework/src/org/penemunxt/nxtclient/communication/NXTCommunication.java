@@ -1,13 +1,12 @@
-package Communication;
+package org.penemunxt.nxtclient.communication;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-import lejos.nxt.LCD;
 import lejos.nxt.comm.*;
 
 public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData> {
-	boolean m_isConnected = false;
+	boolean isConnected = false;
 
 	boolean WriteBeforeRead = true;
 	
@@ -15,7 +14,7 @@ public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDat
 	INXTCommunicationDataFactory CommDataOutFactory = null;
 	
 	NXTDataExchanger<CommDataInT, CommDataOutT> NXTDE = null;
-	NXTConnection m_Connection = null;
+	NXTConnection dataConnection = null;
 
 	DataOutputStream DataOut = null;
 	DataInputStream DataIn = null;
@@ -43,23 +42,23 @@ public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDat
 	}
 
 	private void setConnected(boolean isConnected) {
-		m_isConnected = isConnected;
+		this.isConnected = isConnected;
 	}
 
 	public boolean isConnected() {
 		if (this.getConnection() == null) {
 			return false;
 		} else {
-			return m_isConnected;
+			return isConnected;
 		}
 	}
 
 	private void setConnection(NXTConnection Connection) {
-		m_Connection = Connection;
+		dataConnection = Connection;
 	}
 
 	public NXTConnection getConnection() {
-		return m_Connection;
+		return dataConnection;
 	}
 
 	public void Disconnect() {
@@ -95,12 +94,9 @@ public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDat
 
 		NXTConnection NewConn = null;
 		if (ConnMode == NXTConnectionModes.USB) {
-			LCD.drawString("USB", 1, 1);
 			NewConn = USB.waitForConnection();
 		} else if (ConnMode == NXTConnectionModes.Bluetooth) {
-			LCD.drawString("Bluetooth", 1, 1);
 			NewConn = Bluetooth.waitForConnection();
-			LCD.drawString("F", 1, 1);
 		}
 
 		if (NewConn != null) {

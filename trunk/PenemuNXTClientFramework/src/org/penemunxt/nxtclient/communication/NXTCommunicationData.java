@@ -1,9 +1,9 @@
-package Communication;
+package org.penemunxt.nxtclient.communication;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class NXTCommunicationData implements INXTCommunicationData {
+public class NXTCommunicationData implements INXTCommunicationData {	
 	public final static int MAIN_STATUS_NORMAL = 100;
 	public final static int MAIN_STATUS_SHUT_DOWN = 200;
 	public final static int MAIN_STATUS_SHUTTING_DOWN = 210;

@@ -1,4 +1,4 @@
-package Communication;
+package org.penemunxt.nxtclient.communication;
 import java.util.ArrayList;
 
 public class NXTCommunicationQueue<CommDataT extends INXTCommunicationData> {
