@@ -1,4 +1,4 @@
-package penemunxt.pcserver.communication;
+package org.penemunxt.pcserver.communication;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
