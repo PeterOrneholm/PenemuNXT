@@ -1,12 +1,13 @@
-package Test;
+package org.penemunxt.nxtclient.test;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import Communication.INXTCommunicationData;
-import Communication.NXTCommunicationData;
-import Debug.NXTDebug;
+import org.penemunxt.nxtclient.communication.INXTCommunicationData;
+import org.penemunxt.nxtclient.communication.NXTCommunicationData;
+
+
 
 public class ProcessedData extends NXTCommunicationData implements
 		INXTCommunicationData {

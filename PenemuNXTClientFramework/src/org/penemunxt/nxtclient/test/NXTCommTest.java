@@ -1,9 +1,10 @@
-package Test;
+package org.penemunxt.nxtclient.test;
 
-import Communication.NXTCommunication;
-import Communication.NXTCommunicationData;
-import Communication.NXTConnectionModes;
-import Debug.NXTDebug;
+import org.penemunxt.nxtclient.communication.NXTCommunication;
+import org.penemunxt.nxtclient.communication.NXTCommunicationData;
+import org.penemunxt.nxtclient.communication.NXTConnectionModes;
+import org.penemunxt.nxtclient.debug.NXTDebug;
+
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
