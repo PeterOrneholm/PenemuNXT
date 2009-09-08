@@ -12,6 +12,17 @@ public class NXTCommunicationTest {
 	public static void main(String args[]) {
 		NXTConnector conn = new NXTConnector();
 
+//		boolean connected = conn.connectTo("PeterF", "0016530A3D1C", NXTCommFactory.USB);
+		boolean connected = conn.connectTo("PeterF", null, NXTCommFactory.USB);
+		
+		if(connected){
+			System.out.println("Connected to:" + conn.getNXTInfo().name);
+		}else{
+			System.err.println("Not connected");
+			System.exit(1);
+		}
+		
+		/*
 		switch (ConnectionMode) {
 		case NXTCommFactory.BLUETOOTH:
 			if (!conn.connectTo("btspp://")) {
@@ -25,7 +36,7 @@ public class NXTCommunicationTest {
 				System.exit(1);
 			}
 			break;
-		}
+		}*/
 
 		DataInputStream inDat = conn.getDataIn();
 		DataOutputStream outDat = conn.getDataOut();
