@@ -1,8 +1,8 @@
-package penemunxt.pcserver.test;
+package org.penemunxt.pcserver.test;
 
-import penemunxt.pcserver.communication.NXTCommunication;
-import penemunxt.pcserver.communication.NXTCommunicationData;
-import penemunxt.pcserver.communication.NXTConnectionModes;
+import org.penemunxt.pcserver.communication.NXTCommunication;
+import org.penemunxt.pcserver.communication.NXTCommunicationData;
+import org.penemunxt.pcserver.communication.NXTConnectionModes;
 
 public class NXTCommTest implements Runnable {
 	boolean Active;

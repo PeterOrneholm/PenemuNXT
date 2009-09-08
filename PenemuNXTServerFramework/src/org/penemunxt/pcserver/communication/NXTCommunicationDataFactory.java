@@ -1,4 +1,4 @@
-package penemunxt.pcserver.communication;
+package org.penemunxt.pcserver.communication;
 public class NXTCommunicationDataFactory implements INXTCommunicationDataFactory {
 	@Override
 	public NXTCommunicationData getEmptyInstance() {

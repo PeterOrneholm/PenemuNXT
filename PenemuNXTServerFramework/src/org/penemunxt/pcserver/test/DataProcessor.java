@@ -1,7 +1,7 @@
-package penemunxt.pcserver.test;
+package org.penemunxt.pcserver.test;
 
-import penemunxt.pcserver.communication.NXTCommunication;
-import penemunxt.pcserver.communication.NXTCommunicationData;
+import org.penemunxt.pcserver.communication.NXTCommunication;
+import org.penemunxt.pcserver.communication.NXTCommunicationData;
 
 public class DataProcessor extends Thread {
 	public boolean Active;

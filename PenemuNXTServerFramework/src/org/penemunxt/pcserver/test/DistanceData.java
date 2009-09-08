@@ -1,11 +1,12 @@
-package penemunxt.pcserver.test;
+package org.penemunxt.pcserver.test;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import penemunxt.pcserver.communication.INXTCommunicationData;
-import penemunxt.pcserver.communication.NXTCommunicationData;
+import org.penemunxt.pcserver.communication.INXTCommunicationData;
+import org.penemunxt.pcserver.communication.NXTCommunicationData;
+
 
 
 public class DistanceData extends NXTCommunicationData implements
