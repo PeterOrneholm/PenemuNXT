@@ -1,3 +1,4 @@
+package penemunxt.pcserver.test;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -5,15 +6,14 @@ import java.io.IOException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 
-public class NXTCommunicationTest {
+public class NXTCommunicationTestOld {
 	final static int ConnectionMode = NXTCommFactory.USB;
 	static boolean Active = true;
 
 	public static void main(String args[]) {
 		NXTConnector conn = new NXTConnector();
 
-//		boolean connected = conn.connectTo("PeterF", "0016530A3D1C", NXTCommFactory.USB);
-		boolean connected = conn.connectTo("PeterF", null, NXTCommFactory.USB);
+		boolean connected = conn.connectTo("PeterF", "0016530A3D1C", NXTCommFactory.USB);
 		
 		if(connected){
 			System.out.println("Connected to:" + conn.getNXTInfo().name);
@@ -21,22 +21,6 @@ public class NXTCommunicationTest {
 			System.err.println("Not connected");
 			System.exit(1);
 		}
-		
-		/*
-		switch (ConnectionMode) {
-		case NXTCommFactory.BLUETOOTH:
-			if (!conn.connectTo("btspp://")) {
-				System.err.println("No NXT found by Bluetooth");
-				System.exit(1);
-			}
-			break;
-		case NXTCommFactory.USB:
-			if (!conn.connectTo("usb://")) {
-				System.err.println("No NXT found by USB");
-				System.exit(1);
-			}
-			break;
-		}*/
 
 		DataInputStream inDat = conn.getDataIn();
 		DataOutputStream outDat = conn.getDataOut();
