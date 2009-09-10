@@ -13,7 +13,7 @@ public class SensorData extends NXTCommunicationData implements
 	/* Read / Write */
 	public void ReadData(DataInputStream DataIn) throws IOException {
 		super.ReadData(DataIn);
-		if (this.getDataStatus() != DATA_STATUS_EMPTY) {
+		if (this.getDataStatus() == DATA_STATUS_NORMAL) {
 			this.setIRDistance(DataIn.readInt());
 			this.setUSDistance(DataIn.readInt());
 			this.setSoundDB(DataIn.readInt());
@@ -22,7 +22,7 @@ public class SensorData extends NXTCommunicationData implements
 
 	public void WriteData(DataOutputStream DataOut) throws IOException {
 		super.WriteData(DataOut);
-		if (this.getDataStatus() != DATA_STATUS_EMPTY) {
+		if (this.getDataStatus() == DATA_STATUS_NORMAL) {
 			DataOut.writeInt(this.getIRDistance());
 			DataOut.writeInt(this.getUSDistance());
 			DataOut.writeInt(this.getSoundDB());
