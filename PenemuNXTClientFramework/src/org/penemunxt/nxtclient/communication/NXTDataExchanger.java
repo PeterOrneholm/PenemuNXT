@@ -146,8 +146,6 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 			RealData = false;
 		}
 
-		LCD.drawInt(DataItemIn.getMainStatus(), 1, 5);
-		
 		DataItemIn = null;
 
 		return RealData;
