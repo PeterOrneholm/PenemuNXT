@@ -35,7 +35,7 @@ public class NXTCommTest implements Runnable {
 		// Start up the communication
 		NXTCommunication<DistanceData, ProcessedData> NXTComm = new NXTCommunication<DistanceData, ProcessedData>(
 				false, new DistanceDataFactory(), new ProcessedDataFactory());
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB, "PeterF", "0016530A3D1C");
+		NXTComm.ConnectAndStartAll(NXTConnectionModes.Bluetooth, "PeterF", "0016530A3D1C");
 		
 		System.out.println("Started");
 

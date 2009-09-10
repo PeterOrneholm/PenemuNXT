@@ -144,6 +144,8 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 			RealData = false;
 		}
 
+		System.out.println(DataItemIn.getMainStatus());
+		
 		DataItemIn = null;
 
 		return RealData;
