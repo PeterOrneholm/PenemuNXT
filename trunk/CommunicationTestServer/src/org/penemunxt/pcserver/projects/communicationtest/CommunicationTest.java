@@ -10,7 +10,7 @@ public class CommunicationTest implements Runnable {
 
 	private void sendNormalData(
 			NXTCommunication<SensorData, ServerMessageData> NXTComm,
-			float Message) {
+			int Message) {
 		NXTComm.getDataSendQueue().add(
 				new ServerMessageData(Message));
 	}
@@ -34,7 +34,7 @@ public class CommunicationTest implements Runnable {
 		// Start up the communication
 		NXTCommunication<SensorData, ServerMessageData> NXTComm = new NXTCommunication<SensorData, ServerMessageData>(
 				false, new SensorDataFactory(), new ServerMessageDataFactory());
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.Bluetooth, "PeterF", "0016530A3D1C");
+		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB, "PeterF", "0016530A3D1C");
 
 		// Setup a data processor
 		NXTDataProcessor<SensorData, ServerMessageData> DP = new NXTDataProcessor<SensorData, ServerMessageData>(
@@ -42,11 +42,7 @@ public class CommunicationTest implements Runnable {
 				new SensorDataProcessor<SensorData, ServerMessageData>());
 
 		// Add some data to send
-		this.sendNormalData(NXTComm, 187);
-		this.sendNormalData(NXTComm, 986.5f);
-		this.sendNormalData(NXTComm, 456);
-		this.sendNormalData(NXTComm, 34);
-		this.sendNormalData(NXTComm, 55.6f);
+		this.sendNormalData(NXTComm, ServerMessageData.SOUND_MEDIUM);
 		
 		// Handle retrieved data
 		DP.start();
@@ -62,7 +58,8 @@ public class CommunicationTest implements Runnable {
 			if (Button.RIGHT.isPressed()) {
 				this.sendNormalData(NXTComm, 10, 20, 30);
 			}
-*/
+			*/
+
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
