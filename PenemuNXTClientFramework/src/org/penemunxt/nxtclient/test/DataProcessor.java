@@ -32,6 +32,11 @@ public class DataProcessor extends Thread {
 				} else {
 					this.TotalSum += DataItem.getSum();
 				}
+				
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+				}
 			}
 
 			Thread.yield();

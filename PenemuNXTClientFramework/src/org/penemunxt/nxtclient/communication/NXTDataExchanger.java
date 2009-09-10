@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import lejos.nxt.LCD;
+
 class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData>
 		extends Thread {
 	boolean Active;
@@ -144,6 +146,8 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 			RealData = false;
 		}
 
+		LCD.drawInt(DataItemIn.getMainStatus(), 1, 5);
+		
 		DataItemIn = null;
 
 		return RealData;

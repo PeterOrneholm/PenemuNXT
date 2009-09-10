@@ -40,7 +40,7 @@ public class NXTCommTest implements Runnable {
 		// Start up the communication
 		NXTCommunication<ProcessedData, DistanceData> NXTComm = new NXTCommunication<ProcessedData, DistanceData>(
 				true, new ProcessedDataFactory(), new DistanceDataFactory());
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB);
+		NXTComm.ConnectAndStartAll(NXTConnectionModes.Bluetooth);
 
 		// Setup a data processor
 		DataProcessor DP = new DataProcessor(NXTComm);
