@@ -1,9 +1,9 @@
+package org.penemunxt.pcserver.projects.communicationtest;
 import lejos.pc.comm.*;
 
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
 import java.io.*;
 
 import javax.swing.JFrame;
@@ -53,7 +53,7 @@ public class CommTestServer extends Applet implements Runnable,
 	@Override
 	public void run() {
 		NXTConnector conn = new NXTConnector();
-		if (!conn.connectTo("btspp://")) {
+		if (!conn.connectTo("usb://")) {
 			System.err.println("No NXT find using USB");
 			System.exit(1);
 		}
