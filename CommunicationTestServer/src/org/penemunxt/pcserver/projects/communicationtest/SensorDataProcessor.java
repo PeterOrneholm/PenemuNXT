@@ -1,4 +1,5 @@
 package org.penemunxt.pcserver.projects.communicationtest;
+
 import org.penemunxt.pcserver.communication.INXTCommunicationData;
 import org.penemunxt.pcserver.communication.INXTDataItemProcessor;
 import org.penemunxt.pcserver.communication.NXTCommunication;
@@ -15,15 +16,24 @@ public class SensorDataProcessor<CommDataInT extends INXTCommunicationData, Comm
 
 		SensorData SensorDataItem = (SensorData) dataItem;
 
-		System.out.println(SensorDataItem.SoundDB);
+		String TempOut = "";
+		for (int i = 0; i < (int) (SensorDataItem.SoundDB); i++) {
+			TempOut += "*";
+		}
+		System.out.println(TempOut);
 
 		NXTCommunicationQueue<ServerMessageData> SendQueue = (NXTCommunicationQueue<ServerMessageData>) NXTComm
 				.getDataSendQueue();
 
-		if (SensorDataItem.SoundDB > 100) {
-			SendQueue.add(new ServerMessageData(20.3f));
+		if (SensorDataItem.SoundDB > 70) {
+			SendQueue.add(new ServerMessageData(
+					ServerMessageData.SOUND_TOO_HIGH));
+		} else if (SensorDataItem.SoundDB > 40 && SensorDataItem.SoundDB <= 70) {
+			SendQueue
+					.add(new ServerMessageData(ServerMessageData.SOUND_MEDIUM));
 		} else {
-			SendQueue.add(new ServerMessageData(10.1f));
+			SendQueue
+					.add(new ServerMessageData(ServerMessageData.SOUND_TOO_LOW));
 		}
 	}
 

@@ -1,4 +1,5 @@
 package org.penemunxt.pcserver.projects.communicationtest;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,11 +9,11 @@ import org.penemunxt.pcserver.communication.NXTCommunicationData;
 
 public class SensorData extends NXTCommunicationData implements
 		INXTCommunicationData {
-	
+
 	/* Read / Write */
 	public void ReadData(DataInputStream DataIn) throws IOException {
 		super.ReadData(DataIn);
-		if (this.getDataStatus() != DATA_STATUS_EMPTY) {
+		if (this.getDataStatus() == DATA_STATUS_NORMAL) {
 			this.setIRDistance(DataIn.readInt());
 			this.setUSDistance(DataIn.readInt());
 			this.setSoundDB(DataIn.readInt());
@@ -21,13 +22,13 @@ public class SensorData extends NXTCommunicationData implements
 
 	public void WriteData(DataOutputStream DataOut) throws IOException {
 		super.WriteData(DataOut);
-		if (this.getDataStatus() != DATA_STATUS_EMPTY) {
+		if (this.getDataStatus() == DATA_STATUS_NORMAL) {
 			DataOut.writeInt(this.getIRDistance());
 			DataOut.writeInt(this.getUSDistance());
 			DataOut.writeInt(this.getSoundDB());
 		}
 	}
-	
+
 	/* Constructors */
 
 	public SensorData(int IRDistance, int USDistance, int SoundDB) {
@@ -40,7 +41,7 @@ public class SensorData extends NXTCommunicationData implements
 	public SensorData(int MainStatus, int DataStatus, boolean IsPrioritated) {
 		super(MainStatus, DataStatus, IsPrioritated);
 	}
-	
+
 	public SensorData(int MainStatus, int DataStatus) {
 		super(MainStatus, DataStatus);
 	}
@@ -48,9 +49,9 @@ public class SensorData extends NXTCommunicationData implements
 	public SensorData() {
 		super();
 	}
-	
+
 	/* Params */
-	
+
 	int IRDistance;
 	int USDistance;
 	int SoundDB;
@@ -77,5 +78,5 @@ public class SensorData extends NXTCommunicationData implements
 
 	public void setSoundDB(int soundDB) {
 		SoundDB = soundDB;
-	}	
+	}
 }
