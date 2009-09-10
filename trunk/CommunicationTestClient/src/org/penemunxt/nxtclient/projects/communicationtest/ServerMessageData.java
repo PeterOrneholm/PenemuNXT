@@ -14,20 +14,20 @@ public class ServerMessageData extends NXTCommunicationData implements
 	public void ReadData(DataInputStream DataIn) throws IOException {
 		super.ReadData(DataIn);
 		if (this.getDataStatus() != DATA_STATUS_EMPTY) {
-			this.setMessage(DataIn.readUTF());
+			this.setMessage(DataIn.readFloat());
 		}
 	}
 
 	public void WriteData(DataOutputStream DataOut) throws IOException {
 		super.WriteData(DataOut);
 		if (this.getDataStatus() != DATA_STATUS_EMPTY) {
-			DataOut.writeUTF(this.getMessage());
+			DataOut.writeFloat(this.getMessage());
 		}
 	}
 	
 	/* Constructors */
 
-	public ServerMessageData(String message) {
+	public ServerMessageData(float message) {
 		this();
 		this.setMessage(message);
 	}
@@ -46,13 +46,13 @@ public class ServerMessageData extends NXTCommunicationData implements
 	
 	/* Params */
 	
-	String Message;
+	float Message;
 
-	public String getMessage() {
+	public float getMessage() {
 		return Message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(float message) {
 		Message = message;
 	}
 }

@@ -5,13 +5,11 @@ import org.penemunxt.nxtclient.communication.NXTCommunicationData;
 import org.penemunxt.nxtclient.communication.NXTConnectionModes;
 import org.penemunxt.nxtclient.communication.NXTDataProcessor;
 import org.penemunxt.nxtclient.debug.NXTDebug;
-import org.penemunxt.nxtclient.test.DistanceData;
-import org.penemunxt.nxtclient.test.ProcessedData;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
-public class CommunicationTest implements Runnable {
+public class CommTest implements Runnable {
 	boolean Active;
 
 	private void sendNormalData(
@@ -29,7 +27,7 @@ public class CommunicationTest implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		CommunicationTest NXTCT = new CommunicationTest();
+		CommTest NXTCT = new CommTest();
 		NXTCT.run();
 	}
 
@@ -40,7 +38,7 @@ public class CommunicationTest implements Runnable {
 		// Start up the communication
 		NXTCommunication<ServerMessageData, SensorData> NXTComm = new NXTCommunication<ServerMessageData, SensorData>(
 				true, new ServerMessageDataFactory(), new SensorDataFactory());
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB);
+		NXTComm.ConnectAndStartAll(NXTConnectionModes.Bluetooth);
 
 		// Setup a data processor
 		NXTDataProcessor<ServerMessageData, SensorData> DP = new NXTDataProcessor<ServerMessageData, SensorData>(
@@ -49,7 +47,7 @@ public class CommunicationTest implements Runnable {
 
 		// Add some data to send
 		this.sendNormalData(NXTComm, 1, 5, 17);
-		this.sendNormalData(NXTComm, 7, 2,8);
+		this.sendNormalData(NXTComm, 7, 2, 8);
 		this.sendNormalData(NXTComm, 55, 120, 25);
 		this.sendNormalData(NXTComm, 358, 88, 32);
 		this.sendNormalData(NXTComm, 25, 10, 58);
@@ -61,6 +59,16 @@ public class CommunicationTest implements Runnable {
 		LCD.clear();
 		while (Active) {
 			this.Active = DP.Active;
+
+			LCD.clear();
+
+			LCD.drawString("CommTestClient", 1, 1);
+			LCD.drawString("LSO:" + NXTComm.getDataSendQueue().getQueueSize(),
+					1, 3);
+			LCD.drawString("LSI:"
+					+ NXTComm.getDataRetrievedQueue().getQueueSize(), 1, 4);
+
+			LCD.refresh();
 
 			if (Button.ESCAPE.isPressed()) {
 				ShutDown(NXTComm);
