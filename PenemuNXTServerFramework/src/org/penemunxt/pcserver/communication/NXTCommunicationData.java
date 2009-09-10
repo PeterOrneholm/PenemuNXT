@@ -63,6 +63,6 @@ public class NXTCommunicationData implements INXTCommunicationData {
 	}
 
 	public NXTCommunicationData() {
-		this(MAIN_STATUS_NORMAL, DATA_STATUS_EMPTY);
+		this(MAIN_STATUS_NORMAL, DATA_STATUS_NORMAL);
 	}
 }

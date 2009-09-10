@@ -34,6 +34,11 @@ public class DataProcessor extends Thread {
 				System.out.println("Data: " + DataItem.getMainStatus() + ','
 						+ DataItem.getDataStatus() + ',' + DataItem.getParam1()
 						+ ',' + DataItem.getParam2());
+				
+				NXTComm.getDataSendQueue().add(
+						new ProcessedData(NXTCommunicationData.MAIN_STATUS_NORMAL,
+								NXTCommunicationData.DATA_STATUS_NORMAL, (DataItem.getParam1() + DataItem.getParam2())));
+
 			}
 
 			Thread.yield();
