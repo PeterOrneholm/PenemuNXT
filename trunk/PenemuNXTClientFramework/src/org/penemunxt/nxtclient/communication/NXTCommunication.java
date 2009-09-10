@@ -3,6 +3,8 @@ package org.penemunxt.nxtclient.communication;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+import org.penemunxt.nxtclient.debug.NXTDebug;
+
 import lejos.nxt.comm.*;
 
 public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData> {
