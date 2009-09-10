@@ -11,16 +11,16 @@ import org.penemunxt.nxtclient.communication.NXTDataProcessor;
 
 public class ServerMessageDataProcessor<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData>
 		implements INXTDataItemProcessor {
-	public String LatestMessage;
+	private DataShare DS;
 
 	@Override
 	public <CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData> void ProcessItem(
 			CommDataInT dataItem,
 			NXTCommunication<CommDataInT, CommDataOutT> NXTComm) {
 
-		//ServerMessageData ServerMessageDataItem = (ServerMessageData) dataItem;
+		ServerMessageData ServerMessageDataItem = (ServerMessageData) dataItem;
 
-		//this.LatestMessage = ServerMessageDataItem.Message;
+		this.DS.Message = ServerMessageDataItem.Message;
 	}
 
 	@Override
@@ -34,5 +34,9 @@ public class ServerMessageDataProcessor<CommDataInT extends INXTCommunicationDat
 				NXTCommunicationData.MAIN_STATUS_SHUTTING_DOWN,
 				NXTCommunicationData.DATA_STATUS_ONLY_STATUS, true));
 
+	}
+
+	public ServerMessageDataProcessor(DataShare DS) {
+		this.DS = DS;
 	}
 }

@@ -8,6 +8,8 @@ import org.penemunxt.nxtclient.debug.NXTDebug;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
+import lejos.nxt.SensorPort;
+import lejos.nxt.SoundSensor;
 
 public class CommTest implements Runnable {
 	boolean Active;
@@ -34,39 +36,38 @@ public class CommTest implements Runnable {
 	@Override
 	public void run() {
 		Active = true;
+		DataShare DS = new DataShare();
 
 		// Start up the communication
 		NXTCommunication<ServerMessageData, SensorData> NXTComm = new NXTCommunication<ServerMessageData, SensorData>(
 				true, new ServerMessageDataFactory(), new SensorDataFactory());
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.Bluetooth);
+		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB);
 
 		// Setup a data processor
 		NXTDataProcessor<ServerMessageData, SensorData> DP = new NXTDataProcessor<ServerMessageData, SensorData>(
 				NXTComm,
-				new ServerMessageDataProcessor<ServerMessageData, SensorData>());
+				new ServerMessageDataProcessor<ServerMessageData, SensorData>(
+						DS));
 
-		// Add some data to send
-		this.sendNormalData(NXTComm, 1, 5, 17);
-		this.sendNormalData(NXTComm, 7, 2, 8);
-		this.sendNormalData(NXTComm, 55, 120, 25);
-		this.sendNormalData(NXTComm, 358, 88, 32);
-		this.sendNormalData(NXTComm, 25, 10, 58);
-		this.sendNormalData(NXTComm, 3, 85, 589);
-
-		// Handle retrieved data
 		DP.start();
 
 		LCD.clear();
+		SoundSensor SS = new SoundSensor(SensorPort.S1);
 		while (Active) {
 			this.Active = DP.Active;
 
 			LCD.clear();
 
 			LCD.drawString("CommTestClient", 1, 1);
-			LCD.drawString("LSO:" + NXTComm.getDataSendQueue().getQueueSize(),
+			LCD.drawString("LSO: " + NXTComm.getDataSendQueue().getQueueSize(),
 					1, 3);
-			LCD.drawString("LSI:"
+			LCD.drawString("LSI: "
 					+ NXTComm.getDataRetrievedQueue().getQueueSize(), 1, 4);
+
+			LCD
+					.drawString("M: "
+							+ ServerMessageData
+									.getMessageDescription(DS.Message), 1, 5);
 
 			LCD.refresh();
 
@@ -74,9 +75,7 @@ public class CommTest implements Runnable {
 				ShutDown(NXTComm);
 			}
 
-			if (Button.RIGHT.isPressed()) {
-				this.sendNormalData(NXTComm, 10, 20, 30);
-			}
+			this.sendNormalData(NXTComm, 0, 0, SS.readValue());
 
 			try {
 				Thread.sleep(50);
@@ -85,7 +84,6 @@ public class CommTest implements Runnable {
 		}
 
 		NXTComm.Disconnect();
-		NXTDebug.WriteMessageAndWait("Finished!");
 		System.exit(0);
 	}
 }
