@@ -1,32 +1,13 @@
 package org.penemunxt.pcserver.projects.communicationtest;
 
 import java.applet.Applet;
-import java.awt.Button;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Label;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.image.VolatileImage;
-import javax.sound.*;
-import javax.sound.midi.*;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.Port;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.*;
 
-import org.penemunxt.pcserver.communication.NXTCommunication;
-import org.penemunxt.pcserver.communication.NXTCommunicationData;
-import org.penemunxt.pcserver.communication.NXTConnectionModes;
-import org.penemunxt.pcserver.communication.NXTDataProcessor;
+import org.penemunxt.pcserver.communication.*;
 
 public class CommunicationTest extends Applet implements Runnable,
 		ActionListener, WindowListener {
@@ -34,20 +15,7 @@ public class CommunicationTest extends Applet implements Runnable,
 	DataShare DS;
 	VolatileImage OSI;
 	Button btnExit;
-	NXTCommunication<SensorData, ServerMessageData> NXTComm;
-
-	private void sendNormalData(
-			NXTCommunication<SensorData, ServerMessageData> NXTComm, int Message) {
-		NXTComm.getDataSendQueue().add(new ServerMessageData(Message));
-	}
-
-	private void ShutDown(
-			NXTCommunication<SensorData, ServerMessageData> NXTComm) {
-		NXTComm.getDataSendQueue().add(
-				new ServerMessageData(
-						NXTCommunicationData.MAIN_STATUS_SHUT_DOWN,
-						NXTCommunicationData.DATA_STATUS_ONLY_STATUS, true));
-	}
+	NXTCommunication NXTComm;
 
 	public static void main(String[] args) {
 		CommunicationTest PCCT = new CommunicationTest();
@@ -66,6 +34,17 @@ public class CommunicationTest extends Applet implements Runnable,
 		mainFrame.setVisible(true);
 
 		PCCT.start();
+	}
+
+	public void start() {
+		Thread t = new Thread(this);
+		t.start();
+	}
+
+	public void init() {
+		btnExit = new Button("Exit");
+		btnExit.addActionListener(this);
+		this.add(btnExit);
 	}
 
 	public void update(Graphics g) {
@@ -89,54 +68,36 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		g.setFont(new Font("Arial", Font.PLAIN, 36));
 		g.setColor(new Color(0, 0, 0));
-		g.drawString(DS.SoundDB + "%", (int) (this.getWidth() / 2.0),
-				(int) (this.getHeight() / 2.0));
-	}
-
-	public void start() {
-		Thread t = new Thread(this);
-		t.start();
-	}
-
-	public void init() {
-		btnExit = new Button("Exit");
-		btnExit.addActionListener(this);
-		this.add(btnExit);
-	}
-
-	public void actionPerformed(ActionEvent AE) {
-		if (AE.getSource() == btnExit) {
-			this.ShutDown(NXTComm);
-		}
+		g.drawString(DS.SoundDB + "%",
+				(int) ((DS.SoundDB / 100.0) * getWidth()), (int) (this
+						.getHeight() / 2.0));
 	}
 
 	@Override
 	public void run() {
 		Active = true;
+
+		// Object to share data internal
 		DS = new DataShare();
 
-		// Start up the communication
-		NXTComm = new NXTCommunication<SensorData, ServerMessageData>(false,
+		// Setup data factories
+		NXTCommunicationDataFactories DataFactories = new NXTCommunicationDataFactories(
 				new SensorDataFactory(), new ServerMessageDataFactory());
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.Bluetooth, "PeterF",
+
+		// Setup and start the communication
+		NXTComm = new NXTCommunication(false, DataFactories);
+		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB, "PeterF",
 				"0016530A3D1C");
 
 		// Setup a data processor
-		NXTDataProcessor<SensorData, ServerMessageData> DP = new NXTDataProcessor<SensorData, ServerMessageData>(
-				NXTComm,
-				new SensorDataProcessor<SensorData, ServerMessageData>(DS));
-
-		// Add some data to send
-		this.sendNormalData(NXTComm, ServerMessageData.SOUND_MEDIUM);
-
-		// Handle retrieved data
-		DP.start();
+		SensorDataProcessor SDP = new SensorDataProcessor(DS, NXTComm,
+				DataFactories);
+		SDP.start();
 
 		while (Active) {
-			this.Active = DP.Active;
+			this.Active = SDP.Active;
 
 			repaint();
-			this.setSystemVolume(DS.SoundDB);
 
 			try {
 				Thread.sleep(50);
@@ -148,59 +109,32 @@ public class CommunicationTest extends Applet implements Runnable,
 		System.exit(0);
 	}
 
-	@Override
-	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void windowClosed(WindowEvent arg0) {
+	public void actionPerformed(ActionEvent AE) {
+		if (AE.getSource() == btnExit) {
+			NXTComm.sendShutDown();
+		}
 	}
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		this.ShutDown(NXTComm);
+		NXTComm.sendShutDown();
 	}
 
-	@Override
+	public void windowActivated(WindowEvent arg0) {
+	}
+
+	public void windowClosed(WindowEvent arg0) {
+	}
+
 	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
-	@Override
 	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
-	@Override
 	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
-	@Override
 	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
-
-	public void setSystemVolume(int volumePercentage) {
-		Port lineO;
-		try {
-			lineO = (Port) AudioSystem.getLine(Port.Info.SPEAKER);
-			lineO.open();
-
-			FloatControl controlF = (FloatControl) lineO
-					.getControl(FloatControl.Type.VOLUME);
-			float volume = 100 * (controlF.getValue() / controlF
-					.getMaximum());
-			controlF.setValue((float) volumePercentage / 100);
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-	}
-
 }
