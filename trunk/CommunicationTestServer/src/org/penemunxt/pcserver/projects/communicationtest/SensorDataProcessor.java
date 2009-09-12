@@ -1,34 +1,28 @@
 package org.penemunxt.pcserver.projects.communicationtest;
 
 import org.penemunxt.pcserver.communication.INXTCommunicationData;
-import org.penemunxt.pcserver.communication.INXTDataItemProcessor;
+import org.penemunxt.pcserver.communication.INXTCommunicationDataFactories;
 import org.penemunxt.pcserver.communication.NXTCommunication;
-import org.penemunxt.pcserver.communication.NXTCommunicationData;
 import org.penemunxt.pcserver.communication.NXTCommunicationQueue;
 import org.penemunxt.pcserver.communication.NXTDataProcessor;
 
-public class SensorDataProcessor<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData>
-		implements INXTDataItemProcessor {
+public class SensorDataProcessor extends NXTDataProcessor {
 	DataShare DS;
 
 	@Override
-	public <CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData> void ProcessItem(
-			CommDataInT dataItem,
-			NXTCommunication<CommDataInT, CommDataOutT> NXTComm) {
-
+	public void ProcessItem(INXTCommunicationData dataItem,
+			NXTCommunication NXTComm) {
 		SensorData SensorDataItem = (SensorData) dataItem;
 
 		String TempOut = "";
 		for (int i = 0; i < (int) (SensorDataItem.SoundDB); i++) {
 			TempOut += "*";
 		}
-		//System.out.println(TempOut);
 
-		NXTCommunicationQueue<ServerMessageData> SendQueue = (NXTCommunicationQueue<ServerMessageData>) NXTComm
-				.getDataSendQueue();
+		NXTCommunicationQueue SendQueue = NXTComm.getDataSendQueue();
 
 		DS.SoundDB = SensorDataItem.SoundDB;
-		
+
 		if (SensorDataItem.SoundDB > 70) {
 			SendQueue.add(new ServerMessageData(
 					ServerMessageData.SOUND_TOO_HIGH));
@@ -41,20 +35,9 @@ public class SensorDataProcessor<CommDataInT extends INXTCommunicationData, Comm
 		}
 	}
 
-	@Override
-	public <CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData> void SendIsShuttingDownMessage(
-			NXTCommunication<CommDataInT, CommDataOutT> NXTComm) {
-
-		NXTCommunicationQueue<ServerMessageData> SendQueue = (NXTCommunicationQueue<ServerMessageData>) NXTComm
-				.getDataSendQueue();
-
-		SendQueue.add(new ServerMessageData(
-				NXTCommunicationData.MAIN_STATUS_SHUTTING_DOWN,
-				NXTCommunicationData.DATA_STATUS_ONLY_STATUS, true));
-
-	}
-	
-	public SensorDataProcessor(DataShare ds){
+	public SensorDataProcessor(DataShare ds, NXTCommunication NXTComm,
+			INXTCommunicationDataFactories DataFactories) {
+		super(NXTComm, DataFactories);
 		DS = ds;
 	}
 }

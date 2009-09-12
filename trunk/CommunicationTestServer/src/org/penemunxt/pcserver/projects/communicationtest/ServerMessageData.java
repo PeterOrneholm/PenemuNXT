@@ -50,6 +50,7 @@ public class ServerMessageData extends NXTCommunicationData implements
 		super();
 	}
 
+
 	/* Params */
 
 	int Message;
