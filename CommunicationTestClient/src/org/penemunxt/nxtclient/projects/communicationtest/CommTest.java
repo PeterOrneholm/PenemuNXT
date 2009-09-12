@@ -41,7 +41,7 @@ public class CommTest implements Runnable {
 		// Start up the communication
 		NXTCommunication<ServerMessageData, SensorData> NXTComm = new NXTCommunication<ServerMessageData, SensorData>(
 				true, new ServerMessageDataFactory(), new SensorDataFactory());
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB);
+		NXTComm.ConnectAndStartAll(NXTConnectionModes.Bluetooth);
 
 		// Setup a data processor
 		NXTDataProcessor<ServerMessageData, SensorData> DP = new NXTDataProcessor<ServerMessageData, SensorData>(
