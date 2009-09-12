@@ -9,6 +9,8 @@ import org.penemunxt.pcserver.communication.NXTDataProcessor;
 
 public class SensorDataProcessor<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData>
 		implements INXTDataItemProcessor {
+	DataShare DS;
+
 	@Override
 	public <CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData> void ProcessItem(
 			CommDataInT dataItem,
@@ -20,11 +22,13 @@ public class SensorDataProcessor<CommDataInT extends INXTCommunicationData, Comm
 		for (int i = 0; i < (int) (SensorDataItem.SoundDB); i++) {
 			TempOut += "*";
 		}
-		System.out.println(TempOut);
+		//System.out.println(TempOut);
 
 		NXTCommunicationQueue<ServerMessageData> SendQueue = (NXTCommunicationQueue<ServerMessageData>) NXTComm
 				.getDataSendQueue();
 
+		DS.SoundDB = SensorDataItem.SoundDB;
+		
 		if (SensorDataItem.SoundDB > 70) {
 			SendQueue.add(new ServerMessageData(
 					ServerMessageData.SOUND_TOO_HIGH));
@@ -48,5 +52,9 @@ public class SensorDataProcessor<CommDataInT extends INXTCommunicationData, Comm
 				NXTCommunicationData.MAIN_STATUS_SHUTTING_DOWN,
 				NXTCommunicationData.DATA_STATUS_ONLY_STATUS, true));
 
+	}
+	
+	public SensorDataProcessor(DataShare ds){
+		DS = ds;
 	}
 }
