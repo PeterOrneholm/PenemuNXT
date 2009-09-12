@@ -1,46 +1,37 @@
 package org.penemunxt.pcserver.communication;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import lejos.pc.comm.*;
 
-import lejos.pc.comm.NXTCommFactory;
-import lejos.pc.comm.NXTConnector;
-
-public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData> {
-	boolean isConnected = false;
-
+public class NXTCommunication {
+	boolean isConnected;
 	boolean WriteBeforeRead;
 
-	INXTCommunicationDataFactory CommDataInFactory = null;
-	INXTCommunicationDataFactory CommDataOutFactory = null;
+	INXTCommunicationDataFactories DataFactories;
 
-	NXTDataExchanger<CommDataInT, CommDataOutT> NXTDE = null;
-	NXTConnector dataConnection = null;
+	NXTDataExchanger NXTDE;
+	NXTConnector dataConnection;
+	
+	NXTDataStreamConnection NXTDSC;
 
-	DataOutputStream DataOut = null;
-	DataInputStream DataIn = null;
+	NXTCommunicationQueue DataRetrievedQueue;
+	NXTCommunicationQueue DataSendQueue;
 
-	NXTCommunicationQueue<CommDataInT> DataRetrievedQueue;
-	NXTCommunicationQueue<CommDataOutT> DataSendQueue;
+	boolean DataRetrievedQueueIsLocked;
+	boolean DataSendQueueIsLocked;
 
-	boolean DataRetrievedQueueIsLocked = false;
-	boolean DataSendQueueIsLocked = false;
-
-	public NXTCommunicationQueue<CommDataInT> getDataRetrievedQueue() {
+	public NXTCommunicationQueue getDataRetrievedQueue() {
 		return DataRetrievedQueue;
 	}
 
-	public void setDataRetrievedQueue(
-			NXTCommunicationQueue<CommDataInT> dataRetrievedQueue) {
+	public void setDataRetrievedQueue(NXTCommunicationQueue dataRetrievedQueue) {
 		DataRetrievedQueue = dataRetrievedQueue;
 	}
 
-	public NXTCommunicationQueue<CommDataOutT> getDataSendQueue() {
+	public NXTCommunicationQueue getDataSendQueue() {
 		return DataSendQueue;
 	}
 
-	public void setDataSendQueue(
-			NXTCommunicationQueue<CommDataOutT> dataSendQueue) {
+	public void setDataSendQueue(NXTCommunicationQueue dataSendQueue) {
 		DataSendQueue = dataSendQueue;
 	}
 
@@ -49,75 +40,48 @@ public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDat
 	}
 
 	public boolean isConnected() {
-		if (this.getConnection() == null) {
+		if (this.NXTDSC == null) {
 			return false;
 		} else {
 			return isConnected;
 		}
 	}
 
-	private void setConnection(NXTConnector Connection) {
-		dataConnection = Connection;
-	}
-
-	public NXTConnector getConnection() {
-		return dataConnection;
-	}
-
 	public void Disconnect() {
 		try {
-			this.getConnection().close();
+			this.NXTDSC.close();
 		} catch (Exception ex) {
 		}
-		this.setConnection(null);
 		this.setConnected(false);
-	}
-
-	public void OpenStreams() {
-		if (this.isConnected()) {
-			this.DataIn = this.getConnection().getDataIn();
-			this.DataOut = this.getConnection().getDataOut();
-		}
+		this.NXTDSC = null;
 	}
 
 	public void CloseStreams() {
 		if (this.isConnected()) {
 			try {
-				this.DataIn.close();
-				this.DataOut.close();
+				this.NXTDSC.DataIn.close();
+				this.NXTDSC.DataOut.close();
 			} catch (Exception ex) {
 			}
 		}
 	}
 
 	public void Connect(NXTConnectionModes ConnMode, String Name, String Address) {
-		if (this.isConnected() || this.getConnection() != null) {
+		if (this.isConnected() || this.NXTDSC != null) {
 			this.Disconnect();
 		}
 
-		NXTConnector NewConn = new NXTConnector();
-		boolean ConnectSuccess = false;
-		int ConnectionMode = 0;
-
-		if (ConnMode == NXTConnectionModes.USB) {
-			ConnectionMode = NXTCommFactory.USB;
-		} else if (ConnMode == NXTConnectionModes.Bluetooth) {
-			ConnectionMode = NXTCommFactory.BLUETOOTH;
-		}
-
-		ConnectSuccess = NewConn.connectTo(Name, Address, ConnectionMode);
-
-		if (NewConn != null && ConnectSuccess) {
+		NXTDSC = new NXTDataStreamConnection();
+		
+		if (NXTDSC.Connect(ConnMode, Name, Address)) {
 			this.setConnected(true);
-			this.setConnection(NewConn);
 		}
 	}
 
 	public void StartExchangeData() {
 		if (this.isConnected()) {
-			NXTDE = new NXTDataExchanger<CommDataInT, CommDataOutT>(
-					WriteBeforeRead, DataOut, DataIn, DataRetrievedQueue,
-					DataSendQueue, CommDataInFactory, CommDataOutFactory);
+			NXTDE = new NXTDataExchanger(WriteBeforeRead, this.NXTDSC.DataOut, this.NXTDSC.DataIn,
+					DataRetrievedQueue, DataSendQueue, DataFactories);
 			NXTDE.start();
 		}
 	}
@@ -130,15 +94,13 @@ public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDat
 	public void ConnectAndStartAll(NXTConnectionModes ConnMode, String Name,
 			String Address) {
 		this.Connect(ConnMode, Name, Address);
-		this.OpenStreams();
 		this.StartExchangeData();
 	}
 
-	
 	public void ConnectAndStartAll(NXTConnectionModes ConnMode, String Name) {
 		this.ConnectAndStartAll(ConnMode, Name, null);
 	}
-	
+
 	public void ConnectAndStartAll(NXTConnectionModes ConnMode) {
 		this.ConnectAndStartAll(ConnMode, null, null);
 	}
@@ -150,14 +112,20 @@ public class NXTCommunication<CommDataInT extends INXTCommunicationData, CommDat
 	}
 
 	public NXTCommunication(boolean WriteBeforeRead,
-			INXTCommunicationDataFactory CommDataInFactory,
-			INXTCommunicationDataFactory CommDataOutFactory) {
+			INXTCommunicationDataFactories DataFactories) {
+		super();
+
+		this.setConnected(false);
 		this.WriteBeforeRead = WriteBeforeRead;
+		this.setDataRetrievedQueue(new NXTCommunicationQueue());
+		this.setDataSendQueue(new NXTCommunicationQueue());
+		this.DataFactories = DataFactories;
+	}
 
-		this.setDataRetrievedQueue(new NXTCommunicationQueue<CommDataInT>());
-		this.setDataSendQueue(new NXTCommunicationQueue<CommDataOutT>());
-
-		this.CommDataInFactory = CommDataInFactory;
-		this.CommDataOutFactory = CommDataOutFactory;
+	public void sendShutDown() {
+		this.getDataSendQueue().add(
+				new NXTCommunicationData(
+						NXTCommunicationData.MAIN_STATUS_SHUT_DOWN,
+						NXTCommunicationData.DATA_STATUS_ONLY_STATUS, true));
 	}
 }

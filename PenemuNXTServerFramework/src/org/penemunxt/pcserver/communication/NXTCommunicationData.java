@@ -53,13 +53,14 @@ public class NXTCommunicationData implements INXTCommunicationData {
 	}
 	
 	public NXTCommunicationData(int MainStatus, int DataStatus, boolean IsPrioritated) {
-		this(MainStatus, DataStatus);
+		super();
 		this.IsPrioritated = IsPrioritated;
+		this.MainStatus = MainStatus;
+		this.DataStatus = DataStatus;
 	}
 	
 	public NXTCommunicationData(int MainStatus, int DataStatus) {
-		this.MainStatus = MainStatus;
-		this.DataStatus = DataStatus;
+		this(MainStatus, DataStatus, false);
 	}
 
 	public NXTCommunicationData() {

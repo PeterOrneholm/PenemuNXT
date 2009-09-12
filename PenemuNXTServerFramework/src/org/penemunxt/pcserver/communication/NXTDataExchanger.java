@@ -4,52 +4,66 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT extends INXTCommunicationData>
-		extends Thread {
+class NXTDataExchanger extends Thread {
 	boolean Active;
 	boolean WriteBeforeRead;
+	int WaitMilliseconds[];
 
-	INXTCommunicationDataFactory CommDataInFactory = null;
-	INXTCommunicationDataFactory CommDataOutFactory = null;
+	INXTCommunicationDataFactories DataFactories;
 
-	DataOutputStream DataOut = null;
-	DataInputStream DataIn = null;
+	DataOutputStream DataOut;
+	DataInputStream DataIn;
 
-	NXTCommunicationQueue<CommDataInT> DataRetrievedQueue;
-	NXTCommunicationQueue<CommDataOutT> DataSendQueue;
+	NXTCommunicationQueue DataRetrievedQueue;
+	NXTCommunicationQueue DataSendQueue;
 
-	public NXTCommunicationQueue<CommDataInT> getDataRetrievedQueue() {
+	public NXTCommunicationQueue getDataRetrievedQueue() {
 		return DataRetrievedQueue;
 	}
 
-	public void setDataRetrievedQueue(
-			NXTCommunicationQueue<CommDataInT> dataRetrievedQueue) {
+	public void setDataRetrievedQueue(NXTCommunicationQueue dataRetrievedQueue) {
 		DataRetrievedQueue = dataRetrievedQueue;
 	}
 
-	public NXTCommunicationQueue<CommDataOutT> getDataSendQueue() {
+	public NXTCommunicationQueue getDataSendQueue() {
 		return DataSendQueue;
 	}
 
-	public void setDataSendQueue(
-			NXTCommunicationQueue<CommDataOutT> dataSendQueue) {
+	public void setDataSendQueue(NXTCommunicationQueue dataSendQueue) {
 		DataSendQueue = dataSendQueue;
 	}
 
+	public int[] getWaitMilliseconds() {
+		return WaitMilliseconds;
+	}
+
 	public NXTDataExchanger(boolean WriteBeforeRead, DataOutputStream DataOut,
-			DataInputStream DataIn,
-			NXTCommunicationQueue<CommDataInT> DataRetrievedQueue,
-			NXTCommunicationQueue<CommDataOutT> DataSendQueue,
-			INXTCommunicationDataFactory CommDataInFactory,
-			INXTCommunicationDataFactory CommDataOutFactory) {
+			DataInputStream DataIn, NXTCommunicationQueue DataRetrievedQueue,
+			NXTCommunicationQueue DataSendQueue,
+			INXTCommunicationDataFactories DataFactories) {
+		super();
 		this.WriteBeforeRead = WriteBeforeRead;
 		this.DataOut = DataOut;
 		this.DataIn = DataIn;
 		this.DataRetrievedQueue = DataRetrievedQueue;
 		this.DataSendQueue = DataSendQueue;
 		this.Active = true;
-		this.CommDataInFactory = CommDataInFactory;
-		this.CommDataOutFactory = CommDataOutFactory;
+		this.DataFactories = DataFactories;
+
+		this.WaitMilliseconds = new int[] { 0, 100, 250, 500, 1000, 1500, 2000,
+				2500, 3000, 5000, 7000, 10000 };
+	}
+
+	public NXTDataExchanger(boolean WriteBeforeRead, DataOutputStream DataOut,
+			DataInputStream DataIn, NXTCommunicationQueue DataRetrievedQueue,
+			NXTCommunicationQueue DataSendQueue,
+			INXTCommunicationDataFactories DataFactories,
+			int WaitMilliseconds[]) {
+
+		this(WriteBeforeRead, DataOut, DataIn, DataRetrievedQueue,
+				DataSendQueue, DataFactories);
+
+		this.WaitMilliseconds = WaitMilliseconds;
 	}
 
 	public void End() {
@@ -57,8 +71,6 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 	}
 
 	public void run() {
-		final int WaitMilliseconds[] = { 0, 100, 250, 500, 1000, 1500, 2000,
-				2500, 3000, 5000, 7000 };
 		int WaitPos = -1;
 		boolean ResetWaitPos;
 
@@ -101,8 +113,8 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 
 	private boolean Write() {
 		boolean RealData;
-		CommDataOutT DataItemOut = (CommDataOutT) CommDataOutFactory
-				.getEmptyInstance();
+		INXTCommunicationData DataItemOut = (INXTCommunicationData) DataFactories
+				.getDataOutFactory().getEmptyInstance();
 
 		// Write
 		if (this.getDataSendQueue().getQueueSize() > 0) {
@@ -126,8 +138,8 @@ class NXTDataExchanger<CommDataInT extends INXTCommunicationData, CommDataOutT e
 
 	private boolean Read() {
 		boolean RealData;
-		CommDataInT DataItemIn = (CommDataInT) CommDataInFactory
-				.getEmptyInstance();
+		INXTCommunicationData DataItemIn = (INXTCommunicationData) DataFactories
+				.getDataInFactory().getEmptyInstance();
 
 		// Read
 		try {
