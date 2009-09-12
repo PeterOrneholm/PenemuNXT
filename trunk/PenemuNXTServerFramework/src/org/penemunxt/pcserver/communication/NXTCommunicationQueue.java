@@ -1,18 +1,18 @@
 package org.penemunxt.pcserver.communication;
 import java.util.ArrayList;
 
-public class NXTCommunicationQueue<CommDataT extends INXTCommunicationData> {
-	ArrayList<CommDataT> DataQueue;
+public class NXTCommunicationQueue {
+	ArrayList<INXTCommunicationData> DataQueue;
 	
-	public ArrayList<CommDataT> getDataQueue() {
+	public ArrayList<INXTCommunicationData> getDataQueue() {
 		return DataQueue;
 	}
 
-	public void setDataQueue(ArrayList<CommDataT> dataQueue) {
+	public void setDataQueue(ArrayList<INXTCommunicationData> dataQueue) {
 		DataQueue = dataQueue;
 	}
 
-	public void add(CommDataT DataItem){
+	public void add(INXTCommunicationData DataItem){
 		if(DataItem!=null){
 			if(DataItem.isPrioritated()){
 				this.addPrioritated(DataItem);
@@ -22,15 +22,15 @@ public class NXTCommunicationQueue<CommDataT extends INXTCommunicationData> {
 		}
 	}
 
-	public void addNormal(CommDataT DataItem){
+	public void addNormal(INXTCommunicationData DataItem){
 		this.DataQueue.add(DataItem);
 	}
 	
-	public void addPrioritated(CommDataT DataItem){
+	public void addPrioritated(INXTCommunicationData DataItem){
 		this.DataQueue.add(0, DataItem);
 	}
 	
-	public CommDataT getNextItem() {
+	public INXTCommunicationData getNextItem() {
 		if (this.DataQueue.size() > 0) {
 			return this.DataQueue.get(0);
 		} else {
@@ -38,8 +38,8 @@ public class NXTCommunicationQueue<CommDataT extends INXTCommunicationData> {
 		}
 	}
 
-	public CommDataT getAndDeleteNextItem() {
-		CommDataT DataItem = this.getNextItem();
+	public INXTCommunicationData getAndDeleteNextItem() {
+		INXTCommunicationData DataItem = this.getNextItem();
 		if (DataItem != null) {
 			this.DataQueue.remove(DataItem);
 		}
@@ -51,6 +51,7 @@ public class NXTCommunicationQueue<CommDataT extends INXTCommunicationData> {
 	}
 
 	public NXTCommunicationQueue() {
-		this.setDataQueue(new ArrayList<CommDataT>());
+		super();
+		this.setDataQueue(new ArrayList<INXTCommunicationData>());
 	}
 }
