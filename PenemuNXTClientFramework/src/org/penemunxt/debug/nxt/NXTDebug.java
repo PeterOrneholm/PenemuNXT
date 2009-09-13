@@ -1,4 +1,4 @@
-package org.penemunxt.nxtclient.debug;
+package org.penemunxt.debug.nxt;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
