@@ -9,6 +9,7 @@ public class NXTServerDataStreamConnection extends NXTDataStreamConnection {
 	@Override
 	public boolean Connect(NXTConnectionModes ConnMode, String Name,
 			String Address) {
+		Connection = null;
 		NXTConnection NewConn = null;
 		if (ConnMode == NXTConnectionModes.USB) {
 			NewConn = USB.waitForConnection();
@@ -16,10 +17,10 @@ public class NXTServerDataStreamConnection extends NXTDataStreamConnection {
 			NewConn = Bluetooth.waitForConnection();
 		}
 
-		if (Connection != null) {
+		if (NewConn != null) {
 			this.setDataIn(Connection.openDataInputStream());
 			this.setDataOut(Connection.openDataOutputStream());
-
+			Connection = NewConn;
 		}
 
 		return (Connection != null);
