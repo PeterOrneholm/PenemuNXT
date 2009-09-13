@@ -11,7 +11,9 @@ public class SensorDataProcessor extends NXTDataProcessor {
 			NXTCommunication NXTComm) {
 		SensorData SensorDataItem = (SensorData) dataItem;
 
-		DS.SoundDB = SensorDataItem.getSoundDB();
+		DS.Sound.add(SensorDataItem.getSoundDB());
+		DS.IRDistance.add(SensorDataItem.getIRDistance());
+		DS.USDistance.add(SensorDataItem.getUSDistance());
 
 		if (SensorDataItem.getSoundDB() > 70) {
 			NXTComm.sendData(new ServerMessageData(

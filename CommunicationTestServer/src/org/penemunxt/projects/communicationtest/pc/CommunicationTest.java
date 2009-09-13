@@ -3,12 +3,14 @@ package org.penemunxt.projects.communicationtest.pc;
 import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 
 import javax.swing.*;
 
 import org.penemunxt.communication.*;
 import org.penemunxt.communication.pc.*;
+import org.penemunxt.graphics.pc.Graph;
 import org.penemunxt.projects.communicationtest.*;
 
 public class CommunicationTest extends Applet implements Runnable,
@@ -18,6 +20,8 @@ public class CommunicationTest extends Applet implements Runnable,
 	VolatileImage OSI;
 	Button btnExit;
 	NXTCommunication NXTC;
+	Graph SoundGraph;
+	Graph IRDistanceGraph;
 
 	public static void main(String[] args) {
 		CommunicationTest PCCT = new CommunicationTest();
@@ -25,14 +29,14 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		JFrame mainFrame = new JFrame();
 		mainFrame.addWindowListener(PCCT);
-
 		mainFrame.add(PCCT);
 
+		mainFrame.setBackground(Color.WHITE);
 		mainFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		// mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// mainFrame.setUndecorated(true);
-		// mainFrame.pack();
-		// mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setUndecorated(true);
+		mainFrame.pack();
+		mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		mainFrame.setVisible(true);
 
 		PCCT.start();
@@ -49,6 +53,9 @@ public class CommunicationTest extends Applet implements Runnable,
 		btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
 		this.add(btnExit);
+		
+		SoundGraph = new Graph();
+		IRDistanceGraph = new Graph();
 	}
 
 	@Override
@@ -65,18 +72,13 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	@Override
 	public void paint(Graphics g) {
-		int C = (int) ((DS.SoundDB / 100.0) * 255);
-		g.setColor(new Color(C, C, 255 - C));
+		Rectangle2D.Float SoundBox = new Rectangle2D.Float(5, 5,
+				(getWidth() / 2) - 10, getHeight() - 10);
+		Rectangle2D.Float IRDistanceBox = new Rectangle2D.Float(
+				(getWidth() / 2) + 5, 5, (getWidth() / 2) - 10, getHeight() - 10);
 
-		g
-				.fillRect(0, 0, (int) ((DS.SoundDB / 100.0) * getWidth()),
-						getHeight());
-
-		g.setFont(new Font("Arial", Font.PLAIN, 36));
-		g.setColor(new Color(0, 0, 0));
-		g.drawString(DS.SoundDB + "%",
-				(int) ((DS.SoundDB / 100.0) * getWidth()), (int) (this
-						.getHeight() / 2.0));
+		SoundGraph.drawGraph(DS.Sound, 100, "%", Color.GREEN, SoundBox, true, g);
+		IRDistanceGraph.drawGraph(DS.IRDistance, 1500, "MM", Color.RED, IRDistanceBox, true, g);
 	}
 
 	@Override
@@ -91,7 +93,8 @@ public class CommunicationTest extends Applet implements Runnable,
 				new SensorDataFactory(), new ServerMessageDataFactory());
 
 		// Setup and start the communication
-		NXTC = new NXTCommunication(false, DataFactories, new NXTServerDataStreamConnection());
+		NXTC = new NXTCommunication(false, DataFactories,
+				new PCDataStreamConnection());
 		NXTC.ConnectAndStartAll(NXTConnectionModes.USB, "PeterF",
 				"0016530A3D1C");
 
@@ -106,7 +109,7 @@ public class CommunicationTest extends Applet implements Runnable,
 			repaint();
 
 			try {
-				Thread.sleep(50);
+				Thread.sleep(200);
 			} catch (InterruptedException e) {
 			}
 		}
