@@ -1,4 +1,4 @@
-package org.penemunxt.pcserver.projects.communicationtest;
+package org.penemunxt.projects.communicationtest.pc;
 
 public class DataShare {
 	public int SoundDB;

@@ -1,4 +1,4 @@
-package org.penemunxt.pcserver.projects.communicationtest;
+package org.penemunxt.projects.communicationtest.pc;
 
 import java.applet.Applet;
 import java.awt.*;
@@ -7,7 +7,9 @@ import java.awt.image.*;
 
 import javax.swing.*;
 
-import org.penemunxt.pcserver.communication.*;
+import org.penemunxt.communication.*;
+import org.penemunxt.communication.pc.*;
+import org.penemunxt.projects.communicationtest.*;
 
 public class CommunicationTest extends Applet implements Runnable,
 		ActionListener, WindowListener {
@@ -15,7 +17,7 @@ public class CommunicationTest extends Applet implements Runnable,
 	DataShare DS;
 	VolatileImage OSI;
 	Button btnExit;
-	NXTCommunication NXTComm;
+	NXTCommunication NXTC;
 
 	public static void main(String[] args) {
 		CommunicationTest PCCT = new CommunicationTest();
@@ -36,17 +38,20 @@ public class CommunicationTest extends Applet implements Runnable,
 		PCCT.start();
 	}
 
+	@Override
 	public void start() {
 		Thread t = new Thread(this);
 		t.start();
 	}
 
+	@Override
 	public void init() {
 		btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
 		this.add(btnExit);
 	}
 
+	@Override
 	public void update(Graphics g) {
 		if (OSI == null || OSI.getWidth() != getWidth()
 				|| OSI.getHeight() != getHeight()) {
@@ -58,6 +63,7 @@ public class CommunicationTest extends Applet implements Runnable,
 		g.drawImage(OSI, 0, 0, null);
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		int C = (int) ((DS.SoundDB / 100.0) * 255);
 		g.setColor(new Color(C, C, 255 - C));
@@ -85,12 +91,12 @@ public class CommunicationTest extends Applet implements Runnable,
 				new SensorDataFactory(), new ServerMessageDataFactory());
 
 		// Setup and start the communication
-		NXTComm = new NXTCommunication(false, DataFactories);
-		NXTComm.ConnectAndStartAll(NXTConnectionModes.USB, "PeterF",
+		NXTC = new NXTCommunication(false, DataFactories, new NXTServerDataStreamConnection());
+		NXTC.ConnectAndStartAll(NXTConnectionModes.USB, "PeterF",
 				"0016530A3D1C");
 
 		// Setup a data processor
-		SensorDataProcessor SDP = new SensorDataProcessor(DS, NXTComm,
+		SensorDataProcessor SDP = new SensorDataProcessor(DS, NXTC,
 				DataFactories);
 		SDP.start();
 
@@ -105,19 +111,19 @@ public class CommunicationTest extends Applet implements Runnable,
 			}
 		}
 
-		NXTComm.Disconnect();
+		NXTC.Disconnect();
 		System.exit(0);
 	}
 
 	public void actionPerformed(ActionEvent AE) {
 		if (AE.getSource() == btnExit) {
-			NXTComm.sendShutDown();
+			NXTC.sendShutDown();
 		}
 	}
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		NXTComm.sendShutDown();
+		NXTC.sendShutDown();
 	}
 
 	public void windowActivated(WindowEvent arg0) {
