@@ -1,4 +1,4 @@
-package org.penemunxt.pcserver.communication;
+package org.penemunxt.communication.pc;
 
 import java.io.IOException;
 
@@ -9,6 +9,7 @@ import org.penemunxt.communication.*;
 public class NXTServerDataStreamConnection extends NXTDataStreamConnection {
 	NXTConnector Connection;
 
+	@Override
 	public boolean Connect(NXTConnectionModes ConnMode, String Name,
 			String Address) {
 		Connection = new NXTConnector();
@@ -29,6 +30,7 @@ public class NXTServerDataStreamConnection extends NXTDataStreamConnection {
 		return (Connection != null && ConnectSuccess);
 	}
 	
+	@Override
 	public void close(){
 		try {
 			this.Connection.close();
