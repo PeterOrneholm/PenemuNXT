@@ -2,12 +2,14 @@ package org.penemunxt.projects.communicationtest.nxt;
 
 import org.penemunxt.communication.*;
 import org.penemunxt.communication.nxt.*;
+import org.penemunxt.debug.nxt.NXTDebug;
 import org.penemunxt.projects.communicationtest.*;
 
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.SoundSensor;
+import lejos.nxt.addon.OpticalDistanceSensor;
 
 public class CommTest implements Runnable {
 	boolean Active;
@@ -31,24 +33,26 @@ public class CommTest implements Runnable {
 				new ServerMessageDataFactory(), new SensorDataFactory());
 
 		// Setup and start the communication
-		NXTC = new NXTCommunication(true, DataFactories, new NXTServerDataStreamConnection());
+		NXTC = new NXTCommunication(true, DataFactories,
+				new NXTDataStreamConnection());
 		NXTC.ConnectAndStartAll(NXTConnectionModes.USB);
 
 		// Setup a data processor
-		ServerMessageDataProcessor SMDP = new ServerMessageDataProcessor(DS, NXTC,
-				DataFactories);
+		ServerMessageDataProcessor SMDP = new ServerMessageDataProcessor(DS,
+				NXTC, DataFactories);
 		SMDP.start();
 
 		LCD.clear();
 		SoundSensor SS = new SoundSensor(SensorPort.S1);
+		OpticalDistanceSensor ODS = new OpticalDistanceSensor(SensorPort.S2);
 		while (Active) {
 			this.Active = SMDP.Active;
 
 			LCD.clear();
 
 			LCD.drawString("CommTestClient", 1, 1);
-			LCD.drawString("LSO: " + NXTC.getDataSendQueue().getQueueSize(),
-					1, 3);
+			LCD.drawString("LSO: " + NXTC.getDataSendQueue().getQueueSize(), 1,
+					3);
 			LCD.drawString("LSI: "
 					+ NXTC.getDataRetrievedQueue().getQueueSize(), 1, 4);
 
@@ -63,7 +67,7 @@ public class CommTest implements Runnable {
 				NXTC.sendShutDown();
 			}
 
-			NXTC.sendData(new SensorData(0, 0, SS.readValue()));
+			NXTC.sendData(new SensorData(ODS.getDistance(), 0, SS.readValue()));
 
 			try {
 				Thread.sleep(50);
