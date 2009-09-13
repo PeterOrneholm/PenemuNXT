@@ -1,4 +1,4 @@
-package org.penemunxt.nxtclient.projects.communicationtest;
+package org.penemunxt.projects.communicationtest.nxtclient;
 
 public class DataShare {
 	public int Message;

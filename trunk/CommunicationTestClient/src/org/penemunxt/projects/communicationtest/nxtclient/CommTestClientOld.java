@@ -1,4 +1,4 @@
-package org.penemunxt.nxtclient.projects.communicationtest;
+package org.penemunxt.projects.communicationtest.nxtclient;
 import java.io.*;
 
 import lejos.nxt.*;
