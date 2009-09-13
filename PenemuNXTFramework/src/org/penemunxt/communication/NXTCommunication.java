@@ -129,4 +129,8 @@ public class NXTCommunication {
 						NXTCommunicationData.MAIN_STATUS_SHUT_DOWN,
 						NXTCommunicationData.DATA_STATUS_ONLY_STATUS, true));
 	}
+
+	public void sendData(INXTCommunicationData data) {
+		this.getDataSendQueue().add(data);
+	}
 }

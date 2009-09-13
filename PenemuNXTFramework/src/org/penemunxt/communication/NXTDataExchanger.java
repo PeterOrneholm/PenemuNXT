@@ -70,6 +70,7 @@ class NXTDataExchanger extends Thread {
 		this.Active = false;
 	}
 
+	@Override
 	public void run() {
 		int WaitPos = -1;
 		boolean ResetWaitPos;
@@ -113,7 +114,7 @@ class NXTDataExchanger extends Thread {
 
 	private boolean Write() {
 		boolean RealData;
-		INXTCommunicationData DataItemOut = (INXTCommunicationData) DataFactories
+		INXTCommunicationData DataItemOut = DataFactories
 				.getDataOutFactory().getEmptyInstance();
 
 		// Write
@@ -138,7 +139,7 @@ class NXTDataExchanger extends Thread {
 
 	private boolean Read() {
 		boolean RealData;
-		INXTCommunicationData DataItemIn = (INXTCommunicationData) DataFactories
+		INXTCommunicationData DataItemIn = DataFactories
 				.getDataInFactory().getEmptyInstance();
 
 		// Read
