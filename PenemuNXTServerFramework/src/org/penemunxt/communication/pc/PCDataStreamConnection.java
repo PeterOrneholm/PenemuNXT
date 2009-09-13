@@ -6,7 +6,7 @@ import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
 import org.penemunxt.communication.*;
 
-public class NXTServerDataStreamConnection extends NXTDataStreamConnection {
+public class PCDataStreamConnection extends DataStreamConnection {
 	NXTConnector Connection;
 
 	@Override
@@ -38,7 +38,7 @@ public class NXTServerDataStreamConnection extends NXTDataStreamConnection {
 		}
 	}
 	
-	public NXTServerDataStreamConnection(){
+	public PCDataStreamConnection(){
 		super();
 	}
 }
