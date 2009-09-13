@@ -1,33 +1,14 @@
 package org.penemunxt.pcserver.communication;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTConnector;
+import org.penemunxt.communication.*;
 
-public class NXTDataStreamConnection {
-	DataOutputStream DataOut;
-	DataInputStream DataIn;
+public class NXTServerDataStreamConnection extends NXTDataStreamConnection {
 	NXTConnector Connection;
-	
-	public DataOutputStream getDataOut() {
-		return DataOut;
-	}
 
-	public void setDataOut(DataOutputStream dataOut) {
-		DataOut = dataOut;
-	}
-
-	public DataInputStream getDataIn() {
-		return DataIn;
-	}
-
-	public void setDataIn(DataInputStream dataIn) {
-		DataIn = dataIn;
-	}
-	
 	public boolean Connect(NXTConnectionModes ConnMode, String Name,
 			String Address) {
 		Connection = new NXTConnector();
@@ -55,7 +36,7 @@ public class NXTDataStreamConnection {
 		}
 	}
 	
-	public NXTDataStreamConnection(){
+	public NXTServerDataStreamConnection(){
 		super();
 	}
 }
