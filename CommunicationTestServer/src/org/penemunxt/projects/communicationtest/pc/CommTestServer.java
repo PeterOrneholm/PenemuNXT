@@ -1,4 +1,4 @@
-package org.penemunxt.pcserver.projects.communicationtest;
+package org.penemunxt.projects.communicationtest.pc;
 import lejos.pc.comm.*;
 
 import java.applet.*;
@@ -21,6 +21,7 @@ public class CommTestServer extends Applet implements Runnable,
 
 		JFrame mainFrame = new JFrame();
 		mainFrame.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent we) {
 				System.exit(0);
 			}
@@ -36,14 +37,17 @@ public class CommTestServer extends Applet implements Runnable,
 		NXTGraph.start();
 	}
 
+	@Override
 	public void start() {
 		Thread t = new Thread(this);
 		t.start();
 	}
 
+	@Override
 	public void paint(Graphics g) {
 	}
 
+	@Override
 	public void init() {
 		Button btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
