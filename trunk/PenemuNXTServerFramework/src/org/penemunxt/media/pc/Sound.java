@@ -1,4 +1,4 @@
-package org.penemunxt.pcserver.media;
+package org.penemunxt.media.pc;
 
 import javax.sound.sampled.*;
 
