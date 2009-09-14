@@ -2,7 +2,6 @@ package org.penemunxt.projects.communicationtest.nxt;
 
 import org.penemunxt.communication.*;
 import org.penemunxt.communication.nxt.*;
-import org.penemunxt.debug.nxt.NXTDebug;
 import org.penemunxt.projects.communicationtest.*;
 
 import lejos.nxt.Button;
@@ -43,7 +42,7 @@ public class CommTest implements Runnable {
 		SMDP.start();
 
 		LCD.clear();
-		SoundSensor SS = new SoundSensor(SensorPort.S1);
+		SoundSensor SS = new SoundSensor(SensorPort.S1, true);
 		OpticalDistanceSensor ODS = new OpticalDistanceSensor(SensorPort.S2);
 		while (Active) {
 			this.Active = SMDP.Active;
@@ -61,6 +60,10 @@ public class CommTest implements Runnable {
 							+ ServerMessageData
 									.getMessageDescription(DS.Message), 1, 5);
 
+			LCD
+			.drawString("S: "
+					+ SS.readValue(), 1, 6);
+			
 			LCD.refresh();
 
 			if (Button.ESCAPE.isPressed()) {
