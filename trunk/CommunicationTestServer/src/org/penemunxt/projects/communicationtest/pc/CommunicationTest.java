@@ -33,10 +33,10 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		mainFrame.setBackground(Color.WHITE);
 		mainFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setUndecorated(true);
-		mainFrame.pack();
-		mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		//mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//mainFrame.setUndecorated(true);
+		//mainFrame.pack();
+		//mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		mainFrame.setVisible(true);
 
 		PCCT.start();
@@ -72,13 +72,13 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	@Override
 	public void paint(Graphics g) {
-		Rectangle2D.Float SoundBox = new Rectangle2D.Float(5, 5,
+		Rectangle SoundBox = new Rectangle(5, 5,
 				(getWidth() / 2) - 10, getHeight() - 10);
-		Rectangle2D.Float IRDistanceBox = new Rectangle2D.Float(
+		Rectangle IRDistanceBox = new Rectangle(
 				(getWidth() / 2) + 5, 5, (getWidth() / 2) - 10, getHeight() - 10);
 
-		SoundGraph.drawGraph(DS.Sound, 100, "%", Color.GREEN, SoundBox, true, g);
-		IRDistanceGraph.drawGraph(DS.IRDistance, 1500, "MM", Color.RED, IRDistanceBox, true, g);
+		SoundGraph.drawGraph(DS.Sound,0, 100, "%", Color.GREEN, SoundBox, true, g);
+		IRDistanceGraph.drawGraph(DS.IRDistance,200, 1500, "MM", Color.RED, IRDistanceBox, true, g);
 	}
 
 	@Override
