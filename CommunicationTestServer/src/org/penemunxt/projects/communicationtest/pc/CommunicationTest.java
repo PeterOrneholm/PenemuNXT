@@ -79,6 +79,9 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		SoundGraph.drawGraph(DS.Sound,0, 100, "%", Color.GREEN, SoundBox, true, g);
 		IRDistanceGraph.drawGraph(DS.IRDistance,200, 1500, "MM", Color.RED, IRDistanceBox, true, g);
+		
+		AccelerationValues AV = DS.Acceleration.get(DS.Acceleration.size() - 1);
+		g.drawString("X: " + AV.getX() + "Y: " + AV.getY() + "Z: " + AV.getZ(), 100, 100);
 	}
 
 	@Override
