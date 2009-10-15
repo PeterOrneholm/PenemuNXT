@@ -69,8 +69,6 @@ public class Graph {
 				int x1 = xStart + ((i - 1) * xMultiplier);
 				int x2 = xStart + (i * xMultiplier);
 
-				System.out.println(lastValuePercentage);
-
 				int y1 = (int) (lastValuePercentage * bounds.getHeight());
 				int y2 = (int) (curValuePercentage * bounds.getHeight());
 
