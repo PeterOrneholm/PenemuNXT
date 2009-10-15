@@ -1,8 +1,5 @@
 package org.penemunxt.communication;
 
-import org.penemunxt.communication.INXTCommunicationData;
-import org.penemunxt.communication.NXTCommunication;
-import org.penemunxt.communication.NXTCommunicationData;
 
 public class NXTDataProcessor extends Thread {
 	public boolean Active;
