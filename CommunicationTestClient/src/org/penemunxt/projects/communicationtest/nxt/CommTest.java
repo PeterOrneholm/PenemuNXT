@@ -9,6 +9,7 @@ import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import lejos.nxt.SoundSensor;
 import lejos.nxt.addon.OpticalDistanceSensor;
+import lejos.nxt.addon.TiltSensor;
 
 public class CommTest implements Runnable {
 	boolean Active;
@@ -42,8 +43,11 @@ public class CommTest implements Runnable {
 		SMDP.start();
 
 		LCD.clear();
-		SoundSensor SS = new SoundSensor(SensorPort.S1, true);
-		OpticalDistanceSensor ODS = new OpticalDistanceSensor(SensorPort.S2);
+		//SoundSensor SS = new SoundSensor(SensorPort.S1, true);
+		//OpticalDistanceSensor ODS = new OpticalDistanceSensor(SensorPort.S2);
+		TiltSensor TS = new TiltSensor(SensorPort.S1);
+
+
 		while (Active) {
 			this.Active = SMDP.Active;
 
@@ -60,17 +64,14 @@ public class CommTest implements Runnable {
 							+ ServerMessageData
 									.getMessageDescription(DS.Message), 1, 5);
 
-			LCD
-			.drawString("S: "
-					+ SS.readValue(), 1, 6);
-			
 			LCD.refresh();
 
 			if (Button.ESCAPE.isPressed()) {
 				NXTC.sendShutDown();
 			}
 
-			NXTC.sendData(new SensorData(ODS.getDistance(), 0, SS.readValue()));
+			//NXTC.sendData(new SensorData(ODS.getDistance(), SS.readValue(), TS.getXTilt(), TS.getYTilt(), TS.getZTilt()));
+			NXTC.sendData(new SensorData(0, 0, TS.getXTilt(), TS.getYTilt(), TS.getZTilt()));
 
 			try {
 				Thread.sleep(50);
