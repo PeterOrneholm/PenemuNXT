@@ -15,8 +15,10 @@ public class SensorData extends NXTCommunicationData implements
 		super.ReadData(DataIn);
 		if (this.getDataStatus() == DATA_STATUS_NORMAL) {
 			this.setIRDistance(DataIn.readInt());
-			this.setUSDistance(DataIn.readInt());
 			this.setSoundDB(DataIn.readInt());
+			this.setAccX(DataIn.readInt());
+			this.setAccY(DataIn.readInt());
+			this.setAccZ(DataIn.readInt());
 		}
 	}
 
@@ -25,18 +27,22 @@ public class SensorData extends NXTCommunicationData implements
 		super.WriteData(DataOut);
 		if (this.getDataStatus() == DATA_STATUS_NORMAL) {
 			DataOut.writeInt(this.getIRDistance());
-			DataOut.writeInt(this.getUSDistance());
 			DataOut.writeInt(this.getSoundDB());
+			DataOut.writeInt(this.getAccX());
+			DataOut.writeInt(this.getAccY());
+			DataOut.writeInt(this.getAccZ());
 		}
 	}
 
 	/* Constructors */
 
-	public SensorData(int IRDistance, int USDistance, int SoundDB) {
+	public SensorData(int IRDistance, int SoundDB, int AccX, int AccY, int AccZ) {
 		this();
 		this.setIRDistance(IRDistance);
-		this.setUSDistance(USDistance);
 		this.setSoundDB(SoundDB);
+		this.setAccX(AccX);
+		this.setAccY(AccY);
+		this.setAccZ(AccZ);
 	}
 
 	public SensorData(int MainStatus, int DataStatus, boolean IsPrioritated) {
@@ -54,8 +60,10 @@ public class SensorData extends NXTCommunicationData implements
 	/* Params */
 
 	int IRDistance;
-	int USDistance;
 	int SoundDB;
+	int AccX;
+	int AccY;
+	int AccZ;
 
 	public int getIRDistance() {
 		return IRDistance;
@@ -65,19 +73,35 @@ public class SensorData extends NXTCommunicationData implements
 		IRDistance = distance;
 	}
 
-	public int getUSDistance() {
-		return USDistance;
-	}
-
-	public void setUSDistance(int distance) {
-		USDistance = distance;
-	}
-
 	public int getSoundDB() {
 		return SoundDB;
 	}
 
 	public void setSoundDB(int soundDB) {
 		SoundDB = soundDB;
+	}
+
+	public int getAccX() {
+		return AccX;
+	}
+
+	public void setAccX(int accX) {
+		AccX = accX;
+	}
+
+	public int getAccY() {
+		return AccY;
+	}
+
+	public void setAccY(int accY) {
+		AccY = accY;
+	}
+
+	public int getAccZ() {
+		return AccZ;
+	}
+
+	public void setAccZ(int accZ) {
+		AccZ = accZ;
 	}
 }
