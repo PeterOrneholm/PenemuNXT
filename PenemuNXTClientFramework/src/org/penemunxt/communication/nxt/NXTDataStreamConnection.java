@@ -1,7 +1,11 @@
 package org.penemunxt.communication.nxt;
 
-import lejos.nxt.comm.*;
-import org.penemunxt.communication.*;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.NXTConnection;
+import lejos.nxt.comm.USB;
+
+import org.penemunxt.communication.DataStreamConnection;
+import org.penemunxt.communication.NXTConnectionModes;
 
 public class NXTDataStreamConnection extends DataStreamConnection {
 	NXTConnection Connection;
