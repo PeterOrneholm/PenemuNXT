@@ -1,13 +1,14 @@
-import lejos.navigation.CompassNavigator;
-import lejos.subsumption.Behavior;
+import lejos.robotics.navigation.SimpleNavigator;
+import lejos.robotics.subsumption.Behavior;
+
 
 
 public class Forward implements Behavior {
 
-	CompassNavigator comnav;
+	SimpleNavigator comnav;
 
 
-	public Forward(CompassNavigator comnav) {
+	public Forward(SimpleNavigator comnav) {
 		this.comnav = comnav;
 
 	}
