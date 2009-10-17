@@ -14,19 +14,17 @@ import org.penemunxt.projects.communicationtest.*;
 
 public class CommunicationTest extends Applet implements Runnable,
 		ActionListener, WindowListener {
-	boolean Active;
-	DataShare DS;
-	VolatileImage OSI;
 	Button btnExit;
-
 	Checkbox chkShowLatestPos;
 	Checkbox chkShowDrivingPath;
 	Checkbox chkShowBumpingPositions;
 	Checkbox chkShowHeadMap;
+	Label lblLatestPosition;
 
+	boolean Active;
 	NXTCommunication NXTC;
-	Graph SoundGraph;
-	Graph IRDistanceGraph;
+	DataShare DS;
+	VolatileImage OSI;
 
 	public static void main(String[] args) {
 		CommunicationTest PCCT = new CommunicationTest();
@@ -55,12 +53,27 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	@Override
 	public void init() {
+		Panel controlPanel = new Panel();
+		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
+
 		btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
-		this.add(btnExit);
 
-		SoundGraph = new Graph();
-		IRDistanceGraph = new Graph();
+		chkShowLatestPos = new Checkbox("Senaste position", true);
+		chkShowDrivingPath = new Checkbox("Färdväg", true);
+		chkShowBumpingPositions = new Checkbox("Krockar", true);
+		chkShowHeadMap = new Checkbox("Karta", true);
+
+		lblLatestPosition = new Label("");
+
+		controlPanel.add(btnExit);
+		controlPanel.add(chkShowLatestPos);
+		controlPanel.add(chkShowDrivingPath);
+		controlPanel.add(chkShowBumpingPositions);
+		controlPanel.add(chkShowHeadMap);
+		controlPanel.add(lblLatestPosition);
+
+		this.add(controlPanel, BorderLayout.WEST);
 	}
 
 	@Override
@@ -79,44 +92,71 @@ public class CommunicationTest extends Applet implements Runnable,
 	public void paint(Graphics g) {
 		for (RobotData PD : DS.NXTRobotData) {
 			int circleSize;
+			boolean show;
+
 			switch (PD.getType()) {
 			case RobotData.POSITION_TYPE_DRIVE:
 				g.setColor(Color.BLACK);
+				show = chkShowDrivingPath.getState();
 				circleSize = 2;
 				break;
 			case RobotData.POSITION_TYPE_BUMP_BUMPER:
 				g.setColor(Color.RED);
+				show = chkShowBumpingPositions.getState();
 				circleSize = 10;
 				break;
 			case RobotData.POSITION_TYPE_BUMP_DISTANCE:
 				g.setColor(Color.BLUE);
+				show = chkShowBumpingPositions.getState();
 				circleSize = 10;
 				break;
 			default:
 				g.setColor(Color.BLACK);
+				show = true;
 				circleSize = 2;
 				break;
 			}
-			g.fillOval(-PD.getPosY() / 5 + (this.getWidth() / 2), -PD
-					.getPosX()/ 5 + (this.getHeight() / 2), circleSize, circleSize);
-			
-			int x;
-			int y;
-			
-			x = (int) (PD.getHeadDistance() * Math.cos((PD.getHeadHeading()+ PD.getRobotHeading()) * Math.PI / 180)) + PD.getPosX(); 
-			y = (int) (PD.getHeadDistance() * Math.sin((PD.getHeadHeading()+ PD.getRobotHeading()) * Math.PI / 180)) + PD.getPosY(); 
-			
-			g.setColor(Color.ORANGE);
-			if (PD.getHeadDistance()> 200 && PD.getHeadDistance()< 1500) {
-				g.fillOval(-y / 5 + (this.getWidth() / 2), -x / 5
-						+ (this.getHeight() / 2), 5, 5);
+
+			if (show) {
+				g.fillOval(-PD.getPosY() / 5 + (this.getWidth() / 2), -PD
+						.getPosX()
+						/ 5 + (this.getHeight() / 2), circleSize, circleSize);
 			}
-			
+
+			if (chkShowHeadMap.getState()) {
+				int x;
+				int y;
+
+				x = (int) (PD.getHeadDistance() * Math
+						.cos((PD.getHeadHeading() + PD.getRobotHeading())
+								* Math.PI / 180))
+						+ PD.getPosX();
+				y = (int) (PD.getHeadDistance() * Math
+						.sin((PD.getHeadHeading() + PD.getRobotHeading())
+								* Math.PI / 180))
+						+ PD.getPosY();
+
+				g.setColor(Color.ORANGE);
+				if (PD.getHeadDistance() > 200 && PD.getHeadDistance() < 1500) {
+					g.fillOval(-y / 5 + (this.getWidth() / 2), -x / 5
+							+ (this.getHeight() / 2), 5, 5);
+				}
+			}
+
 		}
 
-		RobotData PD = DS.NXTRobotData.get(DS.NXTRobotData.size() - 1);
-		g.drawString("X: " + PD.getPosX() + "Y: " + PD.getPosY() + "H: "
-				+ PD.getRobotHeading(), 100, 100);
+		if (DS.NXTRobotData.size() > 0) {
+			RobotData PD = DS.NXTRobotData.get(DS.NXTRobotData.size() - 1);
+			lblLatestPosition.setText("X: " + PD.getPosX() + "Y: "
+					+ PD.getPosY() + "H: " + PD.getRobotHeading());
+			if (chkShowLatestPos.getState()) {
+				g.setColor(Color.PINK);
+				g.fillOval(-PD.getPosY() / 5 + (this.getWidth() / 2), -PD
+						.getPosX()
+						/ 5 + (this.getHeight() / 2), 15, 15);
+			}
+
+		}
 	}
 
 	@Override
