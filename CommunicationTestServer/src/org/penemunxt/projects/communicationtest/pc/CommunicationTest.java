@@ -3,7 +3,6 @@ package org.penemunxt.projects.communicationtest.pc;
 import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 
 import javax.swing.*;
@@ -19,6 +18,12 @@ public class CommunicationTest extends Applet implements Runnable,
 	DataShare DS;
 	VolatileImage OSI;
 	Button btnExit;
+
+	Checkbox chkShowLatestPos;
+	Checkbox chkShowDrivingPath;
+	Checkbox chkShowBumpingPositions;
+	Checkbox chkShowHeadMap;
+
 	NXTCommunication NXTC;
 	Graph SoundGraph;
 	Graph IRDistanceGraph;
@@ -33,10 +38,10 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		mainFrame.setBackground(Color.WHITE);
 		mainFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		//mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//mainFrame.setUndecorated(true);
-		//mainFrame.pack();
-		//mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		// mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// mainFrame.setUndecorated(true);
+		// mainFrame.pack();
+		// mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		mainFrame.setVisible(true);
 
 		PCCT.start();
@@ -53,7 +58,7 @@ public class CommunicationTest extends Applet implements Runnable,
 		btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
 		this.add(btnExit);
-		
+
 		SoundGraph = new Graph();
 		IRDistanceGraph = new Graph();
 	}
@@ -72,16 +77,46 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	@Override
 	public void paint(Graphics g) {
-		Rectangle SoundBox = new Rectangle(5, 5,
-				(getWidth() / 2) - 10, getHeight() - 10);
-		Rectangle IRDistanceBox = new Rectangle(
-				(getWidth() / 2) + 5, 5, (getWidth() / 2) - 10, getHeight() - 10);
+		for (RobotData PD : DS.NXTRobotData) {
+			int circleSize;
+			switch (PD.getType()) {
+			case RobotData.POSITION_TYPE_DRIVE:
+				g.setColor(Color.BLACK);
+				circleSize = 2;
+				break;
+			case RobotData.POSITION_TYPE_BUMP_BUMPER:
+				g.setColor(Color.RED);
+				circleSize = 10;
+				break;
+			case RobotData.POSITION_TYPE_BUMP_DISTANCE:
+				g.setColor(Color.BLUE);
+				circleSize = 10;
+				break;
+			default:
+				g.setColor(Color.BLACK);
+				circleSize = 2;
+				break;
+			}
+			g.fillOval(-PD.getPosY() / 5 + (this.getWidth() / 2), -PD
+					.getPosX()/ 5 + (this.getHeight() / 2), circleSize, circleSize);
+			
+			int x;
+			int y;
+			
+			x = (int) (PD.getHeadDistance() * Math.cos((PD.getHeadHeading()+ PD.getRobotHeading()) * Math.PI / 180)) + PD.getPosX(); 
+			y = (int) (PD.getHeadDistance() * Math.sin((PD.getHeadHeading()+ PD.getRobotHeading()) * Math.PI / 180)) + PD.getPosY(); 
+			
+			g.setColor(Color.ORANGE);
+			if (PD.getHeadDistance()> 200 && PD.getHeadDistance()< 1500) {
+				g.fillOval(-y / 5 + (this.getWidth() / 2), -x / 5
+						+ (this.getHeight() / 2), 5, 5);
+			}
+			
+		}
 
-		SoundGraph.drawGraph(DS.Sound,0, 100, "%", Color.GREEN, SoundBox, true, g);
-		IRDistanceGraph.drawGraph(DS.IRDistance,200, 1500, "MM", Color.RED, IRDistanceBox, true, g);
-		
-		AccelerationValues AV = DS.Acceleration.get(DS.Acceleration.size() - 1);
-		g.drawString("X: " + AV.getX() + "Y: " + AV.getY() + "Z: " + AV.getZ(), 100, 100);
+		RobotData PD = DS.NXTRobotData.get(DS.NXTRobotData.size() - 1);
+		g.drawString("X: " + PD.getPosX() + "Y: " + PD.getPosY() + "H: "
+				+ PD.getRobotHeading(), 100, 100);
 	}
 
 	@Override
@@ -93,16 +128,15 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		// Setup data factories
 		NXTCommunicationDataFactories DataFactories = new NXTCommunicationDataFactories(
-				new SensorDataFactory(), new ServerMessageDataFactory());
+				new RobotDataFactory(), new ServerMessageDataFactory());
 
 		// Setup and start the communication
 		NXTC = new NXTCommunication(false, DataFactories,
 				new PCDataStreamConnection());
-		NXTC.ConnectAndStartAll(NXTConnectionModes.USB, "PeterF",
-				"0016530A3D1C");
+		NXTC.ConnectAndStartAll(NXTConnectionModes.Bluetooth, "NXT", "");
 
 		// Setup a data processor
-		SensorDataProcessor SDP = new SensorDataProcessor(DS, NXTC,
+		PositionDataProcessor SDP = new PositionDataProcessor(DS, NXTC,
 				DataFactories);
 		SDP.start();
 
