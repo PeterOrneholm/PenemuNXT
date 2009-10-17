@@ -23,7 +23,11 @@ public class CommunicationTest extends Applet implements Runnable,
 	Checkbox chkShowDrivingPath;
 	Checkbox chkShowBumpingPositions;
 	Checkbox chkShowHeadMap;
-	JLabel lblLatestPosition;
+	Label lblRDX;
+	Label lblRDY;
+	Label lblRDRobotHeading;
+	Label lblRDHeadDistance;
+	Label lblRDHeadHeading;
 
 	boolean Active;
 	NXTCommunication NXTC;
@@ -59,9 +63,9 @@ public class CommunicationTest extends Applet implements Runnable,
 	public void init() {
 		Panel leftPanel = new Panel();
 		controlPanel = new Panel();
-		mapPanel = new Panel();		
-		
-		btnExit = new Button("Exit");
+		mapPanel = new Panel();
+
+		btnExit = new Button("Shut down");
 		btnExit.addActionListener(this);
 
 		chkShowLatestPos = new Checkbox("Latest position", true);
@@ -69,10 +73,14 @@ public class CommunicationTest extends Applet implements Runnable,
 		chkShowBumpingPositions = new Checkbox("Bumps", true);
 		chkShowHeadMap = new Checkbox("Map from head", true);
 
-		lblLatestPosition = new JLabel();
+		lblRDX = new Label();
+		lblRDY = new Label();
+		lblRDRobotHeading = new Label();
+		lblRDHeadDistance = new Label();
+		lblRDHeadHeading = new Label();
 
 		Label lblHeader = new Label("PenemuNXT");
-		Label lblLatestPositionHeader = new Label("Latest position:");
+		Label lblLatestPositionHeader = new Label("ROBOT DATA");
 
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		controlPanel.add(lblHeader);
@@ -82,13 +90,16 @@ public class CommunicationTest extends Applet implements Runnable,
 		controlPanel.add(chkShowBumpingPositions);
 		controlPanel.add(chkShowHeadMap);
 		controlPanel.add(lblLatestPositionHeader);
-		controlPanel.add(lblLatestPosition);
+		controlPanel.add(lblRDX);
+		controlPanel.add(lblRDY);
+		controlPanel.add(lblRDRobotHeading);
+		controlPanel.add(lblRDHeadDistance);
+		controlPanel.add(lblRDHeadHeading);
 
-		
 		leftPanel.setBackground(Color.LIGHT_GRAY);
 		leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		leftPanel.add(controlPanel);
-		
+
 		this.setLayout(new BorderLayout());
 		this.add(leftPanel, BorderLayout.WEST);
 		this.add(mapPanel, BorderLayout.CENTER);
@@ -138,7 +149,8 @@ public class CommunicationTest extends Applet implements Runnable,
 			if (show) {
 				g.fillOval(-PD.getPosY() / 5 + (mapPanel.getWidth() / 2), -PD
 						.getPosX()
-						/ 5 + (mapPanel.getHeight() / 2), circleSize, circleSize);
+						/ 5 + (mapPanel.getHeight() / 2), circleSize,
+						circleSize);
 			}
 
 			if (chkShowHeadMap.getState()) {
@@ -165,15 +177,18 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		if (DS.NXTRobotData.size() > 0) {
 			RobotData PD = DS.NXTRobotData.get(DS.NXTRobotData.size() - 1);
-			lblLatestPosition.setText("X: " + PD.getPosX() + "\nY: "
-					+ PD.getPosY() + "\nH: " + PD.getRobotHeading());
 			if (chkShowLatestPos.getState()) {
 				g.setColor(Color.PINK);
 				g.fillOval(-PD.getPosY() / 5 + (mapPanel.getWidth() / 2), -PD
 						.getPosX()
 						/ 5 + (mapPanel.getHeight() / 2), 15, 15);
 			}
-
+			
+			lblRDX.setText("X: " + PD.getPosX());
+			lblRDY.setText("Y: " + PD.getPosY());
+			lblRDRobotHeading.setText("Robot heading: " + PD.getRobotHeading());
+			lblRDHeadDistance.setText("Head distance: " + PD.getHeadDistance());
+			lblRDHeadHeading.setText("Head heading: " + PD.getHeadHeading());
 		}
 	}
 
