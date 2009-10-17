@@ -28,6 +28,8 @@ public class CommunicationTest extends Applet implements Runnable,
 	Label lblRDRobotHeading;
 	Label lblRDHeadDistance;
 	Label lblRDHeadHeading;
+	JComboBox cboMapScales;
+	float[] mapScales = { 0.05f, 0.1f, 0.15f, 0.20f, 0.25f, 0.50f, 0.75f, 1.0f };
 
 	boolean Active;
 	NXTCommunication NXTC;
@@ -65,6 +67,8 @@ public class CommunicationTest extends Applet implements Runnable,
 		controlPanel = new Panel();
 		mapPanel = new Panel();
 
+		Label lblHeader = new Label("PenemuNXT");
+
 		btnExit = new Button("Shut down");
 		btnExit.addActionListener(this);
 
@@ -73,14 +77,20 @@ public class CommunicationTest extends Applet implements Runnable,
 		chkShowBumpingPositions = new Checkbox("Bumps", true);
 		chkShowHeadMap = new Checkbox("Map from head", true);
 
+		Label lblLatestPositionHeader = new Label("ROBOT DATA");
 		lblRDX = new Label();
 		lblRDY = new Label();
 		lblRDRobotHeading = new Label();
 		lblRDHeadDistance = new Label();
 		lblRDHeadHeading = new Label();
 
-		Label lblHeader = new Label("PenemuNXT");
-		Label lblLatestPositionHeader = new Label("ROBOT DATA");
+		Label lblMapScalesHeader = new Label("Map scale:");
+		cboMapScales = new JComboBox(new String[] { "5%", "10%", "15%", "20%",
+				"25%", "50%", "75%", "100%" });
+		cboMapScales.setSelectedIndex(3);
+		Panel pnlMapScale = new Panel(new FlowLayout(FlowLayout.LEFT));
+		pnlMapScale.add(lblMapScalesHeader);
+		pnlMapScale.add(cboMapScales);
 
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		controlPanel.add(lblHeader);
@@ -89,6 +99,8 @@ public class CommunicationTest extends Applet implements Runnable,
 		controlPanel.add(chkShowDrivingPath);
 		controlPanel.add(chkShowBumpingPositions);
 		controlPanel.add(chkShowHeadMap);
+		controlPanel.add(chkShowHeadMap);
+		controlPanel.add(pnlMapScale);
 		controlPanel.add(lblLatestPositionHeader);
 		controlPanel.add(lblRDX);
 		controlPanel.add(lblRDY);
@@ -147,29 +159,27 @@ public class CommunicationTest extends Applet implements Runnable,
 			}
 
 			if (show) {
-				g.fillOval(-PD.getPosY() / 5 + (mapPanel.getWidth() / 2), -PD
-						.getPosX()
-						/ 5 + (mapPanel.getHeight() / 2), circleSize,
-						circleSize);
+				Point pos = getMapPos(PD.getPosY(), PD.getPosX(), mapPanel);
+				g.fillOval(pos.x, pos.y, circleSize, circleSize);
 			}
 
 			if (chkShowHeadMap.getState()) {
 				int x;
 				int y;
 
-				x = (int) (PD.getHeadDistance() * Math
-						.cos((PD.getHeadHeading() + PD.getRobotHeading())
-								* Math.PI / 180))
+				x = (int) (PD.getHeadDistance() * Math.cos((-PD
+						.getHeadHeading() + PD.getRobotHeading())
+						* Math.PI / 180))
 						+ PD.getPosX();
-				y = (int) (PD.getHeadDistance() * Math
-						.sin((PD.getHeadHeading() + PD.getRobotHeading())
-								* Math.PI / 180))
+				y = (int) (PD.getHeadDistance() * Math.sin((-PD
+						.getHeadHeading() + PD.getRobotHeading())
+						* Math.PI / 180))
 						+ PD.getPosY();
 
 				g.setColor(Color.ORANGE);
 				if (PD.getHeadDistance() > 200 && PD.getHeadDistance() < 1500) {
-					g.fillOval(-y / 5 + (mapPanel.getWidth() / 2), -x / 5
-							+ (mapPanel.getHeight() / 2), 5, 5);
+					Point pos = getMapPos(y, x, mapPanel);
+					g.fillOval(pos.x, pos.y, 5, 5);
 				}
 			}
 
@@ -179,11 +189,10 @@ public class CommunicationTest extends Applet implements Runnable,
 			RobotData PD = DS.NXTRobotData.get(DS.NXTRobotData.size() - 1);
 			if (chkShowLatestPos.getState()) {
 				g.setColor(Color.PINK);
-				g.fillOval(-PD.getPosY() / 5 + (mapPanel.getWidth() / 2), -PD
-						.getPosX()
-						/ 5 + (mapPanel.getHeight() / 2), 15, 15);
+				Point pos = getMapPos(PD.getPosY(), PD.getPosX(), mapPanel);
+				g.fillOval(pos.x, pos.y, 15, 15);
 			}
-			
+
 			lblRDX.setText("X: " + PD.getPosX());
 			lblRDY.setText("Y: " + PD.getPosY());
 			lblRDRobotHeading.setText("Robot heading: " + PD.getRobotHeading());
@@ -255,5 +264,13 @@ public class CommunicationTest extends Applet implements Runnable,
 	}
 
 	public void windowOpened(WindowEvent arg0) {
+	}
+
+	private Point getMapPos(int x, int y, Panel targetPanel) {
+		return new Point(
+				(int) (-y * mapScales[cboMapScales.getSelectedIndex()] + (targetPanel
+						.getWidth() / 2)),
+				(int) (x * mapScales[cboMapScales.getSelectedIndex()] + (targetPanel
+						.getHeight() / 2)));
 	}
 }
