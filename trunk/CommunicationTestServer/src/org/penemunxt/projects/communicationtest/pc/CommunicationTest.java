@@ -19,7 +19,7 @@ public class CommunicationTest extends Applet implements Runnable,
 	Checkbox chkShowDrivingPath;
 	Checkbox chkShowBumpingPositions;
 	Checkbox chkShowHeadMap;
-	Label lblLatestPosition;
+	JLabel lblLatestPosition;
 
 	boolean Active;
 	NXTCommunication NXTC;
@@ -64,7 +64,7 @@ public class CommunicationTest extends Applet implements Runnable,
 		chkShowBumpingPositions = new Checkbox("Bumps", true);
 		chkShowHeadMap = new Checkbox("Map from head", true);
 
-		lblLatestPosition = new Label("");
+		lblLatestPosition = new JLabel("");
 
 		Label lblHeader = new Label("PenemuNXT");
 		Label lblLatestPositionHeader = new Label("Latest position:");
@@ -154,8 +154,8 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		if (DS.NXTRobotData.size() > 0) {
 			RobotData PD = DS.NXTRobotData.get(DS.NXTRobotData.size() - 1);
-			lblLatestPosition.setText("X: " + PD.getPosX() + "/nY: "
-					+ PD.getPosY() + "/nH: " + PD.getRobotHeading());
+			lblLatestPosition.setText("X: " + PD.getPosX() + "\nY: "
+					+ PD.getPosY() + "\nH: " + PD.getRobotHeading());
 			if (chkShowLatestPos.getState()) {
 				g.setColor(Color.PINK);
 				g.fillOval(-PD.getPosY() / 5 + (this.getWidth() / 2), -PD
