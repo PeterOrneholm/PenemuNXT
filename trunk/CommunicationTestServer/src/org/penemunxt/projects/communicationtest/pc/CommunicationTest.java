@@ -15,6 +15,10 @@ import org.penemunxt.projects.communicationtest.*;
 public class CommunicationTest extends Applet implements Runnable,
 		ActionListener, WindowListener {
 	Button btnExit;
+
+	Panel controlPanel;
+	Panel mapPanel;
+
 	Checkbox chkShowLatestPos;
 	Checkbox chkShowDrivingPath;
 	Checkbox chkShowBumpingPositions;
@@ -53,9 +57,10 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	@Override
 	public void init() {
-		Panel controlPanel = new Panel();
-		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-
+		Panel leftPanel = new Panel();
+		controlPanel = new Panel();
+		mapPanel = new Panel();		
+		
 		btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
 
@@ -64,11 +69,12 @@ public class CommunicationTest extends Applet implements Runnable,
 		chkShowBumpingPositions = new Checkbox("Bumps", true);
 		chkShowHeadMap = new Checkbox("Map from head", true);
 
-		lblLatestPosition = new JLabel("");
+		lblLatestPosition = new JLabel();
 
 		Label lblHeader = new Label("PenemuNXT");
 		Label lblLatestPositionHeader = new Label("Latest position:");
-		
+
+		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		controlPanel.add(lblHeader);
 		controlPanel.add(btnExit);
 		controlPanel.add(chkShowLatestPos);
@@ -77,10 +83,15 @@ public class CommunicationTest extends Applet implements Runnable,
 		controlPanel.add(chkShowHeadMap);
 		controlPanel.add(lblLatestPositionHeader);
 		controlPanel.add(lblLatestPosition);
-		
 
-		this.setLayout(new FlowLayout(FlowLayout.LEFT));
-		this.add(controlPanel, BorderLayout.WEST);
+		
+		leftPanel.setBackground(Color.LIGHT_GRAY);
+		leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		leftPanel.add(controlPanel);
+		
+		this.setLayout(new BorderLayout());
+		this.add(leftPanel, BorderLayout.WEST);
+		this.add(mapPanel, BorderLayout.CENTER);
 	}
 
 	@Override
@@ -92,7 +103,7 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		OSI.getGraphics().clearRect(0, 0, OSI.getWidth(), OSI.getHeight());
 		paint(OSI.getGraphics());
-		g.drawImage(OSI, 0, 0, null);
+		mapPanel.getGraphics().drawImage(OSI, 0, 0, null);
 	}
 
 	@Override
@@ -125,9 +136,9 @@ public class CommunicationTest extends Applet implements Runnable,
 			}
 
 			if (show) {
-				g.fillOval(-PD.getPosY() / 5 + (this.getWidth() / 2), -PD
+				g.fillOval(-PD.getPosY() / 5 + (mapPanel.getWidth() / 2), -PD
 						.getPosX()
-						/ 5 + (this.getHeight() / 2), circleSize, circleSize);
+						/ 5 + (mapPanel.getHeight() / 2), circleSize, circleSize);
 			}
 
 			if (chkShowHeadMap.getState()) {
@@ -145,8 +156,8 @@ public class CommunicationTest extends Applet implements Runnable,
 
 				g.setColor(Color.ORANGE);
 				if (PD.getHeadDistance() > 200 && PD.getHeadDistance() < 1500) {
-					g.fillOval(-y / 5 + (this.getWidth() / 2), -x / 5
-							+ (this.getHeight() / 2), 5, 5);
+					g.fillOval(-y / 5 + (mapPanel.getWidth() / 2), -x / 5
+							+ (mapPanel.getHeight() / 2), 5, 5);
 				}
 			}
 
@@ -158,9 +169,9 @@ public class CommunicationTest extends Applet implements Runnable,
 					+ PD.getPosY() + "\nH: " + PD.getRobotHeading());
 			if (chkShowLatestPos.getState()) {
 				g.setColor(Color.PINK);
-				g.fillOval(-PD.getPosY() / 5 + (this.getWidth() / 2), -PD
+				g.fillOval(-PD.getPosY() / 5 + (mapPanel.getWidth() / 2), -PD
 						.getPosX()
-						/ 5 + (this.getHeight() / 2), 15, 15);
+						/ 5 + (mapPanel.getHeight() / 2), 15, 15);
 			}
 
 		}
