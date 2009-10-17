@@ -59,20 +59,27 @@ public class CommunicationTest extends Applet implements Runnable,
 		btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
 
-		chkShowLatestPos = new Checkbox("Senaste position", true);
-		chkShowDrivingPath = new Checkbox("Färdväg", true);
-		chkShowBumpingPositions = new Checkbox("Krockar", true);
-		chkShowHeadMap = new Checkbox("Karta", true);
+		chkShowLatestPos = new Checkbox("Latest position", true);
+		chkShowDrivingPath = new Checkbox("Driving path", true);
+		chkShowBumpingPositions = new Checkbox("Bumps", true);
+		chkShowHeadMap = new Checkbox("Map from head", true);
 
 		lblLatestPosition = new Label("");
 
+		Label lblHeader = new Label("PenemuNXT");
+		Label lblLatestPositionHeader = new Label("Latest position:");
+		
+		controlPanel.add(lblHeader);
 		controlPanel.add(btnExit);
 		controlPanel.add(chkShowLatestPos);
 		controlPanel.add(chkShowDrivingPath);
 		controlPanel.add(chkShowBumpingPositions);
 		controlPanel.add(chkShowHeadMap);
+		controlPanel.add(lblLatestPositionHeader);
 		controlPanel.add(lblLatestPosition);
+		
 
+		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		this.add(controlPanel, BorderLayout.WEST);
 	}
 
@@ -147,8 +154,8 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		if (DS.NXTRobotData.size() > 0) {
 			RobotData PD = DS.NXTRobotData.get(DS.NXTRobotData.size() - 1);
-			lblLatestPosition.setText("X: " + PD.getPosX() + "Y: "
-					+ PD.getPosY() + "H: " + PD.getRobotHeading());
+			lblLatestPosition.setText("X: " + PD.getPosX() + "/nY: "
+					+ PD.getPosY() + "/nH: " + PD.getRobotHeading());
 			if (chkShowLatestPos.getState()) {
 				g.setColor(Color.PINK);
 				g.fillOval(-PD.getPosY() / 5 + (this.getWidth() / 2), -PD
