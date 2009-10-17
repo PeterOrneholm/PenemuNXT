@@ -1,17 +1,13 @@
 package org.penemunxt.projects.communicationtest.pc;
 import java.util.ArrayList;
 
-import org.penemunxt.projects.communicationtest.AccelerationValues;
+import org.penemunxt.projects.communicationtest.RobotData;
 
 public class DataShare {
-	public ArrayList<Integer> Sound;
-	public ArrayList<Integer> IRDistance;
-	public ArrayList<AccelerationValues> Acceleration;
+	public ArrayList<RobotData> NXTRobotData;
 	
 	public DataShare(){
 		super();
-		Sound = new ArrayList<Integer>();
-		IRDistance = new ArrayList<Integer>();
-		Acceleration = new ArrayList<AccelerationValues>();
+		NXTRobotData = new ArrayList<RobotData>();
 	}
 }
