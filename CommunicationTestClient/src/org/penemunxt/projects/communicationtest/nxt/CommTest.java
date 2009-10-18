@@ -19,6 +19,7 @@ public class CommTest implements Runnable {
 	boolean Active;
 	NXTCommunication NXTC;
 
+
 	public static void main(String[] args) {
 		CommTest NXTCT = new CommTest();
 		NXTCT.run();
@@ -78,11 +79,12 @@ public class CommTest implements Runnable {
 							.getHeading(), ODS.getDistance(), Motor.A.getTachoCount()));
 
 			try {
-				Thread.sleep(50);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
 		}
-
+		Motor.A.stop();
+		Motor.A.rotateTo(0);
 		NXTC.Disconnect();
 		System.exit(0);
 	}
