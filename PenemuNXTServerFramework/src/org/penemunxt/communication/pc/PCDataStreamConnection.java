@@ -9,6 +9,14 @@ import org.penemunxt.communication.*;
 public class PCDataStreamConnection extends DataStreamConnection {
 	NXTConnector Connection;
 
+	public NXTConnector getConnection() {
+		return Connection;
+	}
+
+	public void setConnection(NXTConnector connection) {
+		Connection = connection;
+	}
+
 	@Override
 	public boolean Connect(NXTConnectionModes ConnMode, String Name,
 			String Address) {
@@ -24,6 +32,8 @@ public class PCDataStreamConnection extends DataStreamConnection {
 
 		ConnectSuccess = Connection.connectTo(Name, Address, ConnectionMode);
 
+		//
+		
 		this.setDataIn(Connection.getDataIn());
 		this.setDataOut(Connection.getDataOut());
 		
