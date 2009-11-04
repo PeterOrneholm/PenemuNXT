@@ -45,7 +45,7 @@ public class CommunicationTest extends Applet implements Runnable,
 			NXTConnectionModes.USB, NXTConnectionModes.Bluetooth };
 	final static String[] CONNECTION_MODES_NAMES = { "USB", "Bluetooth" };
 	final static int CONNECTION_MODES_INIT_SELECTED = 1;
-	
+
 	final static String CONNECT_TO_NAME_DEFAULT = "NXT";
 	final static String CONNECT_TO_ADDRESS_DEFAULT = "0016530A9000";
 
@@ -103,10 +103,10 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		mainFrame.setBackground(Color.WHITE);
 		mainFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		// mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// mainFrame.setUndecorated(true);
-		// mainFrame.pack();
-		// mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setUndecorated(true);
+		mainFrame.pack();
+		mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		mainFrame.setVisible(true);
 
 		PCCT.start();
@@ -413,7 +413,7 @@ public class CommunicationTest extends Applet implements Runnable,
 				DataFactories);
 		SDP.start();
 
-		//System.out.println(CPDSC.getConnection().getNXTInfo().deviceAddress);
+		// System.out.println(CPDSC.getConnection().getNXTInfo().deviceAddress);
 
 		// Map init center
 		mapCenter = new Point((mapPanel.getWidth() / 2),
