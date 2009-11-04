@@ -51,11 +51,17 @@ public class CommTest implements Runnable {
 				new CompassSensor(SensorPort.S2), 49, 125, Motor.C, Motor.B);
 		TachoPilot tacho = new TachoPilot(49, 125, Motor.C, Motor.B);
 		SimpleNavigator simnav = new SimpleNavigator(tacho);
+		
+		//Array med 10 senaste värdena
+		DataShare DSL = new DataShare();
 
-		leJOSnavigation lenav = new leJOSnavigation(simnav, NXTC, ODS);
+		leJOSnavigation lenav = new leJOSnavigation(simnav, NXTC, ODS, DSL);
 		lenav.start();
 
 		LCD.clear();
+		
+
+		
 		while (Active) {
 			this.Active = SMDP.Active;
 
@@ -74,9 +80,19 @@ public class CommTest implements Runnable {
 			}
 
 			simnav.updatePosition();
-			NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_DRIVE,
+			RobotData RD = new RobotData(RobotData.POSITION_TYPE_DRIVE,
 					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-							.getHeading(), ODS.getDistance(), Motor.A.getTachoCount()));
+					.getHeading(), ODS.getDistance(), Motor.A.getTachoCount());
+			
+			NXTC.sendData(RD);
+			
+			RobotData RDL = new RobotData(RobotData.POSITION_TYPE_DRIVE,
+					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
+					.getHeading(), ODS.getDistance(), Motor.A.getTachoCount());
+			
+			
+			DSL.addRobotData(RDL);
+			
 
 			try {
 				Thread.sleep(100);
