@@ -11,12 +11,14 @@ public class USSclose implements Behavior {
 	SimpleNavigator simnav;
 	UltrasonicSensor USS;
 	NXTCommunication NXTC;
+	DataShare DSL;
 
 	public USSclose(SimpleNavigator simnav, UltrasonicSensor USS,
-			NXTCommunication NXTC) {
+			NXTCommunication NXTC, DataShare dsl) {
 		this.simnav = simnav;
 		this.USS = USS;
 		this.NXTC = NXTC;
+		this.DSL = dsl;
 	}
 
 	@Override
@@ -25,7 +27,8 @@ public class USSclose implements Behavior {
 				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 						.getHeading(), 0, 0));
 
-		simnav.rotate(20);
+		simnav.rotate(70);
+		DSL.alignUsed();
 	}
 
 	@Override
