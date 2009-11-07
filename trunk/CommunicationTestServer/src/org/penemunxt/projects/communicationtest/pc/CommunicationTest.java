@@ -4,13 +4,9 @@ import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.beans.XMLEncoder;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.beans.*;
+import java.io.*;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -55,13 +51,14 @@ public class CommunicationTest extends Applet implements Runnable,
 	final static String CONNECT_TO_NAME_DEFAULT = "NXT";
 	final static String CONNECT_TO_ADDRESS_DEFAULT = "0016530A9000";
 
-	final static Boolean START_FULLSCREEN = false;
+	final static Boolean START_FULLSCREEN = true;
 
 	// Buttons
 	Button btnExit;
 	Button btnStart;
 	Button btnConnect;
 	Button btnSaveData;
+	Button btnOpenData;
 
 	// Panels
 	Panel controlPanel;
@@ -262,10 +259,15 @@ public class CommunicationTest extends Applet implements Runnable,
 		pnlLatestData.add(lblRDHeadHeadingHeader);
 		pnlLatestData.add(lblRDHeadHeading);
 
-		// Save
+		// Map data
 		Label lblSaveDataHeader = new Label("Map data", Label.LEFT);
 		lblSaveDataHeader.setFont(fntSectionHeader);
 
+		// Open
+		btnOpenData = new Button("Open");
+		btnOpenData.addActionListener(this);
+
+		// Save
 		btnSaveData = new Button("Save");
 		btnSaveData.addActionListener(this);
 
@@ -293,6 +295,7 @@ public class CommunicationTest extends Applet implements Runnable,
 		controlPanel.add(pnlLatestData);
 
 		controlPanel.add(lblSaveDataHeader);
+		controlPanel.add(btnOpenData);
 		controlPanel.add(btnSaveData);
 
 		// Left panel
@@ -470,14 +473,37 @@ public class CommunicationTest extends Applet implements Runnable,
 
 			Thread t = new Thread(this);
 			t.start();
-		} else if (AE.getSource() == btnSaveData) {
-			// System.out.println(getCodeBase());
-			RobotData RD1 = new RobotData(1, 20, 300, 4, 50, 600);
-			RobotData RD2 = new RobotData(5, 15, 32, 75, 18, 23);
-			ArrayList<RobotData> RDL = new ArrayList<RobotData>();
-			RDL.add(RD1);
-			RDL.add(RD2);
+		} else if (AE.getSource() == btnOpenData) {
+			JFileChooser FC = new JFileChooser();
+			String filePath = "";
+			FC.showOpenDialog(this);
+			try {
+				filePath = FC.getSelectedFile().getPath();
+			} catch (Exception ex) {
+				filePath = "";
+			}
 
+			FileInputStream FIS;
+
+			if (filePath.length() > 0) {
+				XMLDecoder xdec;
+				ArrayList<RobotData> OpenedRobotData = null;
+
+				try {
+					FIS = new FileInputStream(filePath);
+					xdec = new XMLDecoder(FIS);
+					OpenedRobotData = (ArrayList<RobotData>) xdec.readObject();
+					xdec.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					OpenedRobotData = null;
+				}
+				
+				if (OpenedRobotData!=null){
+					DS.NXTRobotData = OpenedRobotData;
+				}
+			}
+		} else if (AE.getSource() == btnSaveData) {
 			JFileChooser FC = new JFileChooser();
 			String filePath = "";
 			FC.showSaveDialog(this);
@@ -489,11 +515,12 @@ public class CommunicationTest extends Applet implements Runnable,
 
 			FileOutputStream FOS;
 
-			if (filePath.length() > 0 && NXTC != null && NXTC.getDataRetrievedQueue() != null) {
+			if (filePath.length() > 0 && NXTC != null
+					&& NXTC.getDataRetrievedQueue() != null) {
 				try {
 					FOS = new FileOutputStream(filePath);
 					XMLEncoder xenc = new XMLEncoder(FOS);
-					xenc.writeObject(NXTC.getDataRetrievedQueue());
+					xenc.writeObject(DS.NXTRobotData);
 					xenc.close();
 					FOS.close();
 				} catch (FileNotFoundException e) {
