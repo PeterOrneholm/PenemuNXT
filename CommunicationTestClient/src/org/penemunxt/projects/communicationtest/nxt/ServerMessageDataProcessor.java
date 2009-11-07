@@ -1,7 +1,10 @@
 package org.penemunxt.projects.communicationtest.nxt;
 
-import org.penemunxt.communication.*;
-import org.penemunxt.projects.communicationtest.*;
+import org.penemunxt.communication.INXTCommunicationData;
+import org.penemunxt.communication.INXTCommunicationDataFactories;
+import org.penemunxt.communication.NXTCommunication;
+import org.penemunxt.communication.NXTDataProcessor;
+import org.penemunxt.projects.communicationtest.ServerMessageData;
 
 public class ServerMessageDataProcessor extends NXTDataProcessor {
 	@Override
