@@ -3,9 +3,11 @@ package org.penemunxt.projects.communicationtest.pc;
 import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.awt.image.*;
 import java.beans.*;
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 import javax.swing.*;
@@ -14,6 +16,7 @@ import javax.swing.event.ChangeListener;
 
 import org.penemunxt.communication.*;
 import org.penemunxt.communication.pc.*;
+import org.penemunxt.graphics.pc.Icons;
 import org.penemunxt.projects.communicationtest.*;
 
 public class CommunicationTest extends Applet implements Runnable,
@@ -21,14 +24,20 @@ public class CommunicationTest extends Applet implements Runnable,
 		MouseListener, MouseMotionListener {
 	// Constants
 
+	final static String APPLICATION_NAME = "PenemuNXT";
+
 	final static int OPTICAL_DISTANCE_MIN_LENGTH_MM = 200;
 	final static int OPTICAL_DISTANCE_MAX_LENGTH_MM = 1500;
+
+	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
+	final static Color CONTROL_PANEL_BACKGROUND_COLOR = Color.LIGHT_GRAY;
 
 	final static Color DEFAULT_CIRCLE_COLOR = Color.BLACK;
 	final static Color LATEST_POS_CIRCLE_COLOR = Color.GREEN;
 	final static Color DRIVING_PATH_CIRCLE_COLOR = Color.BLACK;
 	final static Color BUMPING_BUMPER_CIRCLE_COLOR = Color.RED;
 	final static Color BUMPING_DISTANCE_CIRCLE_COLOR = Color.BLUE;
+	final static Color ALIGNED_TO_WALL_CIRCLE_COLOR = Color.CYAN;
 	final static Color HEAD_MAP_CIRCLE_COLOR = Color.ORANGE;
 
 	final static int DEFAULT_CIRCLE_SIZE = 2;
@@ -36,18 +45,21 @@ public class CommunicationTest extends Applet implements Runnable,
 	final static int DRIVING_PATH_CIRCLE_SIZE = 2;
 	final static int BUMPING_BUMPER_CIRCLE_SIZE = 10;
 	final static int BUMPING_DISTANCE_CIRCLE_SIZE = 10;
+	final static int ALIGNED_TO_WALL_CIRCLE_SIZE = 10;
 	final static int HEAD_MAP_CIRCLE_SIZE = 5;
+	final static int HOT_SPOTS_MAX_CIRCLE_SIZE = 25;
+
+	final static int HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON = 700;
+	final static int HOT_SPOTS_FIND_CONNECTIONS = 5;
+
+	final static int HOT_SPOTS_DEFAULT_FILTER_CONNECTIONS = 5;
+	final static int HOT_SPOTS_MIN_FILTER_CONNECTIONS = 0;
+	final static int HOT_SPOTS_MAX_FILTER_CONNECTIONS = 15;
 
 	final static float MAP_DEFAULT_SCALE_FACTOR = 0.004f;
 	final static int MAP_MIN_SCALE = 1;
 	final static int MAP_MAX_SCALE = 100;
-	final static int MAP_INIT_SCALE = 50;
-	
-	final static int MAP_POINT_CENTER_POINTS = 5;
-	final static int MAP_POINT_CLOSEST_POINTS = 3;
-	final static int MAP_POINT_CLOSE_POINTS = 1;
-	
-	
+	final static int MAP_DEFAULT_SCALE = 50;
 
 	final static NXTConnectionModes[] CONNECTION_MODES = {
 			NXTConnectionModes.USB, NXTConnectionModes.Bluetooth };
@@ -57,24 +69,29 @@ public class CommunicationTest extends Applet implements Runnable,
 	final static String CONNECT_TO_NAME_DEFAULT = "NXT";
 	final static String CONNECT_TO_ADDRESS_DEFAULT = "0016530A9000";
 
-	final static Boolean START_FULLSCREEN = true;
+	final static Boolean START_FULLSCREEN = false;
+
+	// Menu
+	JMenuItem mnuFileOpenButton;
+	JMenuItem mnuFileSaveButton;
+	JMenuItem mnuFileExitButton;
+
+	// Checkboxes
+	JCheckBoxMenuItem chkShowLatestPos;
+	JCheckBoxMenuItem chkShowDrivingPath;
+	JCheckBoxMenuItem chkShowBumpingPositions;
+	JCheckBoxMenuItem chkShowAlignedToWall;
+	JCheckBoxMenuItem chkShowHeadMap;
+	JCheckBoxMenuItem chkShowHotspots;
 
 	// Buttons
 	Button btnExit;
-	Button btnStart;
-	Button btnConnect;
-	Button btnSaveData;
-	Button btnOpenData;
+	Button btnConnectAndStart;
+	Button btnDisconnectAndStop;
 
 	// Panels
 	Panel controlPanel;
 	Panel mapPanel;
-
-	// Checkboxes
-	Checkbox chkShowLatestPos;
-	Checkbox chkShowDrivingPath;
-	Checkbox chkShowBumpingPositions;
-	Checkbox chkShowHeadMap;
 
 	// Labels
 	Label lblRDX;
@@ -88,19 +105,21 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	// Sliders
 	JSlider sldMapScale;
+	JSlider sldHotspotsDistanceFilter;
 
 	// Textboxes
 	TextField txtConnectToName;
 	TextField txtConnectToAddress;
 
 	// Map
-	int curScale = MAP_INIT_SCALE;
+	int curScale = MAP_DEFAULT_SCALE;
 	Point mapCenter;
 	Point startDrag;
 	Point mapCenterBeforeDrag;
 
 	// Misc
-	boolean Active;
+	boolean AppActive;
+	boolean ConnectionActive;
 	NXTCommunication NXTC;
 	DataShare DS;
 	VolatileImage OSI;
@@ -109,9 +128,14 @@ public class CommunicationTest extends Applet implements Runnable,
 		CommunicationTest PCCT = new CommunicationTest();
 		PCCT.init();
 
-		JFrame mainFrame = new JFrame();
+		JFrame mainFrame = new JFrame(APPLICATION_NAME);
 		mainFrame.addWindowListener(PCCT);
 		mainFrame.add(PCCT);
+
+		mainFrame.setJMenuBar(PCCT.getMenuBar());
+
+		URL iconURL = Icons.class.getResource("PenemuNXT_Logo_Icon_16x16.png");
+		mainFrame.setIconImage(new ImageIcon(iconURL).getImage());
 
 		mainFrame.setBackground(Color.WHITE);
 		mainFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
@@ -128,7 +152,51 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	@Override
 	public void start() {
+		Thread t = new Thread(this);
+		t.start();
+	}
 
+	public JMenuBar getMenuBar() {
+		// Menu
+		JMenuBar mnuMainBar = new JMenuBar();
+
+		// Menus
+		JMenu mnuFileMenu = new JMenu("File");
+		JMenu mnuShowMenu = new JMenu("Show");
+
+		// File menu items
+		mnuFileOpenButton = new JMenuItem("Open File...");
+		mnuFileOpenButton.addActionListener(this);
+		mnuFileSaveButton = new JMenuItem("Save As...");
+		mnuFileSaveButton.addActionListener(this);
+		mnuFileExitButton = new JMenuItem("Exit");
+		mnuFileExitButton.addActionListener(this);
+
+		// Show menu items
+		chkShowLatestPos = new JCheckBoxMenuItem("Latest position", true);
+		chkShowDrivingPath = new JCheckBoxMenuItem("Driving path", true);
+		chkShowBumpingPositions = new JCheckBoxMenuItem("Bumps", true);
+		chkShowAlignedToWall = new JCheckBoxMenuItem("Aligned to wall", true);
+		chkShowHeadMap = new JCheckBoxMenuItem("Map from head", true);
+		chkShowHotspots = new JCheckBoxMenuItem("Hotspots", true);
+
+		// Add everything
+		mnuMainBar.add(mnuFileMenu);
+		mnuMainBar.add(mnuShowMenu);
+
+		mnuFileMenu.add(mnuFileOpenButton);
+		mnuFileMenu.add(mnuFileSaveButton);
+		mnuFileMenu.add(new JSeparator());
+		mnuFileMenu.add(mnuFileExitButton);
+
+		mnuShowMenu.add(chkShowLatestPos);
+		mnuShowMenu.add(chkShowDrivingPath);
+		mnuShowMenu.add(chkShowBumpingPositions);
+		mnuShowMenu.add(chkShowAlignedToWall);
+		mnuShowMenu.add(chkShowHeadMap);
+		mnuShowMenu.add(chkShowHotspots);
+
+		return mnuMainBar;
 	}
 
 	@Override
@@ -144,17 +212,13 @@ public class CommunicationTest extends Applet implements Runnable,
 		Font fntLabelHeader = new Font("Arial", Font.BOLD, 12);
 
 		// Header
-		Label lblHeader = new Label("PenemuNXT", Label.CENTER);
+		Label lblHeader = new Label(APPLICATION_NAME, Label.CENTER);
 		lblHeader.setFont(fntMainHeader);
 
 		// Exit
-		btnExit = new Button("Shut down");
+		btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
-		btnExit.setEnabled(false);
-
-		// Start
-		btnStart = new Button("Start");
-		btnStart.addActionListener(this);
+		btnExit.setEnabled(true);
 
 		// Connect
 		Label lblConnectionHeader = new Label("Connection");
@@ -165,9 +229,14 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		txtConnectToName = new TextField(CONNECT_TO_NAME_DEFAULT, 15);
 		txtConnectToAddress = new TextField(CONNECT_TO_ADDRESS_DEFAULT, 15);
-		btnConnect = new Button("Connect");
-		btnConnect.addActionListener(this);
-		btnConnect.setEnabled(true);
+
+		btnConnectAndStart = new Button("Connect and Start");
+		btnConnectAndStart.addActionListener(this);
+		btnConnectAndStart.setEnabled(true);
+
+		btnDisconnectAndStop = new Button("Disconnect and Stop");
+		btnDisconnectAndStop.addActionListener(this);
+		btnDisconnectAndStop.setEnabled(false);
 
 		Panel pnlConnection = new Panel(new GridBagLayout());
 
@@ -197,16 +266,11 @@ public class CommunicationTest extends Applet implements Runnable,
 		CBC.gridx = 0;
 		CBC.gridy = 3;
 		CBC.gridwidth = 2;
-		pnlConnection.add(btnConnect, CBC);
-
-		// Show
-		Label lblShowHeader = new Label("Show");
-		lblShowHeader.setFont(fntSectionHeader);
-
-		chkShowLatestPos = new Checkbox("Latest position", true);
-		chkShowDrivingPath = new Checkbox("Driving path", true);
-		chkShowBumpingPositions = new Checkbox("Bumps", true);
-		chkShowHeadMap = new Checkbox("Map from head", true);
+		pnlConnection.add(btnConnectAndStart, CBC);
+		CBC.gridx = 0;
+		CBC.gridy = 4;
+		CBC.gridwidth = 2;
+		pnlConnection.add(btnDisconnectAndStop, CBC);
 
 		// Map scale
 		Label lblMapScalesHeader = new Label("Map scale");
@@ -219,7 +283,7 @@ public class CommunicationTest extends Applet implements Runnable,
 		sldMapScale.setPaintTicks(true);
 		sldMapScale.setPaintLabels(true);
 
-		Hashtable labelTable = new Hashtable();
+		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
 		labelTable.put(new Integer(MAP_MIN_SCALE), new JLabel(MAP_MIN_SCALE
 				+ "%"));
 		labelTable.put(new Integer(25), new JLabel("25%"));
@@ -228,8 +292,32 @@ public class CommunicationTest extends Applet implements Runnable,
 		labelTable.put(new Integer(MAP_MAX_SCALE), new JLabel(MAP_MAX_SCALE
 				+ "%"));
 		sldMapScale.setLabelTable(labelTable);
-		sldMapScale.setBackground(Color.LIGHT_GRAY);
+		sldMapScale.setBackground(CONTROL_PANEL_BACKGROUND_COLOR);
 		sldMapScale.addChangeListener(this);
+
+		// Map scale
+		Label lblHotspotsDistanceFilterHeader = new Label(
+				"Hotspots sensitivity");
+		lblHotspotsDistanceFilterHeader.setFont(fntSectionHeader);
+
+		sldHotspotsDistanceFilter = new JSlider(JSlider.HORIZONTAL,
+				HOT_SPOTS_MIN_FILTER_CONNECTIONS,
+				HOT_SPOTS_MAX_FILTER_CONNECTIONS,
+				HOT_SPOTS_DEFAULT_FILTER_CONNECTIONS);
+		sldHotspotsDistanceFilter.setMajorTickSpacing(5);
+		sldHotspotsDistanceFilter.setMinorTickSpacing(1);
+		sldHotspotsDistanceFilter.setPaintTicks(true);
+		sldHotspotsDistanceFilter.setPaintLabels(true);
+
+		Hashtable<Integer, JLabel> sensitivityLabelTable = new Hashtable<Integer, JLabel>();
+		sensitivityLabelTable.put(
+				new Integer(HOT_SPOTS_MIN_FILTER_CONNECTIONS), new JLabel(
+						String.valueOf(HOT_SPOTS_MIN_FILTER_CONNECTIONS)));
+		sensitivityLabelTable.put(
+				new Integer(HOT_SPOTS_MAX_FILTER_CONNECTIONS), new JLabel(
+						String.valueOf(HOT_SPOTS_MAX_FILTER_CONNECTIONS)));
+		sldHotspotsDistanceFilter.setLabelTable(sensitivityLabelTable);
+		sldHotspotsDistanceFilter.setBackground(CONTROL_PANEL_BACKGROUND_COLOR);
 
 		// Latest data
 		Label lblLatestDataHeader = new Label("Latest data");
@@ -265,47 +353,26 @@ public class CommunicationTest extends Applet implements Runnable,
 		pnlLatestData.add(lblRDHeadHeadingHeader);
 		pnlLatestData.add(lblRDHeadHeading);
 
-		// Map data
-		Label lblSaveDataHeader = new Label("Map data", Label.LEFT);
-		lblSaveDataHeader.setFont(fntSectionHeader);
-
-		// Open
-		btnOpenData = new Button("Open");
-		btnOpenData.addActionListener(this);
-
-		// Save
-		btnSaveData = new Button("Save");
-		btnSaveData.addActionListener(this);
-
 		// Control panel
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		controlPanel.add(lblHeader);
 
-		controlPanel.add(btnStart);
 		controlPanel.add(btnExit);
 
 		controlPanel.add(lblConnectionHeader);
 		controlPanel.add(pnlConnection);
 
-		controlPanel.add(lblShowHeader);
-		controlPanel.add(chkShowLatestPos);
-		controlPanel.add(chkShowDrivingPath);
-		controlPanel.add(chkShowBumpingPositions);
-		controlPanel.add(chkShowHeadMap);
-		controlPanel.add(chkShowHeadMap);
-
 		controlPanel.add(lblMapScalesHeader);
 		controlPanel.add(sldMapScale);
+
+		controlPanel.add(lblHotspotsDistanceFilterHeader);
+		controlPanel.add(sldHotspotsDistanceFilter);
 
 		controlPanel.add(lblLatestDataHeader);
 		controlPanel.add(pnlLatestData);
 
-		controlPanel.add(lblSaveDataHeader);
-		controlPanel.add(btnOpenData);
-		controlPanel.add(btnSaveData);
-
 		// Left panel
-		leftPanel.setBackground(Color.LIGHT_GRAY);
+		leftPanel.setBackground(CONTROL_PANEL_BACKGROUND_COLOR);
 		leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		leftPanel.add(controlPanel);
 
@@ -314,13 +381,17 @@ public class CommunicationTest extends Applet implements Runnable,
 		this.add(leftPanel, BorderLayout.WEST);
 		this.add(mapPanel, BorderLayout.CENTER);
 
-		// Map cursors
+		// Map panel
+		mapPanel.setBackground(MAP_PANEL_BACKGROUND_COLOR);
 		mapPanel.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 
 		// Map Listeners
 		mapPanel.addMouseMotionListener(this);
 		mapPanel.addMouseListener(this);
 		mapPanel.addMouseWheelListener(this);
+
+		// Set active
+		AppActive = true;
 	}
 
 	@Override
@@ -331,31 +402,17 @@ public class CommunicationTest extends Applet implements Runnable,
 		}
 
 		OSI.getGraphics().clearRect(0, 0, OSI.getWidth(), OSI.getHeight());
+
 		paint(OSI.getGraphics());
 		mapPanel.getGraphics().drawImage(OSI, 0, 0, null);
 	}
 
-	private void paintArrow(Graphics g, int x0, int y0, int x1, int y1) {
-		int deltaX = x1 - x0;
-		int deltaY = y1 - y0;
-		double frac = 0.2;
-
-		g.drawLine(x0, y0, x1, y1);
-		g.drawLine(x0 + (int) ((1 - frac) * deltaX + frac * deltaY), y0
-				+ (int) ((1 - frac) * deltaY - frac * deltaX), x1, y1);
-		g.drawLine(x0 + (int) ((1 - frac) * deltaX - frac * deltaY), y0
-				+ (int) ((1 - frac) * deltaY + frac * deltaX), x1, y1);
-
-	}
-
 	@Override
 	public void paint(Graphics g) {
-		Hashtable<String, Integer> mapPoints = new Hashtable<String, Integer>();
-				
+		ArrayList<MapPositionPoints> ObjectPositions = new ArrayList<MapPositionPoints>();
+
 		if (DS != null && DS.NXTRobotData != null) {
 			for (RobotData RD : DS.NXTRobotData) {
-				updateMapPositionPoints(mapPoints, RD.getPosX(), RD.getPosY());
-				
 				int circleSize;
 				Color circleColor;
 				boolean circleShow;
@@ -376,6 +433,11 @@ public class CommunicationTest extends Applet implements Runnable,
 					circleShow = chkShowBumpingPositions.getState();
 					circleSize = BUMPING_DISTANCE_CIRCLE_SIZE;
 					break;
+				case RobotData.POSITION_TYPE_ALIGNED:
+					circleColor = ALIGNED_TO_WALL_CIRCLE_COLOR;
+					circleShow = chkShowAlignedToWall.getState();
+					circleSize = ALIGNED_TO_WALL_CIRCLE_SIZE;
+					break;
 				default:
 					circleColor = DEFAULT_CIRCLE_COLOR;
 					circleShow = false;
@@ -388,15 +450,24 @@ public class CommunicationTest extends Applet implements Runnable,
 							circleSize, g);
 				}
 
-				if (chkShowHeadMap.getState()) {
+				if (chkShowHeadMap.getState() || chkShowHotspots.getState()) {
 					Point HeadMapPos = getHeadingPos(RD.getPosX(),
 							RD.getPosY(), (-RD.getHeadHeading() + RD
 									.getRobotHeading()), RD.getHeadDistance());
 					if (RD.getHeadDistance() > OPTICAL_DISTANCE_MIN_LENGTH_MM
 							&& RD.getHeadDistance() < OPTICAL_DISTANCE_MAX_LENGTH_MM) {
-						paintOval((int) HeadMapPos.getY(), (int) HeadMapPos
-								.getX(), HEAD_MAP_CIRCLE_COLOR,
-								HEAD_MAP_CIRCLE_SIZE, g);
+
+						if (chkShowHotspots.getState()) {
+							ObjectPositions.add(new MapPositionPoints(0,
+									(int) HeadMapPos.getX(), (int) HeadMapPos
+											.getY()));
+						}
+
+						if (chkShowHeadMap.getState()) {
+							paintOval((int) HeadMapPos.getY(), (int) HeadMapPos
+									.getX(), HEAD_MAP_CIRCLE_COLOR,
+									HEAD_MAP_CIRCLE_SIZE, g);
+						}
 					}
 				}
 
@@ -422,15 +493,56 @@ public class CommunicationTest extends Applet implements Runnable,
 				lblRDHeadDistance.setText(String.valueOf(RD.getHeadDistance()));
 				lblRDHeadHeading.setText(String.valueOf(RD.getHeadHeading()));
 			}
+
+			if (ObjectPositions != null && chkShowHotspots.getState()) {
+				MapPositionPoints.GetPositionsPoints(ObjectPositions,
+						HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON,
+						HOT_SPOTS_FIND_CONNECTIONS);
+				int maxPoints = MapPositionPoints.GetMaxPoints(ObjectPositions);
+
+				for (MapPositionPoints ScanPoint : ObjectPositions) {
+					float pointPercentage = (ScanPoint.getPoints() / (float) maxPoints);
+					Color c = new Color((int) (pointPercentage * 255),
+							255 - (int) (pointPercentage * 255), 0);
+
+					if (ScanPoint.getPoints() > sldHotspotsDistanceFilter
+							.getValue()) {
+						paintOval(
+								ScanPoint.getY(),
+								ScanPoint.getX(),
+								c,
+								(int) (pointPercentage * HOT_SPOTS_MAX_CIRCLE_SIZE),
+								g);
+					}
+				}
+			}
 		}
 	}
 
 	@Override
 	public void run() {
-		Active = true;
-
 		// Object to share data internal
 		DS = new DataShare();
+
+		// Map init center
+		mapCenter = new Point((mapPanel.getWidth() / 2),
+				(mapPanel.getHeight() / 2));
+
+		while (AppActive) {
+			repaint();
+			sldMapScale.setValue(curScale);
+
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+			}
+		}
+
+		System.exit(0);
+	}
+
+	public void runConnection() {
+		ConnectionActive = true;
 
 		// Setup data factories
 		NXTCommunicationDataFactories DataFactories = new NXTCommunicationDataFactories(
@@ -448,17 +560,8 @@ public class CommunicationTest extends Applet implements Runnable,
 				DataFactories);
 		SDP.start();
 
-		// System.out.println(CPDSC.getConnection().getNXTInfo().deviceAddress);
-
-		// Map init center
-		mapCenter = new Point((mapPanel.getWidth() / 2),
-				(mapPanel.getHeight() / 2));
-
-		while (Active) {
-			this.Active = SDP.Active;
-
-			repaint();
-			sldMapScale.setValue(curScale);
+		while (ConnectionActive) {
+			this.ConnectionActive = SDP.Active;
 
 			try {
 				Thread.sleep(200);
@@ -467,26 +570,55 @@ public class CommunicationTest extends Applet implements Runnable,
 		}
 
 		NXTC.Disconnect();
-		System.exit(0);
+		NXTC = null;
 	}
 
 	public void actionPerformed(ActionEvent AE) {
-		if (AE.getSource() == btnExit) {
-			NXTC.sendShutDown();
-			btnExit.setEnabled(false);
-		} else if (AE.getSource() == btnStart) {
-			btnStart.setEnabled(false);
-			btnExit.setEnabled(true);
-			cboConnectionTypes.setEnabled(false);
-			txtConnectToName.setEnabled(false);
-			txtConnectToAddress.setEnabled(false);
+		if (AE.getSource() == btnExit || AE.getSource() == mnuFileExitButton) {
+			exitApp();
+		} else if (AE.getSource() == btnConnectAndStart) {
+			connectAndStart();
+		} else if (AE.getSource() == btnDisconnectAndStop) {
+			disconnectAndStop();
+		} else if (AE.getSource() == mnuFileOpenButton) {
+			openData();
+		} else if (AE.getSource() == mnuFileSaveButton) {
+			saveData();
+		}
+	}
 
-			Thread t = new Thread(this);
-			t.start();
-		} else if (AE.getSource() == btnOpenData) {
-			JFileChooser FC = new JFileChooser();
-			String filePath = "";
-			FC.showOpenDialog(this);
+	private void exitApp() {
+		AppActive = false;
+		btnExit.setEnabled(false);
+	}
+
+	private void disconnectAndStop() {
+		if (NXTC != null) {
+			NXTC.sendShutDown();
+		}
+
+		btnExit.setEnabled(true);
+		btnConnectAndStart.setEnabled(true);
+		btnDisconnectAndStop.setEnabled(false);
+		cboConnectionTypes.setEnabled(true);
+		txtConnectToName.setEnabled(true);
+		txtConnectToAddress.setEnabled(true);
+	}
+
+	private void connectAndStart() {
+		btnExit.setEnabled(false);
+		btnConnectAndStart.setEnabled(false);
+		btnDisconnectAndStop.setEnabled(true);
+		cboConnectionTypes.setEnabled(false);
+		txtConnectToName.setEnabled(false);
+		txtConnectToAddress.setEnabled(false);
+	}
+
+	private void openData() {
+		JFileChooser FC = new JFileChooser();
+		String filePath = "";
+		FC.addChoosableFileFilter(new PenemuNXTMapFileFilter());
+		if (FC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			try {
 				filePath = FC.getSelectedFile().getPath();
 			} catch (Exception ex) {
@@ -508,25 +640,35 @@ public class CommunicationTest extends Applet implements Runnable,
 					e.printStackTrace();
 					OpenedRobotData = null;
 				}
-				
-				if (OpenedRobotData!=null){
+
+				if (OpenedRobotData != null) {
 					DS.NXTRobotData = OpenedRobotData;
 				}
 			}
-		} else if (AE.getSource() == btnSaveData) {
-			JFileChooser FC = new JFileChooser();
-			String filePath = "";
-			FC.showSaveDialog(this);
+		}
+	}
+
+	private void saveData() {
+		JFileChooser FC = new JFileChooser();
+		String filePath = "";
+		FC.addChoosableFileFilter(new PenemuNXTMapFileFilter());
+		if (FC.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			try {
 				filePath = FC.getSelectedFile().getPath();
 			} catch (Exception ex) {
 				filePath = "";
 			}
 
+			if (!filePath
+					.endsWith(PenemuNXTMapFileFilter.ALLOWED_FILE_EXTENSION)) {
+				filePath += PenemuNXTMapFileFilter.ALLOWED_FILE_EXTENSION;
+			}
+
+			System.out.println(filePath);
+
 			FileOutputStream FOS;
 
-			if (filePath.length() > 0 && NXTC != null
-					&& NXTC.getDataRetrievedQueue() != null) {
+			if (filePath.length() > 0 && DS != null && DS.NXTRobotData != null) {
 				try {
 					FOS = new FileOutputStream(filePath);
 					XMLEncoder xenc = new XMLEncoder(FOS);
@@ -541,40 +683,7 @@ public class CommunicationTest extends Applet implements Runnable,
 			}
 		}
 	}
-	
-	private void updateMapPositionPoints(Hashtable<String, Integer> mapPoints, int centerX, int centerY ){
-		//Center
-		updateMapPositionPoint(mapPoints, centerX, centerY, MAP_POINT_CENTER_POINTS);
-		
-		//Closest
-		updateMapPositionPoint(mapPoints, centerX - 1, centerY - 1, MAP_POINT_CLOSEST_POINTS);
-		updateMapPositionPoint(mapPoints, centerX - 1, centerY, MAP_POINT_CLOSEST_POINTS);
-		updateMapPositionPoint(mapPoints, centerX - 1, centerY + 1, MAP_POINT_CLOSEST_POINTS);
 
-		updateMapPositionPoint(mapPoints, centerX, centerY - 1, MAP_POINT_CLOSEST_POINTS);
-		updateMapPositionPoint(mapPoints, centerX, centerY + 1, MAP_POINT_CLOSEST_POINTS);
-
-	
-		updateMapPositionPoint(mapPoints, centerX + 1, centerY - 1, MAP_POINT_CLOSEST_POINTS);
-		updateMapPositionPoint(mapPoints, centerX + 1, centerY, MAP_POINT_CLOSEST_POINTS);
-		updateMapPositionPoint(mapPoints, centerX + 1, centerY + 1, MAP_POINT_CLOSEST_POINTS);
-	}
-
-	private void updateMapPositionPoint(Hashtable<String, Integer> mapPoints, int x, int y, int addPoints ){
-		if(mapPoints!=null){
-			String pointKey = String.valueOf(x) + ';' + String.valueOf(y);
-			Integer oldValue = 0;
-			if(mapPoints.containsKey(pointKey)){
-				oldValue = mapPoints.get(pointKey);
-				if(oldValue==null){
-					oldValue = 0;
-				}
-			}
-			
-			mapPoints.put(pointKey, new Integer(oldValue + addPoints));
-		}		
-	}
-	
 	private Point getMapPos(int x, int y) {
 		return getMapPos(x, y, (float) (curScale * MAP_DEFAULT_SCALE_FACTOR),
 				mapCenter.x, mapCenter.y);
@@ -593,6 +702,19 @@ public class CommunicationTest extends Applet implements Runnable,
 		ny = (int) (distance * Math.sin(heading * Math.PI / 180)) + y;
 
 		return new Point(nx, ny);
+	}
+
+	private void paintArrow(Graphics g, int x0, int y0, int x1, int y1) {
+		int deltaX = x1 - x0;
+		int deltaY = y1 - y0;
+		double frac = 0.2;
+
+		g.drawLine(x0, y0, x1, y1);
+		g.drawLine(x0 + (int) ((1 - frac) * deltaX + frac * deltaY), y0
+				+ (int) ((1 - frac) * deltaY - frac * deltaX), x1, y1);
+		g.drawLine(x0 + (int) ((1 - frac) * deltaX - frac * deltaY), y0
+				+ (int) ((1 - frac) * deltaY + frac * deltaX), x1, y1);
+
 	}
 
 	private void paintOval(int x, int y, Color c, int size, Graphics g) {
@@ -626,6 +748,7 @@ public class CommunicationTest extends Applet implements Runnable,
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
+			curScale = MAP_DEFAULT_SCALE;
 			mapCenter = new Point((mapPanel.getWidth() / 2), (mapPanel
 					.getHeight() / 2));
 		}
@@ -645,7 +768,8 @@ public class CommunicationTest extends Applet implements Runnable,
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		if (NXTC != null) {
-			NXTC.sendShutDown();
+			disconnectAndStop();
+			exitApp();
 		} else {
 			System.exit(0);
 		}
@@ -684,5 +808,4 @@ public class CommunicationTest extends Applet implements Runnable,
 	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
-
 }
