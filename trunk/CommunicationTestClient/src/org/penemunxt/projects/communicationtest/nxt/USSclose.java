@@ -27,7 +27,7 @@ public class USSclose implements Behavior {
 				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 						.getHeading(), 0, 0));
 
-		simnav.rotate(70);
+		simnav.rotate(90);
 		DSL.alignUsed();
 	}
 

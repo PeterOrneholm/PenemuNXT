@@ -60,8 +60,6 @@ public class CommTest implements Runnable {
 
 		LCD.clear();
 		
-
-		
 		while (Active) {
 			this.Active = SMDP.Active;
 
