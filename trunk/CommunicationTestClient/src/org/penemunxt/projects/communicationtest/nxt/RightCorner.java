@@ -35,15 +35,13 @@ public class RightCorner implements Behavior {
 		if (DSL.LatestRobotData.size() > 9) {
 			if ((DSL.LatestRobotData.get(5).getHeadDistance() - DSL.LatestRobotData
 					.get(4).getHeadDistance()) > 200
-					&& Math.abs(DSL.LatestRobotData.get(3).getHeadDistance()
-							- DSL.LatestRobotData.get(4).getHeadDistance()) < 20
-					&& Math.abs(DSL.LatestRobotData.get(5).getHeadDistance()
-							- DSL.LatestRobotData.get(6).getHeadDistance()) < 20) {
+					&& DSL.isLinear ( DSL, 5, 7) && DSL.isLinear ( DSL, 2,4)) {
 				return true;
 			} else
 				return false;
 		} else
 			return false;
 	}
+
 
 }

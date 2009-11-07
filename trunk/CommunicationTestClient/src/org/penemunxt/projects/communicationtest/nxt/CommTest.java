@@ -1,19 +1,14 @@
 package org.penemunxt.projects.communicationtest.nxt;
 
+import lejos.nxt.*;
+import lejos.nxt.addon.*;
+import lejos.robotics.navigation.*;
+
 import org.penemunxt.communication.*;
-import org.penemunxt.communication.nxt.*;
 import org.penemunxt.communication.nxt.NXTDataStreamConnection;
 import org.penemunxt.projects.communicationtest.*;
 
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
-import lejos.nxt.Motor;
-import lejos.nxt.SensorPort;
-import lejos.nxt.addon.CompassSensor;
-import lejos.nxt.addon.OpticalDistanceSensor;
-import lejos.robotics.navigation.CompassPilot;
-import lejos.robotics.navigation.SimpleNavigator;
-import lejos.robotics.navigation.TachoPilot;
+
 
 public class CommTest implements Runnable {
 	boolean Active;
@@ -103,3 +98,5 @@ public class CommTest implements Runnable {
 		System.exit(0);
 	}
 }
+
+
