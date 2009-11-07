@@ -1,8 +1,15 @@
 package org.penemunxt.graphics.pc;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.util.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.image.VolatileImage;
+import java.util.ArrayList;
 
 public class Graph {
 	VolatileImage VI;
