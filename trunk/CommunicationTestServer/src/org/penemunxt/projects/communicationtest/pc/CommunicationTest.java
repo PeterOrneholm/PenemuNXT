@@ -42,6 +42,12 @@ public class CommunicationTest extends Applet implements Runnable,
 	final static int MAP_MIN_SCALE = 1;
 	final static int MAP_MAX_SCALE = 100;
 	final static int MAP_INIT_SCALE = 50;
+	
+	final static int MAP_POINT_CENTER_POINTS = 5;
+	final static int MAP_POINT_CLOSEST_POINTS = 3;
+	final static int MAP_POINT_CLOSE_POINTS = 1;
+	
+	
 
 	final static NXTConnectionModes[] CONNECTION_MODES = {
 			NXTConnectionModes.USB, NXTConnectionModes.Bluetooth };
@@ -344,8 +350,12 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	@Override
 	public void paint(Graphics g) {
+		Hashtable<String, Integer> mapPoints = new Hashtable<String, Integer>();
+				
 		if (DS != null && DS.NXTRobotData != null) {
 			for (RobotData RD : DS.NXTRobotData) {
+				updateMapPositionPoints(mapPoints, RD.getPosX(), RD.getPosY());
+				
 				int circleSize;
 				Color circleColor;
 				boolean circleShow;
@@ -531,7 +541,40 @@ public class CommunicationTest extends Applet implements Runnable,
 			}
 		}
 	}
+	
+	private void updateMapPositionPoints(Hashtable<String, Integer> mapPoints, int centerX, int centerY ){
+		//Center
+		updateMapPositionPoint(mapPoints, centerX, centerY, MAP_POINT_CENTER_POINTS);
+		
+		//Closest
+		updateMapPositionPoint(mapPoints, centerX - 1, centerY - 1, MAP_POINT_CLOSEST_POINTS);
+		updateMapPositionPoint(mapPoints, centerX - 1, centerY, MAP_POINT_CLOSEST_POINTS);
+		updateMapPositionPoint(mapPoints, centerX - 1, centerY + 1, MAP_POINT_CLOSEST_POINTS);
 
+		updateMapPositionPoint(mapPoints, centerX, centerY - 1, MAP_POINT_CLOSEST_POINTS);
+		updateMapPositionPoint(mapPoints, centerX, centerY + 1, MAP_POINT_CLOSEST_POINTS);
+
+	
+		updateMapPositionPoint(mapPoints, centerX + 1, centerY - 1, MAP_POINT_CLOSEST_POINTS);
+		updateMapPositionPoint(mapPoints, centerX + 1, centerY, MAP_POINT_CLOSEST_POINTS);
+		updateMapPositionPoint(mapPoints, centerX + 1, centerY + 1, MAP_POINT_CLOSEST_POINTS);
+	}
+
+	private void updateMapPositionPoint(Hashtable<String, Integer> mapPoints, int x, int y, int addPoints ){
+		if(mapPoints!=null){
+			String pointKey = String.valueOf(x) + ';' + String.valueOf(y);
+			Integer oldValue = 0;
+			if(mapPoints.containsKey(pointKey)){
+				oldValue = mapPoints.get(pointKey);
+				if(oldValue==null){
+					oldValue = 0;
+				}
+			}
+			
+			mapPoints.put(pointKey, new Integer(oldValue + addPoints));
+		}		
+	}
+	
 	private Point getMapPos(int x, int y) {
 		return getMapPos(x, y, (float) (curScale * MAP_DEFAULT_SCALE_FACTOR),
 				mapCenter.x, mapCenter.y);
