@@ -34,10 +34,11 @@ public class leJOSnavigation extends Thread {
 
 		Behavior b1 = (Behavior) new Forward(simnav);
 		Behavior b2 = (Behavior) new AlignWall(simnav, DSL, NXTC);
-	    Behavior b3 = (Behavior) new USSclose(simnav, USS, NXTC, DSL);
-	    Behavior b4 = (Behavior) new Bumperclose (simnav, TS, NXTC, DSL);
+		Behavior b3 = (Behavior) new RightCorner(simnav, DSL, NXTC);
+	    Behavior b4 = (Behavior) new USSclose(simnav, USS, NXTC, DSL);
+	    Behavior b5 = (Behavior) new Bumperclose (simnav, TS, NXTC, DSL);
 	    //Behavior b4 = (Behavior) new FollowWall (simnav, ODS);
-	    Behavior [] bArray = {b1, b2, b3, b4};
+	    Behavior [] bArray = {b1, b2, b3, b4, b5};
 	    Arbitrator arby = new Arbitrator(bArray);
 	    arby.start();
 	   
