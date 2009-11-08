@@ -22,15 +22,16 @@ import org.penemunxt.projects.communicationtest.*;
 public class CommunicationTest extends Applet implements Runnable,
 		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
 		MouseListener, MouseMotionListener {
-	// Constants
 
+	// Constants
 	final static String APPLICATION_NAME = "PenemuNXT";
 
 	final static int OPTICAL_DISTANCE_MIN_LENGTH_MM = 200;
 	final static int OPTICAL_DISTANCE_MAX_LENGTH_MM = 1500;
 
 	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
-	final static Color CONTROL_PANEL_BACKGROUND_COLOR = Color.LIGHT_GRAY;
+	final static Color LEFT_PANEL_BACKGROUND_COLOR = Color.LIGHT_GRAY;
+	final static Color BOTTOM_PANEL_BACKGROUND_COLOR = Color.LIGHT_GRAY;
 
 	final static Color DEFAULT_CIRCLE_COLOR = Color.BLACK;
 	final static Color LATEST_POS_CIRCLE_COLOR = Color.GREEN;
@@ -61,6 +62,11 @@ public class CommunicationTest extends Applet implements Runnable,
 	final static int MAP_MAX_SCALE = 100;
 	final static int MAP_DEFAULT_SCALE = 50;
 
+	final static int TIMELINE_PLAY_SPEED_MIN = 1;
+	final static int TIMELINE_PLAY_SPEED_MAX = 15;
+	final static int TIMELINE_PLAY_SPEED_DEFAULT = 5;
+	final static int TIMELINE_PLAY_SPEED_MULTIPLIER = 10;
+
 	final static NXTConnectionModes[] CONNECTION_MODES = {
 			NXTConnectionModes.USB, NXTConnectionModes.Bluetooth };
 	final static String[] CONNECTION_MODES_NAMES = { "USB", "Bluetooth" };
@@ -76,7 +82,7 @@ public class CommunicationTest extends Applet implements Runnable,
 	JMenuItem mnuFileSaveButton;
 	JMenuItem mnuFileExitButton;
 
-	// Checkboxes
+	// //In Show menu
 	JCheckBoxMenuItem chkShowLatestPos;
 	JCheckBoxMenuItem chkShowDrivingPath;
 	JCheckBoxMenuItem chkShowBumpingPositions;
@@ -88,6 +94,8 @@ public class CommunicationTest extends Applet implements Runnable,
 	Button btnExit;
 	Button btnConnectAndStart;
 	Button btnDisconnectAndStop;
+	Button btnTimelineEnableDisable;
+	Button btnTimelinePlayPause;
 
 	// Panels
 	Panel controlPanel;
@@ -106,6 +114,8 @@ public class CommunicationTest extends Applet implements Runnable,
 	// Sliders
 	JSlider sldMapScale;
 	JSlider sldHotspotsDistanceFilter;
+	JSlider sldTimeline;
+	JSlider sldTimelineSpeed;
 
 	// Textboxes
 	TextField txtConnectToName;
@@ -116,6 +126,23 @@ public class CommunicationTest extends Applet implements Runnable,
 	Point mapCenter;
 	Point startDrag;
 	Point mapCenterBeforeDrag;
+
+	// Timeline
+	int timelineMin = 0;
+	int timelineMax = 1;
+
+	int timelinePrevMin = 0;
+	int timelinePrevMax = 1;
+
+	int timelineDefault = 0;
+
+	int timelinePlaySpeed = TIMELINE_PLAY_SPEED_DEFAULT;
+
+	boolean timelinePlay = false;
+	boolean timelineEnabled = false;
+
+	Hashtable<Integer, JLabel> TimelineLabelTable;
+	MapTimelinePlayer TimelinePlayer;
 
 	// Misc
 	boolean AppActive;
@@ -138,8 +165,11 @@ public class CommunicationTest extends Applet implements Runnable,
 		mainFrame.setIconImage(new ImageIcon(iconURL).getImage());
 
 		mainFrame.setBackground(Color.WHITE);
-		mainFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+		Dimension ScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		mainFrame.setSize((int) (ScreenSize.width * 0.85),
+				(int) (ScreenSize.height * 0.85));
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		if (START_FULLSCREEN) {
 			mainFrame.setUndecorated(true);
 			mainFrame.pack();
@@ -174,10 +204,20 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		// Show menu items
 		chkShowLatestPos = new JCheckBoxMenuItem("Latest position", true);
+		chkShowLatestPos.setForeground(LATEST_POS_CIRCLE_COLOR);
+		
 		chkShowDrivingPath = new JCheckBoxMenuItem("Driving path", true);
+		chkShowDrivingPath.setForeground(DRIVING_PATH_CIRCLE_COLOR);
+		
 		chkShowBumpingPositions = new JCheckBoxMenuItem("Bumps", true);
+		chkShowBumpingPositions.setForeground(BUMPING_BUMPER_CIRCLE_COLOR);
+		
 		chkShowAlignedToWall = new JCheckBoxMenuItem("Aligned to wall", true);
+		chkShowAlignedToWall.setForeground(ALIGNED_TO_WALL_CIRCLE_COLOR);
+		
 		chkShowHeadMap = new JCheckBoxMenuItem("Map from head", true);
+		chkShowHeadMap.setForeground(HEAD_MAP_CIRCLE_COLOR);
+		
 		chkShowHotspots = new JCheckBoxMenuItem("Hotspots", true);
 
 		// Add everything
@@ -203,8 +243,13 @@ public class CommunicationTest extends Applet implements Runnable,
 	public void init() {
 		// Panels
 		Panel leftPanel = new Panel();
+		Panel rightPanel = new Panel();
+		Panel bottomPanel = new Panel();
+
 		controlPanel = new Panel();
 		mapPanel = new Panel();
+		Panel timelinePanel = new Panel();
+		Panel timelineControlPanel = new Panel();
 
 		// Fonts
 		Font fntMainHeader = new Font("Arial", Font.BOLD, 22);
@@ -292,10 +337,10 @@ public class CommunicationTest extends Applet implements Runnable,
 		labelTable.put(new Integer(MAP_MAX_SCALE), new JLabel(MAP_MAX_SCALE
 				+ "%"));
 		sldMapScale.setLabelTable(labelTable);
-		sldMapScale.setBackground(CONTROL_PANEL_BACKGROUND_COLOR);
+		sldMapScale.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 		sldMapScale.addChangeListener(this);
 
-		// Map scale
+		// Hotspots sensitivity
 		Label lblHotspotsDistanceFilterHeader = new Label(
 				"Hotspots sensitivity");
 		lblHotspotsDistanceFilterHeader.setFont(fntSectionHeader);
@@ -317,7 +362,7 @@ public class CommunicationTest extends Applet implements Runnable,
 				new Integer(HOT_SPOTS_MAX_FILTER_CONNECTIONS), new JLabel(
 						String.valueOf(HOT_SPOTS_MAX_FILTER_CONNECTIONS)));
 		sldHotspotsDistanceFilter.setLabelTable(sensitivityLabelTable);
-		sldHotspotsDistanceFilter.setBackground(CONTROL_PANEL_BACKGROUND_COLOR);
+		sldHotspotsDistanceFilter.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 
 		// Latest data
 		Label lblLatestDataHeader = new Label("Latest data");
@@ -353,6 +398,46 @@ public class CommunicationTest extends Applet implements Runnable,
 		pnlLatestData.add(lblRDHeadHeadingHeader);
 		pnlLatestData.add(lblRDHeadHeading);
 
+		// Timeline
+		Label lblTimelineHeader = new Label("Timeline");
+		lblTimelineHeader.setFont(fntSectionHeader);
+
+		sldTimeline = new JSlider(JSlider.HORIZONTAL, timelineMin, timelineMax,
+				timelineDefault);
+		sldTimeline.setPaintTicks(true);
+		sldTimeline.setPaintLabels(true);
+		sldTimeline.addChangeListener(this);
+		sldTimeline.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
+
+		// Timeline speed
+		Label lblTimelineSpeedHeader = new Label("Speed");
+		lblTimelineSpeedHeader.setFont(fntLabelHeader);
+
+		sldTimelineSpeed = new JSlider(JSlider.HORIZONTAL,
+				TIMELINE_PLAY_SPEED_MIN, TIMELINE_PLAY_SPEED_MAX,
+				TIMELINE_PLAY_SPEED_DEFAULT);
+		sldTimelineSpeed.setMajorTickSpacing(5);
+		sldTimelineSpeed.setMinorTickSpacing(1);
+		sldTimelineSpeed.setPaintTicks(false);
+		sldTimelineSpeed.setPaintLabels(false);
+
+		Hashtable<Integer, JLabel> timelineSpeedLabelTable = new Hashtable<Integer, JLabel>();
+		timelineSpeedLabelTable.put(new Integer(TIMELINE_PLAY_SPEED_MIN),
+				new JLabel(String.valueOf(TIMELINE_PLAY_SPEED_MIN)));
+		timelineSpeedLabelTable.put(new Integer(TIMELINE_PLAY_SPEED_MAX),
+				new JLabel(String.valueOf(TIMELINE_PLAY_SPEED_MAX)));
+		//sldTimelineSpeed.setLabelTable(timelineSpeedLabelTable);
+		sldTimelineSpeed.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
+		sldTimelineSpeed.addChangeListener(this);
+
+		// Timeline buttons
+
+		btnTimelineEnableDisable = new Button("Enable");
+		btnTimelineEnableDisable.addActionListener(this);
+
+		btnTimelinePlayPause = new Button("Play");
+		btnTimelinePlayPause.addActionListener(this);
+
 		// Control panel
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		controlPanel.add(lblHeader);
@@ -371,15 +456,38 @@ public class CommunicationTest extends Applet implements Runnable,
 		controlPanel.add(lblLatestDataHeader);
 		controlPanel.add(pnlLatestData);
 
+		// Timeline controlpanel
+		timelineControlPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+		timelineControlPanel.add(btnTimelineEnableDisable);
+		timelineControlPanel.add(btnTimelinePlayPause);
+		timelineControlPanel.add(lblTimelineSpeedHeader);
+		timelineControlPanel.add(sldTimelineSpeed);
+
+		// Timeline panel
+		timelinePanel.setLayout(new BoxLayout(timelinePanel, BoxLayout.Y_AXIS));
+		timelinePanel.add(lblTimelineHeader);
+		timelinePanel.add(timelineControlPanel);
+		timelinePanel.add(sldTimeline);
+
+		// Bottom panel
+		bottomPanel.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
+		bottomPanel.setLayout(new BorderLayout());
+		bottomPanel.add(timelinePanel, BorderLayout.CENTER);
+
 		// Left panel
-		leftPanel.setBackground(CONTROL_PANEL_BACKGROUND_COLOR);
+		leftPanel.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 		leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		leftPanel.add(controlPanel);
+
+		// Right panel
+		rightPanel.setLayout(new BorderLayout());
+		rightPanel.add(mapPanel, BorderLayout.CENTER);
+		rightPanel.add(bottomPanel, BorderLayout.SOUTH);
 
 		// Add it to the applet
 		this.setLayout(new BorderLayout());
 		this.add(leftPanel, BorderLayout.WEST);
-		this.add(mapPanel, BorderLayout.CENTER);
+		this.add(rightPanel, BorderLayout.CENTER);
 
 		// Map panel
 		mapPanel.setBackground(MAP_PANEL_BACKGROUND_COLOR);
@@ -413,6 +521,9 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		if (DS != null && DS.NXTRobotData != null) {
 			for (RobotData RD : DS.NXTRobotData) {
+				if (DS.NXTRobotData.indexOf(RD) + 1 > sldTimeline.getValue()) {
+					break;
+				}
 				int circleSize;
 				Color circleColor;
 				boolean circleShow;
@@ -474,7 +585,9 @@ public class CommunicationTest extends Applet implements Runnable,
 			}
 
 			if (DS.NXTRobotData.size() > 0) {
-				RobotData RD = DS.NXTRobotData.get(DS.NXTRobotData.size() - 1);
+				RobotData RD = DS.NXTRobotData.get(Math.max(sldTimeline
+						.getValue() - 1, 0));
+
 				if (chkShowLatestPos.getState()) {
 					Color circleColor;
 					if (DS.NXTRobotData.size() % 2 == 0) {
@@ -532,10 +645,63 @@ public class CommunicationTest extends Applet implements Runnable,
 			repaint();
 			sldMapScale.setValue(curScale);
 
+			if (DS != null && DS.NXTRobotData != null
+					&& DS.NXTRobotData.size() > 0) {
+				btnTimelineEnableDisable.setEnabled(true);
+
+				timelineMin = 0;
+				timelineMax = DS.NXTRobotData.size();
+
+				sldTimeline.setMinimum(timelineMin);
+				sldTimeline.setMaximum(timelineMax);
+				if (!timelineEnabled) {
+					sldTimeline.setValue(timelineMax);
+				}
+
+				if (sldTimeline.getValue() == sldTimeline.getMaximum()) {
+					stopTimelineAutoPlay();
+				}
+
+				sldTimeline
+						.setMajorTickSpacing((int) ((timelineMax - timelineMin) / 5.0));
+				sldTimeline
+						.setMinorTickSpacing((int) ((timelineMax - timelineMin) / 10.0));
+
+				if (timelineMin != timelinePrevMin
+						|| timelineMax != timelinePrevMin) {
+					if (TimelineLabelTable == null) {
+						TimelineLabelTable = new Hashtable<Integer, JLabel>();
+					}
+
+					TimelineLabelTable.clear();
+					TimelineLabelTable.put(new Integer(timelineMin),
+							new JLabel(String.valueOf(timelineMin)));
+
+					TimelineLabelTable.put(new Integer(
+							(timelineMax - timelineMin) / 2), new JLabel(String
+							.valueOf((timelineMax - timelineMin) / 2)));
+
+					TimelineLabelTable.put(new Integer(timelineMax),
+							new JLabel(String.valueOf(timelineMax)));
+					sldTimeline.setLabelTable(TimelineLabelTable);
+				}
+			} else {
+				btnTimelineEnableDisable.setEnabled(false);
+				disableTimeline();
+
+				sldTimeline.setMinimum(0);
+				sldTimeline.setMaximum(1);
+				sldTimeline.setMajorTickSpacing(2);
+				sldTimeline.setMinorTickSpacing(1);
+			}
+
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 			}
+
+			timelinePrevMin = timelineMin;
+			timelinePrevMax = timelineMax;
 		}
 
 		System.exit(0);
@@ -573,17 +739,21 @@ public class CommunicationTest extends Applet implements Runnable,
 		NXTC = null;
 	}
 
-	public void actionPerformed(ActionEvent AE) {
-		if (AE.getSource() == btnExit || AE.getSource() == mnuFileExitButton) {
+	public void actionPerformed(ActionEvent ae) {
+		if (ae.getSource() == btnExit || ae.getSource() == mnuFileExitButton) {
 			exitApp();
-		} else if (AE.getSource() == btnConnectAndStart) {
+		} else if (ae.getSource() == btnConnectAndStart) {
 			connectAndStart();
-		} else if (AE.getSource() == btnDisconnectAndStop) {
+		} else if (ae.getSource() == btnDisconnectAndStop) {
 			disconnectAndStop();
-		} else if (AE.getSource() == mnuFileOpenButton) {
+		} else if (ae.getSource() == mnuFileOpenButton) {
 			openData();
-		} else if (AE.getSource() == mnuFileSaveButton) {
+		} else if (ae.getSource() == mnuFileSaveButton) {
 			saveData();
+		} else if (ae.getSource() == btnTimelinePlayPause) {
+			switchTimelineAutoPlay();
+		} else if (ae.getSource() == btnTimelineEnableDisable) {
+			switchTimelineEnabled();
 		}
 	}
 
@@ -725,10 +895,74 @@ public class CommunicationTest extends Applet implements Runnable,
 		g.fillOval(pos.x - (size / 2), pos.y - (size / 2), size, size);
 	}
 
+	private void switchTimelineEnabled() {
+		if (timelineEnabled) {
+			disableTimeline();
+		} else {
+			enableTimeline();
+		}
+	}
+
+	private void enableTimeline() {
+		timelineEnabled = true;
+		stopTimelineAutoPlay();
+		btnTimelineEnableDisable.setLabel("Disable");
+		btnTimelinePlayPause.setEnabled(true);
+
+		sldTimelineSpeed.setEnabled(true);
+		sldTimeline.setEnabled(true);
+	}
+
+	private void disableTimeline() {
+		timelineEnabled = false;
+		btnTimelineEnableDisable.setLabel("Enable");
+		btnTimelinePlayPause.setEnabled(false);
+
+		sldTimelineSpeed.setEnabled(false);
+		sldTimeline.setEnabled(false);
+
+	}
+
+	private void switchTimelineAutoPlay() {
+		if (timelinePlay) {
+			stopTimelineAutoPlay();
+		} else {
+			startTimelineAutoPlay();
+		}
+	}
+
+	private void startTimelineAutoPlay() {
+		stopTimelineAutoPlay();
+		timelinePlay = true;
+		btnTimelinePlayPause.setLabel("Pause");
+		TimelinePlayer = new MapTimelinePlayer(sldTimeline, getTimelineDelayFromSpeed(timelinePlaySpeed));
+		TimelinePlayer.start();
+	}
+
+	private void stopTimelineAutoPlay() {
+		timelinePlay = false;
+		btnTimelinePlayPause.setLabel("Play");
+		if (TimelinePlayer != null) {
+			TimelinePlayer.deactivate();
+			TimelinePlayer = null;
+		}
+	}
+	
+	private int getTimelineDelayFromSpeed(int speed){
+		return ((TIMELINE_PLAY_SPEED_MAX - speed + TIMELINE_PLAY_SPEED_MIN) * TIMELINE_PLAY_SPEED_MULTIPLIER);
+	}
+
 	@Override
 	public void stateChanged(ChangeEvent ce) {
 		if (ce.getSource() == sldMapScale) {
 			curScale = sldMapScale.getValue();
+		} else if (ce.getSource() == sldTimelineSpeed) {
+			timelinePlaySpeed = sldTimelineSpeed.getValue();
+			if(TimelinePlayer!=null){
+				TimelinePlayer.setDelay(getTimelineDelayFromSpeed(timelinePlaySpeed));
+			}
+		} else if (ce.getSource() == sldTimeline) {
+			// stopTimelineAutoPlay();
 		}
 	}
 
