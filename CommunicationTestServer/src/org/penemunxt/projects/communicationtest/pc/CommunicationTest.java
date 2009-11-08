@@ -612,6 +612,8 @@ public class CommunicationTest extends Applet implements Runnable,
 		cboConnectionTypes.setEnabled(false);
 		txtConnectToName.setEnabled(false);
 		txtConnectToAddress.setEnabled(false);
+
+		runConnection();
 	}
 
 	private void openData() {
