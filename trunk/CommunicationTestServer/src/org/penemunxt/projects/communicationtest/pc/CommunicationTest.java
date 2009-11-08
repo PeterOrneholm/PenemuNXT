@@ -82,7 +82,8 @@ public class CommunicationTest extends Applet implements Runnable,
 	JMenuItem mnuFileSaveButton;
 	JMenuItem mnuFileExitButton;
 
-	// //In Show menu
+	// Map menu
+	JMenuItem mnuMapClearButton;
 	JCheckBoxMenuItem chkShowLatestPos;
 	JCheckBoxMenuItem chkShowDrivingPath;
 	JCheckBoxMenuItem chkShowBumpingPositions;
@@ -146,9 +147,9 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	// Misc
 	boolean AppActive;
-	boolean ConnectionActive;
 	NXTCommunication NXTC;
 	DataShare DS;
+	RobotConnection RC;
 	VolatileImage OSI;
 
 	public static void main(String[] args) {
@@ -192,7 +193,7 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		// Menus
 		JMenu mnuFileMenu = new JMenu("File");
-		JMenu mnuShowMenu = new JMenu("Show");
+		JMenu mnuMapMenu = new JMenu("Map");
 
 		// File menu items
 		mnuFileOpenButton = new JMenuItem("Open File...");
@@ -202,39 +203,46 @@ public class CommunicationTest extends Applet implements Runnable,
 		mnuFileExitButton = new JMenuItem("Exit");
 		mnuFileExitButton.addActionListener(this);
 
-		// Show menu items
+		// Map menu items
+		mnuMapClearButton = new JMenuItem("Clear");
+		mnuMapClearButton.addActionListener(this);
+		
 		chkShowLatestPos = new JCheckBoxMenuItem("Latest position", true);
-		chkShowLatestPos.setForeground(LATEST_POS_CIRCLE_COLOR);
-		
+		chkShowLatestPos.setBackground(LATEST_POS_CIRCLE_COLOR);
+
 		chkShowDrivingPath = new JCheckBoxMenuItem("Driving path", true);
-		chkShowDrivingPath.setForeground(DRIVING_PATH_CIRCLE_COLOR);
-		
+		chkShowDrivingPath.setBackground(DRIVING_PATH_CIRCLE_COLOR);
+		chkShowDrivingPath.setForeground(Color.WHITE);
+
 		chkShowBumpingPositions = new JCheckBoxMenuItem("Bumps", true);
-		chkShowBumpingPositions.setForeground(BUMPING_BUMPER_CIRCLE_COLOR);
-		
+		chkShowBumpingPositions.setBackground(BUMPING_BUMPER_CIRCLE_COLOR);
+
 		chkShowAlignedToWall = new JCheckBoxMenuItem("Aligned to wall", true);
-		chkShowAlignedToWall.setForeground(ALIGNED_TO_WALL_CIRCLE_COLOR);
-		
+		chkShowAlignedToWall.setBackground(ALIGNED_TO_WALL_CIRCLE_COLOR);
+
 		chkShowHeadMap = new JCheckBoxMenuItem("Map from head", true);
-		chkShowHeadMap.setForeground(HEAD_MAP_CIRCLE_COLOR);
-		
+		chkShowHeadMap.setBackground(HEAD_MAP_CIRCLE_COLOR);
+
 		chkShowHotspots = new JCheckBoxMenuItem("Hotspots", true);
 
 		// Add everything
 		mnuMainBar.add(mnuFileMenu);
-		mnuMainBar.add(mnuShowMenu);
+		mnuMainBar.add(mnuMapMenu);
 
 		mnuFileMenu.add(mnuFileOpenButton);
 		mnuFileMenu.add(mnuFileSaveButton);
 		mnuFileMenu.add(new JSeparator());
 		mnuFileMenu.add(mnuFileExitButton);
 
-		mnuShowMenu.add(chkShowLatestPos);
-		mnuShowMenu.add(chkShowDrivingPath);
-		mnuShowMenu.add(chkShowBumpingPositions);
-		mnuShowMenu.add(chkShowAlignedToWall);
-		mnuShowMenu.add(chkShowHeadMap);
-		mnuShowMenu.add(chkShowHotspots);
+		
+		mnuMapMenu.add(mnuMapClearButton);
+		mnuMapMenu.add(new JSeparator());
+		mnuMapMenu.add(chkShowLatestPos);
+		mnuMapMenu.add(chkShowDrivingPath);
+		mnuMapMenu.add(chkShowBumpingPositions);
+		mnuMapMenu.add(chkShowAlignedToWall);
+		mnuMapMenu.add(chkShowHeadMap);
+		mnuMapMenu.add(chkShowHotspots);
 
 		return mnuMainBar;
 	}
@@ -416,17 +424,8 @@ public class CommunicationTest extends Applet implements Runnable,
 		sldTimelineSpeed = new JSlider(JSlider.HORIZONTAL,
 				TIMELINE_PLAY_SPEED_MIN, TIMELINE_PLAY_SPEED_MAX,
 				TIMELINE_PLAY_SPEED_DEFAULT);
-		sldTimelineSpeed.setMajorTickSpacing(5);
-		sldTimelineSpeed.setMinorTickSpacing(1);
 		sldTimelineSpeed.setPaintTicks(false);
 		sldTimelineSpeed.setPaintLabels(false);
-
-		Hashtable<Integer, JLabel> timelineSpeedLabelTable = new Hashtable<Integer, JLabel>();
-		timelineSpeedLabelTable.put(new Integer(TIMELINE_PLAY_SPEED_MIN),
-				new JLabel(String.valueOf(TIMELINE_PLAY_SPEED_MIN)));
-		timelineSpeedLabelTable.put(new Integer(TIMELINE_PLAY_SPEED_MAX),
-				new JLabel(String.valueOf(TIMELINE_PLAY_SPEED_MAX)));
-		//sldTimelineSpeed.setLabelTable(timelineSpeedLabelTable);
 		sldTimelineSpeed.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
 		sldTimelineSpeed.addChangeListener(this);
 
@@ -707,36 +706,14 @@ public class CommunicationTest extends Applet implements Runnable,
 		System.exit(0);
 	}
 
-	public void runConnection() {
-		ConnectionActive = true;
-
-		// Setup data factories
-		NXTCommunicationDataFactories DataFactories = new NXTCommunicationDataFactories(
-				new RobotDataFactory(), new ServerMessageDataFactory());
-
-		// Setup and start the communication
-		PCDataStreamConnection CPDSC = new PCDataStreamConnection();
-		NXTC = new NXTCommunication(false, DataFactories, CPDSC);
-		NXTC.ConnectAndStartAll(CONNECTION_MODES[cboConnectionTypes
+	private void connectRobot() {
+		if (RC != null) {
+			RC.disconnect();
+		}
+		RC = new RobotConnection(NXTC, DS, CONNECTION_MODES[cboConnectionTypes
 				.getSelectedIndex()], txtConnectToName.getText(),
 				txtConnectToAddress.getText());
-
-		// Setup a data processor
-		PositionDataProcessor SDP = new PositionDataProcessor(DS, NXTC,
-				DataFactories);
-		SDP.start();
-
-		while (ConnectionActive) {
-			this.ConnectionActive = SDP.Active;
-
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-			}
-		}
-
-		NXTC.Disconnect();
-		NXTC = null;
+		RC.start();
 	}
 
 	public void actionPerformed(ActionEvent ae) {
@@ -754,6 +731,8 @@ public class CommunicationTest extends Applet implements Runnable,
 			switchTimelineAutoPlay();
 		} else if (ae.getSource() == btnTimelineEnableDisable) {
 			switchTimelineEnabled();
+		} else if (ae.getSource() == mnuMapClearButton) {
+			clearMap();
 		}
 	}
 
@@ -762,9 +741,15 @@ public class CommunicationTest extends Applet implements Runnable,
 		btnExit.setEnabled(false);
 	}
 
-	private void disconnectAndStop() {
-		if (NXTC != null) {
-			NXTC.sendShutDown();
+	private void clearMap(){
+		if(DS!=null){
+			DS.NXTRobotData.clear();
+		}
+	}
+	
+	private void disconnectAndStop() {	
+		if(RC!=null){
+			RC.disconnect();
 		}
 
 		btnExit.setEnabled(true);
@@ -783,7 +768,7 @@ public class CommunicationTest extends Applet implements Runnable,
 		txtConnectToName.setEnabled(false);
 		txtConnectToAddress.setEnabled(false);
 
-		runConnection();
+		connectRobot();
 	}
 
 	private void openData() {
@@ -935,7 +920,8 @@ public class CommunicationTest extends Applet implements Runnable,
 		stopTimelineAutoPlay();
 		timelinePlay = true;
 		btnTimelinePlayPause.setLabel("Pause");
-		TimelinePlayer = new MapTimelinePlayer(sldTimeline, getTimelineDelayFromSpeed(timelinePlaySpeed));
+		TimelinePlayer = new MapTimelinePlayer(sldTimeline,
+				getTimelineDelayFromSpeed(timelinePlaySpeed));
 		TimelinePlayer.start();
 	}
 
@@ -947,8 +933,8 @@ public class CommunicationTest extends Applet implements Runnable,
 			TimelinePlayer = null;
 		}
 	}
-	
-	private int getTimelineDelayFromSpeed(int speed){
+
+	private int getTimelineDelayFromSpeed(int speed) {
 		return ((TIMELINE_PLAY_SPEED_MAX - speed + TIMELINE_PLAY_SPEED_MIN) * TIMELINE_PLAY_SPEED_MULTIPLIER);
 	}
 
@@ -958,8 +944,9 @@ public class CommunicationTest extends Applet implements Runnable,
 			curScale = sldMapScale.getValue();
 		} else if (ce.getSource() == sldTimelineSpeed) {
 			timelinePlaySpeed = sldTimelineSpeed.getValue();
-			if(TimelinePlayer!=null){
-				TimelinePlayer.setDelay(getTimelineDelayFromSpeed(timelinePlaySpeed));
+			if (TimelinePlayer != null) {
+				TimelinePlayer
+						.setDelay(getTimelineDelayFromSpeed(timelinePlaySpeed));
 			}
 		} else if (ce.getSource() == sldTimeline) {
 			// stopTimelineAutoPlay();
@@ -1003,7 +990,7 @@ public class CommunicationTest extends Applet implements Runnable,
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		if (NXTC != null) {
+		if (RC != null && RC.isConnectionActive()) {
 			disconnectAndStop();
 			exitApp();
 		} else {
