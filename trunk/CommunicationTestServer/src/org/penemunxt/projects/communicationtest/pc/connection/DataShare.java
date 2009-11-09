@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.pc;
+package org.penemunxt.projects.communicationtest.pc.connection;
 import java.util.ArrayList;
 
 import org.penemunxt.projects.communicationtest.RobotData;

@@ -18,6 +18,8 @@ import org.penemunxt.communication.*;
 import org.penemunxt.communication.pc.*;
 import org.penemunxt.graphics.pc.Icons;
 import org.penemunxt.projects.communicationtest.*;
+import org.penemunxt.projects.communicationtest.pc.connection.DataShare;
+import org.penemunxt.projects.communicationtest.pc.connection.RobotConnection;
 
 import sun.java2d.pipe.SolidTextRenderer;
 

@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.pc;
+package org.penemunxt.projects.communicationtest.pc.connection;
 
 import org.penemunxt.communication.NXTCommunication;
 import org.penemunxt.communication.NXTCommunicationDataFactories;
