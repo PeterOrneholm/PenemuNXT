@@ -19,19 +19,32 @@ import org.penemunxt.communication.pc.*;
 import org.penemunxt.graphics.pc.Icons;
 import org.penemunxt.projects.communicationtest.*;
 
-public class CommunicationTest extends Applet implements Runnable,
+import sun.java2d.pipe.SolidTextRenderer;
+
+public class PenemuNXTControl extends Applet implements Runnable,
 		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
 		MouseListener, MouseMotionListener {
 
 	// Constants
 	final static String APPLICATION_NAME = "PenemuNXT";
+	final static String APPLICATION_ICON_NAME = "PenemuNXT_Circle_Logo_Icon_16x16.png";
+
+	final static String DEFAULT_FOLDER_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
+	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
 
 	final static int OPTICAL_DISTANCE_MIN_LENGTH_MM = 200;
 	final static int OPTICAL_DISTANCE_MAX_LENGTH_MM = 1500;
 
+	final static int PANEL_MARGIN = 15;
+	
+	final static Color DEFAULT_PANEL_BACKGROUND_COLOR = new Color(197, 209, 215);
 	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
-	final static Color LEFT_PANEL_BACKGROUND_COLOR = Color.LIGHT_GRAY;
-	final static Color BOTTOM_PANEL_BACKGROUND_COLOR = Color.LIGHT_GRAY;
+	final static Color VIEW_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
+	final static Color LEFT_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
+	final static Color BOTTOM_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
+
+	final static Color MAP_PANEL_BORDER_COLOR = Color.BLACK;
+	final static int MAP_PANEL_BORDER_WIDTH = 2;
 
 	final static Color DEFAULT_CIRCLE_COLOR = Color.BLACK;
 	final static Color LATEST_POS_CIRCLE_COLOR = Color.GREEN;
@@ -50,17 +63,17 @@ public class CommunicationTest extends Applet implements Runnable,
 	final static int HEAD_MAP_CIRCLE_SIZE = 5;
 	final static int HOT_SPOTS_MAX_CIRCLE_SIZE = 25;
 
-	final static int HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON = 700;
-	final static int HOT_SPOTS_FIND_CONNECTIONS = 5;
+	final static int HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON = 800;
+	final static int HOT_SPOTS_FIND_CONNECTIONS = 10;
 
 	final static int HOT_SPOTS_DEFAULT_FILTER_CONNECTIONS = 5;
 	final static int HOT_SPOTS_MIN_FILTER_CONNECTIONS = 0;
 	final static int HOT_SPOTS_MAX_FILTER_CONNECTIONS = 15;
 
-	final static float MAP_DEFAULT_SCALE_FACTOR = 0.004f;
+	final static float MAP_DEFAULT_SCALE_FACTOR = 0.008f;
 	final static int MAP_MIN_SCALE = 1;
 	final static int MAP_MAX_SCALE = 100;
-	final static int MAP_DEFAULT_SCALE = 50;
+	final static int MAP_DEFAULT_SCALE = 40;
 
 	final static int TIMELINE_PLAY_SPEED_MIN = 1;
 	final static int TIMELINE_PLAY_SPEED_MAX = 15;
@@ -97,10 +110,11 @@ public class CommunicationTest extends Applet implements Runnable,
 	Button btnDisconnectAndStop;
 	Button btnTimelineEnableDisable;
 	Button btnTimelinePlayPause;
+	Button btnTimelineRewind;
 
 	// Panels
 	Panel controlPanel;
-	Panel mapPanel;
+	JPanel mapPanel;
 
 	// Labels
 	Label lblRDX;
@@ -153,16 +167,33 @@ public class CommunicationTest extends Applet implements Runnable,
 	VolatileImage OSI;
 
 	public static void main(String[] args) {
-		CommunicationTest PCCT = new CommunicationTest();
-		PCCT.init();
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createAndShowGUI();
+			}
+		});
+	}
+
+	@Override
+	public void start() {
+		Thread t = new Thread(this);
+		t.start();
+	}
+
+	public PenemuNXTControl() {
+		AppActive = true;
+		this.setLayout(new BorderLayout());
+		this.add(getContentPanel(), BorderLayout.CENTER);
+	}
+
+	private static void createAndShowGUI() {
+		PenemuNXTControl PCCT = new PenemuNXTControl();
 
 		JFrame mainFrame = new JFrame(APPLICATION_NAME);
 		mainFrame.addWindowListener(PCCT);
 		mainFrame.add(PCCT);
 
-		mainFrame.setJMenuBar(PCCT.getMenuBar());
-
-		URL iconURL = Icons.class.getResource("PenemuNXT_Logo_Icon_16x16.png");
+		URL iconURL = Icons.class.getResource(APPLICATION_ICON_NAME);
 		mainFrame.setIconImage(new ImageIcon(iconURL).getImage());
 
 		mainFrame.setBackground(Color.WHITE);
@@ -181,32 +212,13 @@ public class CommunicationTest extends Applet implements Runnable,
 		PCCT.start();
 	}
 
-	@Override
-	public void start() {
-		Thread t = new Thread(this);
-		t.start();
-	}
-
-	public JMenuBar getMenuBar() {
-		// Menu
-		JMenuBar mnuMainBar = new JMenuBar();
-
-		// Menus
-		JMenu mnuFileMenu = new JMenu("File");
+	public JMenu getMapMenu() {
 		JMenu mnuMapMenu = new JMenu("Map");
-
-		// File menu items
-		mnuFileOpenButton = new JMenuItem("Open File...");
-		mnuFileOpenButton.addActionListener(this);
-		mnuFileSaveButton = new JMenuItem("Save As...");
-		mnuFileSaveButton.addActionListener(this);
-		mnuFileExitButton = new JMenuItem("Exit");
-		mnuFileExitButton.addActionListener(this);
 
 		// Map menu items
 		mnuMapClearButton = new JMenuItem("Clear");
 		mnuMapClearButton.addActionListener(this);
-		
+
 		chkShowLatestPos = new JCheckBoxMenuItem("Latest position", true);
 		chkShowLatestPos.setBackground(LATEST_POS_CIRCLE_COLOR);
 
@@ -225,16 +237,6 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		chkShowHotspots = new JCheckBoxMenuItem("Hotspots", true);
 
-		// Add everything
-		mnuMainBar.add(mnuFileMenu);
-		mnuMainBar.add(mnuMapMenu);
-
-		mnuFileMenu.add(mnuFileOpenButton);
-		mnuFileMenu.add(mnuFileSaveButton);
-		mnuFileMenu.add(new JSeparator());
-		mnuFileMenu.add(mnuFileExitButton);
-
-		
 		mnuMapMenu.add(mnuMapClearButton);
 		mnuMapMenu.add(new JSeparator());
 		mnuMapMenu.add(chkShowLatestPos);
@@ -244,18 +246,53 @@ public class CommunicationTest extends Applet implements Runnable,
 		mnuMapMenu.add(chkShowHeadMap);
 		mnuMapMenu.add(chkShowHotspots);
 
+		return mnuMapMenu;
+	}
+
+	public JMenuBar getMenuBar() {
+		// Menu bar
+		JMenuBar mnuMainBar = new JMenuBar();
+
+		// Icon
+		URL iconURL = Icons.class.getResource(APPLICATION_ICON_NAME);
+		ImageIcon appIcon = new ImageIcon(iconURL);
+		
+		// Menus
+		JMenu mnuFileMenu = new JMenu("File");
+		
+		// File menu
+		mnuFileMenu.setIcon(appIcon);
+
+		mnuFileOpenButton = new JMenuItem("Open File...");
+		mnuFileOpenButton.addActionListener(this);
+		mnuFileSaveButton = new JMenuItem("Save As...");
+		mnuFileSaveButton.addActionListener(this);
+		mnuFileExitButton = new JMenuItem("Exit");
+		mnuFileExitButton.addActionListener(this);
+
+		// Add everything
+		mnuMainBar.add(mnuFileMenu);
+		mnuMainBar.add(getMapMenu());
+
+		mnuFileMenu.add(mnuFileOpenButton);
+		mnuFileMenu.add(mnuFileSaveButton);
+		mnuFileMenu.add(new JSeparator());
+		mnuFileMenu.add(mnuFileExitButton);
+
 		return mnuMainBar;
 	}
 
-	@Override
-	public void init() {
+	public Panel getContentPanel() {
 		// Panels
-		Panel leftPanel = new Panel();
-		Panel rightPanel = new Panel();
-		Panel bottomPanel = new Panel();
+		Panel mainPanel = new Panel();
+		JPanel leftPanel = new JPanel();
+		JPanel rightPanel = new JPanel();
+		JPanel bottomPanel = new JPanel();
+		JPanel viewPanel = new JPanel();
+		JPanel mapPanelWrapper = new JPanel();
 
 		controlPanel = new Panel();
-		mapPanel = new Panel();
+		mapPanel = new JPanel();
 		Panel timelinePanel = new Panel();
 		Panel timelineControlPanel = new Panel();
 
@@ -277,6 +314,15 @@ public class CommunicationTest extends Applet implements Runnable,
 		Label lblConnectionHeader = new Label("Connection");
 		lblConnectionHeader.setFont(fntSectionHeader);
 
+		Label lblConnectionMode = new Label("Mode:");
+		lblConnectionMode.setFont(fntLabelHeader);
+		
+		Label lblConnectionNXTName = new Label("NXT name:");
+		lblConnectionNXTName.setFont(fntLabelHeader);
+		
+		Label lblConnectionNXTAddress = new Label("NXT address:");
+		lblConnectionNXTAddress.setFont(fntLabelHeader);
+		
 		cboConnectionTypes = new JComboBox(CONNECTION_MODES_NAMES);
 		cboConnectionTypes.setSelectedIndex(CONNECTION_MODES_INIT_SELECTED);
 
@@ -300,19 +346,19 @@ public class CommunicationTest extends Applet implements Runnable,
 
 		CBC.gridx = 0;
 		CBC.gridy = 0;
-		pnlConnection.add(new Label("Mode:"), CBC);
+		pnlConnection.add(lblConnectionMode, CBC);
 		CBC.gridx = 1;
 		CBC.gridy = 0;
 		pnlConnection.add(cboConnectionTypes, CBC);
 		CBC.gridx = 0;
 		CBC.gridy = 1;
-		pnlConnection.add(new Label("NXT name:"), CBC);
+		pnlConnection.add(lblConnectionNXTName, CBC);
 		CBC.gridx = 1;
 		CBC.gridy = 1;
 		pnlConnection.add(txtConnectToName, CBC);
 		CBC.gridx = 0;
 		CBC.gridy = 2;
-		pnlConnection.add(new Label("NXT address:"), CBC);
+		pnlConnection.add(lblConnectionNXTAddress, CBC);
 		CBC.gridx = 1;
 		CBC.gridy = 2;
 		pnlConnection.add(txtConnectToAddress, CBC);
@@ -372,10 +418,10 @@ public class CommunicationTest extends Applet implements Runnable,
 		sldHotspotsDistanceFilter.setLabelTable(sensitivityLabelTable);
 		sldHotspotsDistanceFilter.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 
-		// Latest data
-		Label lblLatestDataHeader = new Label("Latest data");
-		lblLatestDataHeader.setFont(fntSectionHeader);
-		Panel pnlLatestData = new Panel(new GridLayout(0, 2));
+		// Current data
+		Label lblCurrentDataHeader = new Label("Current data");
+		lblCurrentDataHeader.setFont(fntSectionHeader);
+		Panel pnlCurrentData = new Panel(new GridLayout(0, 2));
 
 		lblRDX = new Label();
 		lblRDY = new Label();
@@ -395,20 +441,21 @@ public class CommunicationTest extends Applet implements Runnable,
 		lblRDHeadDistanceHeader.setFont(fntLabelHeader);
 		lblRDHeadHeadingHeader.setFont(fntLabelHeader);
 
-		pnlLatestData.add(lblRDXHeader);
-		pnlLatestData.add(lblRDX);
-		pnlLatestData.add(lblRDYHeader);
-		pnlLatestData.add(lblRDY);
-		pnlLatestData.add(lblRDRobotHeadingHeader);
-		pnlLatestData.add(lblRDRobotHeading);
-		pnlLatestData.add(lblRDHeadDistanceHeader);
-		pnlLatestData.add(lblRDHeadDistance);
-		pnlLatestData.add(lblRDHeadHeadingHeader);
-		pnlLatestData.add(lblRDHeadHeading);
+		pnlCurrentData.add(lblRDXHeader);
+		pnlCurrentData.add(lblRDX);
+		pnlCurrentData.add(lblRDYHeader);
+		pnlCurrentData.add(lblRDY);
+		pnlCurrentData.add(lblRDRobotHeadingHeader);
+		pnlCurrentData.add(lblRDRobotHeading);
+		pnlCurrentData.add(lblRDHeadDistanceHeader);
+		pnlCurrentData.add(lblRDHeadDistance);
+		pnlCurrentData.add(lblRDHeadHeadingHeader);
+		pnlCurrentData.add(lblRDHeadHeading);
 
 		// Timeline
 		Label lblTimelineHeader = new Label("Timeline");
 		lblTimelineHeader.setFont(fntSectionHeader);
+		JPanel timelineWrapperPanel = new JPanel();
 
 		sldTimeline = new JSlider(JSlider.HORIZONTAL, timelineMin, timelineMax,
 				timelineDefault);
@@ -437,6 +484,9 @@ public class CommunicationTest extends Applet implements Runnable,
 		btnTimelinePlayPause = new Button("Play");
 		btnTimelinePlayPause.addActionListener(this);
 
+		btnTimelineRewind = new Button("Rewind");
+		btnTimelineRewind.addActionListener(this);
+
 		// Control panel
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		controlPanel.add(lblHeader);
@@ -452,12 +502,13 @@ public class CommunicationTest extends Applet implements Runnable,
 		controlPanel.add(lblHotspotsDistanceFilterHeader);
 		controlPanel.add(sldHotspotsDistanceFilter);
 
-		controlPanel.add(lblLatestDataHeader);
-		controlPanel.add(pnlLatestData);
+		controlPanel.add(lblCurrentDataHeader);
+		controlPanel.add(pnlCurrentData);
 
 		// Timeline controlpanel
 		timelineControlPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		timelineControlPanel.add(btnTimelineEnableDisable);
+		timelineControlPanel.add(btnTimelineRewind);
 		timelineControlPanel.add(btnTimelinePlayPause);
 		timelineControlPanel.add(lblTimelineSpeedHeader);
 		timelineControlPanel.add(sldTimelineSpeed);
@@ -469,24 +520,42 @@ public class CommunicationTest extends Applet implements Runnable,
 		timelinePanel.add(sldTimeline);
 
 		// Bottom panel
+		bottomPanel.setBorder(BorderFactory.createEmptyBorder(0,
+				PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN));
 		bottomPanel.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
 		bottomPanel.setLayout(new BorderLayout());
 		bottomPanel.add(timelinePanel, BorderLayout.CENTER);
 
 		// Left panel
+		leftPanel.setBorder(BorderFactory.createEmptyBorder(PANEL_MARGIN,
+				PANEL_MARGIN, PANEL_MARGIN, 0));
 		leftPanel.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 		leftPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		leftPanel.add(controlPanel);
 
 		// Right panel
 		rightPanel.setLayout(new BorderLayout());
-		rightPanel.add(mapPanel, BorderLayout.CENTER);
+		rightPanel.add(viewPanel, BorderLayout.CENTER);
 		rightPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-		// Add it to the applet
-		this.setLayout(new BorderLayout());
-		this.add(leftPanel, BorderLayout.WEST);
-		this.add(rightPanel, BorderLayout.CENTER);
+		// Main panel
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(getMenuBar(), BorderLayout.NORTH);
+		mainPanel.add(leftPanel, BorderLayout.WEST);
+		mainPanel.add(rightPanel, BorderLayout.CENTER);
+
+		// View panel
+		viewPanel.setLayout(new BorderLayout());
+		viewPanel.setBackground(VIEW_PANEL_BACKGROUND_COLOR);
+		viewPanel.setBorder(BorderFactory.createEmptyBorder(PANEL_MARGIN,
+				PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN));
+		viewPanel.add(mapPanelWrapper, BorderLayout.CENTER);
+
+		// Map panel wrapper
+		mapPanelWrapper.setLayout(new BorderLayout());
+		mapPanelWrapper.add(mapPanel, BorderLayout.CENTER);
+		mapPanelWrapper.setBorder(BorderFactory.createLineBorder(
+				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BORDER_WIDTH));
 
 		// Map panel
 		mapPanel.setBackground(MAP_PANEL_BACKGROUND_COLOR);
@@ -497,8 +566,7 @@ public class CommunicationTest extends Applet implements Runnable,
 		mapPanel.addMouseListener(this);
 		mapPanel.addMouseWheelListener(this);
 
-		// Set active
-		AppActive = true;
+		return mainPanel;
 	}
 
 	@Override
@@ -519,10 +587,12 @@ public class CommunicationTest extends Applet implements Runnable,
 		ArrayList<MapPositionPoints> ObjectPositions = new ArrayList<MapPositionPoints>();
 
 		if (DS != null && DS.NXTRobotData != null) {
-			for (RobotData RD : DS.NXTRobotData) {
-				if (DS.NXTRobotData.indexOf(RD) + 1 > sldTimeline.getValue()) {
+			for (int i = 0; i < DS.NXTRobotData.size(); i++) {
+				if (i >= sldTimeline.getValue()) {
 					break;
 				}
+				RobotData RD = DS.NXTRobotData.get(i);
+
 				int circleSize;
 				Color circleColor;
 				boolean circleShow;
@@ -566,7 +636,6 @@ public class CommunicationTest extends Applet implements Runnable,
 									.getRobotHeading()), RD.getHeadDistance());
 					if (RD.getHeadDistance() > OPTICAL_DISTANCE_MIN_LENGTH_MM
 							&& RD.getHeadDistance() < OPTICAL_DISTANCE_MAX_LENGTH_MM) {
-
 						if (chkShowHotspots.getState()) {
 							ObjectPositions.add(new MapPositionPoints(0,
 									(int) HeadMapPos.getX(), (int) HeadMapPos
@@ -607,24 +676,58 @@ public class CommunicationTest extends Applet implements Runnable,
 			}
 
 			if (ObjectPositions != null && chkShowHotspots.getState()) {
-				MapPositionPoints.GetPositionsPoints(ObjectPositions,
-						HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON,
-						HOT_SPOTS_FIND_CONNECTIONS);
+				ArrayList<MapPositionPoints> FilteredPositions = MapPositionPoints
+						.GetFilteredPositionsPoints(ObjectPositions,
+								HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON,
+								HOT_SPOTS_FIND_CONNECTIONS, 1,
+								sldHotspotsDistanceFilter.getValue());
+
+				MapPositionPoints.ClearList(FilteredPositions);
+				FilteredPositions = MapPositionPoints
+						.GetFilteredPositionsPoints(
+								FilteredPositions,
+								HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON * 100,
+								25, 5, sldHotspotsDistanceFilter.getValue());
+
 				int maxPoints = MapPositionPoints.GetMaxPoints(ObjectPositions);
 
-				for (MapPositionPoints ScanPoint : ObjectPositions) {
+				for (MapPositionPoints ScanPoint : FilteredPositions) {
+					MapPositionPoints PositionWithMostPoints = ScanPoint
+							.GetPositionWithMostPoints();
+					if (PositionWithMostPoints.getNeighborsLinesToThis() == null) {
+						PositionWithMostPoints
+								.setNeighborsLinesToThis(new ArrayList<MapPositionPoints>());
+					}
+
+					PositionWithMostPoints.getNeighborsLinesToThis().add(
+							ScanPoint);
+				}
+
+				for (MapPositionPoints ScanPoint : FilteredPositions) {
 					float pointPercentage = (ScanPoint.getPoints() / (float) maxPoints);
 					Color c = new Color((int) (pointPercentage * 255),
 							255 - (int) (pointPercentage * 255), 0);
 
-					if (ScanPoint.getPoints() > sldHotspotsDistanceFilter
-							.getValue()) {
-						paintOval(
-								ScanPoint.getY(),
-								ScanPoint.getX(),
-								c,
-								(int) (pointPercentage * HOT_SPOTS_MAX_CIRCLE_SIZE),
-								g);
+					// (int) (pointPercentage * HOT_SPOTS_MAX_CIRCLE_SIZE)
+
+					MapPositionPoints PositionWithMostPoints = ScanPoint
+							.GetPositionWithMostPoints();
+
+					Point mapPosFrom = getMapPos(ScanPoint.getY(), ScanPoint
+							.getX());
+					Point mapPosTo = getMapPos(PositionWithMostPoints.getY(),
+							PositionWithMostPoints.getX());
+
+					if (ScanPoint.getNeighborsLinesToThis() != null
+							&& ScanPoint.getNeighborsLinesToThis().size() > 0) {
+						// paintOval(ScanPoint.getY(), ScanPoint.getX(), c, 5,
+						// g);
+
+						g.setColor(c);
+						g.drawLine((int) mapPosFrom.getX(), (int) mapPosFrom
+								.getY(), (int) mapPosTo.getX(), (int) mapPosTo
+								.getY());
+
 					}
 				}
 			}
@@ -639,6 +742,12 @@ public class CommunicationTest extends Applet implements Runnable,
 		// Map init center
 		mapCenter = new Point((mapPanel.getWidth() / 2),
 				(mapPanel.getHeight() / 2));
+
+		// Auto open
+		if (PRELOAD_PENEMUNXT_MAP_PATH.length() > 0) {
+			disableTimeline();
+			openData(PRELOAD_PENEMUNXT_MAP_PATH);
+		}
 
 		while (AppActive) {
 			repaint();
@@ -724,13 +833,15 @@ public class CommunicationTest extends Applet implements Runnable,
 		} else if (ae.getSource() == btnDisconnectAndStop) {
 			disconnectAndStop();
 		} else if (ae.getSource() == mnuFileOpenButton) {
-			openData();
+			openData(null);
 		} else if (ae.getSource() == mnuFileSaveButton) {
-			saveData();
+			saveData(null);
 		} else if (ae.getSource() == btnTimelinePlayPause) {
 			switchTimelineAutoPlay();
 		} else if (ae.getSource() == btnTimelineEnableDisable) {
 			switchTimelineEnabled();
+		} else if (ae.getSource() == btnTimelineRewind) {
+			rewindTimeline();
 		} else if (ae.getSource() == mnuMapClearButton) {
 			clearMap();
 		}
@@ -741,14 +852,14 @@ public class CommunicationTest extends Applet implements Runnable,
 		btnExit.setEnabled(false);
 	}
 
-	private void clearMap(){
-		if(DS!=null){
+	private void clearMap() {
+		if (DS != null) {
 			DS.NXTRobotData.clear();
 		}
 	}
-	
-	private void disconnectAndStop() {	
-		if(RC!=null){
+
+	private void disconnectAndStop() {
+		if (RC != null) {
 			RC.disconnect();
 		}
 
@@ -771,72 +882,74 @@ public class CommunicationTest extends Applet implements Runnable,
 		connectRobot();
 	}
 
-	private void openData() {
-		JFileChooser FC = new JFileChooser();
-		String filePath = "";
+	private void openData(String filePath) {
+		JFileChooser FC = new JFileChooser(DEFAULT_FOLDER_PATH);
 		FC.addChoosableFileFilter(new PenemuNXTMapFileFilter());
-		if (FC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+		if (filePath == null || filePath.length() == 0) {
+			if (FC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+				try {
+					filePath = FC.getSelectedFile().getPath();
+				} catch (Exception ex) {
+					filePath = "";
+				}
+			}
+		}
+
+		FileInputStream FIS;
+
+		if (filePath.length() > 0) {
+			XMLDecoder xdec;
+			ArrayList<RobotData> OpenedRobotData = null;
+
 			try {
-				filePath = FC.getSelectedFile().getPath();
-			} catch (Exception ex) {
-				filePath = "";
+				FIS = new FileInputStream(filePath);
+				xdec = new XMLDecoder(FIS);
+				OpenedRobotData = (ArrayList<RobotData>) xdec.readObject();
+				xdec.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				OpenedRobotData = null;
 			}
 
-			FileInputStream FIS;
-
-			if (filePath.length() > 0) {
-				XMLDecoder xdec;
-				ArrayList<RobotData> OpenedRobotData = null;
-
-				try {
-					FIS = new FileInputStream(filePath);
-					xdec = new XMLDecoder(FIS);
-					OpenedRobotData = (ArrayList<RobotData>) xdec.readObject();
-					xdec.close();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					OpenedRobotData = null;
-				}
-
-				if (OpenedRobotData != null) {
-					DS.NXTRobotData = OpenedRobotData;
-				}
+			if (OpenedRobotData != null) {
+				DS.NXTRobotData = OpenedRobotData;
 			}
 		}
 	}
 
-	private void saveData() {
-		JFileChooser FC = new JFileChooser();
-		String filePath = "";
+	private void saveData(String filePath) {
+		JFileChooser FC = new JFileChooser(DEFAULT_FOLDER_PATH);
 		FC.addChoosableFileFilter(new PenemuNXTMapFileFilter());
-		if (FC.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-			try {
-				filePath = FC.getSelectedFile().getPath();
-			} catch (Exception ex) {
-				filePath = "";
-			}
-
-			if (!filePath
-					.endsWith(PenemuNXTMapFileFilter.ALLOWED_FILE_EXTENSION)) {
-				filePath += PenemuNXTMapFileFilter.ALLOWED_FILE_EXTENSION;
-			}
-
-			System.out.println(filePath);
-
-			FileOutputStream FOS;
-
-			if (filePath.length() > 0 && DS != null && DS.NXTRobotData != null) {
+		if (filePath == null || filePath.length() == 0) {
+			if (FC.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				try {
-					FOS = new FileOutputStream(filePath);
-					XMLEncoder xenc = new XMLEncoder(FOS);
-					xenc.writeObject(DS.NXTRobotData);
-					xenc.close();
-					FOS.close();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
+					filePath = FC.getSelectedFile().getPath();
+				} catch (Exception ex) {
+					filePath = "";
 				}
+			}
+		}
+
+		if (!filePath.endsWith(PenemuNXTMapFileFilter.ALLOWED_FILE_EXTENSION)) {
+			filePath += PenemuNXTMapFileFilter.ALLOWED_FILE_EXTENSION;
+		}
+
+		System.out.println(filePath);
+
+		FileOutputStream FOS;
+
+		if (filePath.length() > 0 && DS != null && DS.NXTRobotData != null) {
+			try {
+				FOS = new FileOutputStream(filePath);
+				XMLEncoder xenc = new XMLEncoder(FOS);
+				xenc.writeObject(DS.NXTRobotData);
+				xenc.close();
+				FOS.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -893,6 +1006,7 @@ public class CommunicationTest extends Applet implements Runnable,
 		stopTimelineAutoPlay();
 		btnTimelineEnableDisable.setLabel("Disable");
 		btnTimelinePlayPause.setEnabled(true);
+		btnTimelineRewind.setEnabled(true);
 
 		sldTimelineSpeed.setEnabled(true);
 		sldTimeline.setEnabled(true);
@@ -902,10 +1016,15 @@ public class CommunicationTest extends Applet implements Runnable,
 		timelineEnabled = false;
 		btnTimelineEnableDisable.setLabel("Enable");
 		btnTimelinePlayPause.setEnabled(false);
+		btnTimelineRewind.setEnabled(false);
 
 		sldTimelineSpeed.setEnabled(false);
 		sldTimeline.setEnabled(false);
 
+	}
+
+	private void rewindTimeline() {
+		sldTimeline.setValue(sldTimeline.getMinimum());
 	}
 
 	private void switchTimelineAutoPlay() {
