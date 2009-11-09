@@ -28,6 +28,7 @@ public class USSclose implements Behavior {
 						.getHeading(), 0, 0));
 
 		simnav.rotate(90);
+		DSL.leftturnUsed();
 		DSL.alignUsed();
 	}
 
@@ -38,7 +39,7 @@ public class USSclose implements Behavior {
 
 	@Override
 	public boolean takeControl() {
-		return USS.getDistance() < 30;
+		return (USS.getDistance() < 30 && DSL.sincelastturn > 10)|| USS.getDistance() < 10;
 	}
 
 }

@@ -32,11 +32,12 @@ public class leJOSnavigation extends Thread {
 		Motor.A.rotate(90);
 		Motor.A.setSpeed(50);
 
-		Behavior b1 = (Behavior) new Forward(simnav);
-		Behavior b2 = (Behavior) new AlignWall(simnav, DSL, NXTC);
-		Behavior b3 = (Behavior) new RightCorner(simnav, DSL, NXTC);
-	    Behavior b4 = (Behavior) new USSclose(simnav, USS, NXTC, DSL);
-	    Behavior b5 = (Behavior) new Bumperclose (simnav, TS, NXTC, DSL);
+		Behavior b1 = new Forward(simnav, DSL);
+		Behavior b1_5 = new TurnRight ( simnav, DSL, NXTC);
+		Behavior b2 = new AlignWall(simnav, DSL, NXTC);
+		Behavior b3 = new RightCorner(simnav, DSL, NXTC);
+	    Behavior b4 = new USSclose(simnav, USS, NXTC, DSL);
+	    Behavior b5 = new Bumperclose (simnav, TS, NXTC, DSL);
 	    //Behavior b4 = (Behavior) new FollowWall (simnav, ODS);
 	    Behavior [] bArray = {b1, b2, b3, b4, b5};
 	    Arbitrator arby = new Arbitrator(bArray);

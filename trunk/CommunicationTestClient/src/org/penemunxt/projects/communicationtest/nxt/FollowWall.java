@@ -9,11 +9,13 @@ public class FollowWall implements Behavior {
 
 	OpticalDistanceSensor ODS;
 	SimpleNavigator simnav;
+	DataShare DS;
 	boolean active;
 
-	public FollowWall(SimpleNavigator simnav, OpticalDistanceSensor ods) {
+	public FollowWall(SimpleNavigator simnav, OpticalDistanceSensor ods, DataShare DS) {
 		this.ODS = ods;
 		this.simnav = simnav;
+		this.DS = DS;
 	}
 
 	public void action() {
@@ -31,7 +33,6 @@ public class FollowWall implements Behavior {
 			} catch (InterruptedException e) {
 			}
 		}
-
 	}
 
 	@Override
