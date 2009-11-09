@@ -1,9 +1,7 @@
-package org.penemunxt.projects.communicationtest.nxt;
-
+package org.penemunxt.projects.penemunxtexplorer.nxt;
 
 import java.util.ArrayList;
-import org.penemunxt.projects.communicationtest.RobotData;
-
+import org.penemunxt.projects.penemunxtexplorer.RobotData;
 
 public class DataShare {
 	int sincelastalign = 0;

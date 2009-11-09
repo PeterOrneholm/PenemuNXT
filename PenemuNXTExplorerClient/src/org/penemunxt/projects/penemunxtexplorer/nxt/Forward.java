@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.nxt;
+package org.penemunxt.projects.penemunxtexplorer.nxt;
 
 import lejos.robotics.navigation.SimpleNavigator;
 import lejos.robotics.subsumption.Behavior;

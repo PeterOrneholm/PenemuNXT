@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.nxt;
+package org.penemunxt.projects.penemunxtexplorer.nxt;
 
 import lejos.nxt.*;
 import lejos.nxt.addon.*;
@@ -6,9 +6,7 @@ import lejos.robotics.navigation.*;
 
 import org.penemunxt.communication.*;
 import org.penemunxt.communication.nxt.NXTDataStreamConnection;
-import org.penemunxt.projects.communicationtest.*;
-
-
+import org.penemunxt.projects.penemunxtexplorer.*;
 
 public class CommTest implements Runnable {
 	boolean Active;
