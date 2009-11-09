@@ -26,7 +26,7 @@ public class CommTest implements Runnable {
 
 		// Setup data factories
 		NXTCommunicationDataFactories DataFactories = new NXTCommunicationDataFactories(
-				new ServerMessageDataFactory(), new RobotDataFactory());
+				new ServerDataFactory(), new RobotDataFactory());
 
 		// Setup and start the communication
 		NXTC = new NXTCommunication(true, DataFactories,
@@ -49,11 +49,13 @@ public class CommTest implements Runnable {
 		
 		//Array med 10 senaste värdena
 		DataShare DSL = new DataShare();
-
+		
 		leJOSnavigation lenav = new leJOSnavigation(simnav, NXTC, ODS, DSL);
 		lenav.start();
 
 		LCD.clear();
+		
+		
 		
 		while (Active) {
 			this.Active = SMDP.Active;

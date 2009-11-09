@@ -1,6 +1,7 @@
 package org.penemunxt.projects.communicationtest.nxt;
 
 import org.penemunxt.communication.NXTCommunication;
+import org.penemunxt.projects.communicationtest.RobotData;
 
 import lejos.robotics.navigation.SimpleNavigator;
 import lejos.robotics.subsumption.Behavior;
@@ -15,33 +16,37 @@ public class RightCorner implements Behavior {
 		this.simnav = simnav;
 		this.DSL = dsl;
 		this.NXTC = nxtc;
-
 	}
 
-	@Override
 	public void action() {
-		simnav.rotate(-90);
+		DSL.lockBehaviour = true;
+		NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_RIGHT_CORNER,
+				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
+						.getHeading(), 0, 0));
 
+		simnav.rotate(-90);
+		DSL.leftturnUsed();
+		DSL.lockBehaviour = false;
 	}
 
-	@Override
 	public void suppress() {
 		simnav.stop();
-
 	}
 
-	@Override
 	public boolean takeControl() {
-		if (DSL.LatestRobotData.size() > 9) {
-			if ((DSL.LatestRobotData.get(5).getHeadDistance() - DSL.LatestRobotData
-					.get(4).getHeadDistance()) > 200
-					&& DSL.isLinear ( DSL, 5, 7) && DSL.isLinear ( DSL, 2,4)) {
-				return true;
-			} else
+		if (!DSL.lockBehaviour) {
+			if (DSL.LatestRobotData.size() > 9 && DSL.sincelastturn > 5) {
+				if ((DSL.LatestRobotData.get(4).getHeadDistance() - DSL.LatestRobotData
+						.get(6).getHeadDistance()) > 200
+						&& DSL.isLinear(DSL, 6, 9) != 0) {
+					return true;
+				} else
+					return false;
+			} else {
 				return false;
-		} else
+			}
+		} else {
 			return false;
+		}
 	}
-
-
 }
