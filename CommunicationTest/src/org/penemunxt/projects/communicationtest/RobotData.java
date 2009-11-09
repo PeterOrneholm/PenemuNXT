@@ -4,7 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import org.penemunxt.communication.*;
+import org.penemunxt.communication.INXTCommunicationData;
+import org.penemunxt.communication.NXTCommunicationData;
 
 public class RobotData extends NXTCommunicationData implements
 		INXTCommunicationData {

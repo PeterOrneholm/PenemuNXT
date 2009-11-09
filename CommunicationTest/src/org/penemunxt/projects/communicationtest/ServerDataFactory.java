@@ -1,6 +1,8 @@
 package org.penemunxt.projects.communicationtest;
 
-import org.penemunxt.communication.*;
+import org.penemunxt.communication.INXTCommunicationData;
+import org.penemunxt.communication.INXTCommunicationDataFactory;
+import org.penemunxt.communication.NXTCommunicationData;
 
 public class ServerDataFactory implements INXTCommunicationDataFactory {
 	@Override
