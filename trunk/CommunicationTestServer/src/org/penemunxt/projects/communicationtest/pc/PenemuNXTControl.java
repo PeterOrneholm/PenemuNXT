@@ -3,7 +3,6 @@ package org.penemunxt.projects.communicationtest.pc;
 import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
 import java.awt.image.*;
 import java.beans.*;
 import java.io.*;
@@ -15,13 +14,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.penemunxt.communication.*;
-import org.penemunxt.communication.pc.*;
 import org.penemunxt.graphics.pc.Icons;
 import org.penemunxt.projects.communicationtest.*;
 import org.penemunxt.projects.communicationtest.pc.connection.DataShare;
 import org.penemunxt.projects.communicationtest.pc.connection.RobotConnection;
-
-import sun.java2d.pipe.SolidTextRenderer;
 
 public class PenemuNXTControl extends Applet implements Runnable,
 		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
@@ -203,7 +199,7 @@ public class PenemuNXTControl extends Applet implements Runnable,
 		mainFrame.setSize((int) (ScreenSize.width * 0.85),
 				(int) (ScreenSize.height * 0.85));
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		if (START_FULLSCREEN) {
 			mainFrame.setUndecorated(true);
 			mainFrame.pack();
@@ -377,7 +373,7 @@ public class PenemuNXTControl extends Applet implements Runnable,
 		Label lblMapScalesHeader = new Label("Map scale");
 		lblMapScalesHeader.setFont(fntSectionHeader);
 
-		sldMapScale = new JSlider(JSlider.HORIZONTAL, MAP_MIN_SCALE,
+		sldMapScale = new JSlider(SwingConstants.HORIZONTAL, MAP_MIN_SCALE,
 				MAP_MAX_SCALE, curScale);
 		sldMapScale.setMajorTickSpacing(10);
 		sldMapScale.setMinorTickSpacing(5);
@@ -401,7 +397,7 @@ public class PenemuNXTControl extends Applet implements Runnable,
 				"Hotspots sensitivity");
 		lblHotspotsDistanceFilterHeader.setFont(fntSectionHeader);
 
-		sldHotspotsDistanceFilter = new JSlider(JSlider.HORIZONTAL,
+		sldHotspotsDistanceFilter = new JSlider(SwingConstants.HORIZONTAL,
 				HOT_SPOTS_MIN_FILTER_CONNECTIONS,
 				HOT_SPOTS_MAX_FILTER_CONNECTIONS,
 				HOT_SPOTS_DEFAULT_FILTER_CONNECTIONS);
@@ -459,7 +455,7 @@ public class PenemuNXTControl extends Applet implements Runnable,
 		lblTimelineHeader.setFont(fntSectionHeader);
 		JPanel timelineWrapperPanel = new JPanel();
 
-		sldTimeline = new JSlider(JSlider.HORIZONTAL, timelineMin, timelineMax,
+		sldTimeline = new JSlider(SwingConstants.HORIZONTAL, timelineMin, timelineMax,
 				timelineDefault);
 		sldTimeline.setPaintTicks(true);
 		sldTimeline.setPaintLabels(true);
@@ -470,7 +466,7 @@ public class PenemuNXTControl extends Applet implements Runnable,
 		Label lblTimelineSpeedHeader = new Label("Speed");
 		lblTimelineSpeedHeader.setFont(fntLabelHeader);
 
-		sldTimelineSpeed = new JSlider(JSlider.HORIZONTAL,
+		sldTimelineSpeed = new JSlider(SwingConstants.HORIZONTAL,
 				TIMELINE_PLAY_SPEED_MIN, TIMELINE_PLAY_SPEED_MAX,
 				TIMELINE_PLAY_SPEED_DEFAULT);
 		sldTimelineSpeed.setPaintTicks(false);
@@ -957,7 +953,7 @@ public class PenemuNXTControl extends Applet implements Runnable,
 	}
 
 	private Point getMapPos(int x, int y) {
-		return getMapPos(x, y, (float) (curScale * MAP_DEFAULT_SCALE_FACTOR),
+		return getMapPos(x, y, (curScale * MAP_DEFAULT_SCALE_FACTOR),
 				mapCenter.x, mapCenter.y);
 	}
 

@@ -5,7 +5,7 @@ import org.penemunxt.communication.NXTCommunicationDataFactories;
 import org.penemunxt.communication.NXTConnectionModes;
 import org.penemunxt.communication.pc.PCDataStreamConnection;
 import org.penemunxt.projects.communicationtest.RobotDataFactory;
-import org.penemunxt.projects.communicationtest.ServerMessageDataFactory;
+import org.penemunxt.projects.communicationtest.ServerDataFactory;
 
 public class RobotConnection extends Thread implements Runnable {
 	private boolean connectionActive;
@@ -36,12 +36,13 @@ public class RobotConnection extends Thread implements Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 		connectionActive = true;
 
 		// Setup data factories
 		NXTCommunicationDataFactories DataFactories = new NXTCommunicationDataFactories(
-				new RobotDataFactory(), new ServerMessageDataFactory());
+				new RobotDataFactory(), new ServerDataFactory());
 
 		// Setup and start the communication
 		PCDataStreamConnection CPDSC = new PCDataStreamConnection();

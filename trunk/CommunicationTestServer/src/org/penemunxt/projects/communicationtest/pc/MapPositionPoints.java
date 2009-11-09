@@ -100,9 +100,9 @@ public class MapPositionPoints {
 
 			for (MapPositionPoints ScanPoint : UnfilteredPositions) {
 				if (ScanPoint != MPP) {
-					int distanceSq = (int) Point2D.distanceSq((int) MPP.getX(),
-							(int) MPP.getY(), (int) ScanPoint.getX(),
-							(int) ScanPoint.getY());
+					int distanceSq = (int) Point2D.distanceSq(MPP.getX(),
+							MPP.getY(), ScanPoint.getX(),
+							ScanPoint.getY());
 
 					if (distanceSq < maxDistanceSq) {
 						if (MPP.ClosestNeighbors.size() < findConnections) {
