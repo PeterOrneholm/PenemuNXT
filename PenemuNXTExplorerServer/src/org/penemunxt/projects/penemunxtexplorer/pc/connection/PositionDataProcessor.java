@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.pc.connection;
+package org.penemunxt.projects.penemunxtexplorer.pc.connection;
 
 import org.penemunxt.communication.*;
 import org.penemunxt.projects.communicationtest.*;

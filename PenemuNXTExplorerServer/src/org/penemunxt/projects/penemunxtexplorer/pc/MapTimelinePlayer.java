@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.pc;
+package org.penemunxt.projects.penemunxtexplorer.pc;
 
 import javax.swing.JSlider;
 

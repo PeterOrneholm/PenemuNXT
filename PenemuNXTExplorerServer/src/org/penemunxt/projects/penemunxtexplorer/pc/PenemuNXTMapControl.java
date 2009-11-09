@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.pc;
+package org.penemunxt.projects.penemunxtexplorer.pc;
 
 import java.applet.Applet;
 import java.awt.*;
@@ -16,15 +16,15 @@ import javax.swing.event.ChangeListener;
 import org.penemunxt.communication.*;
 import org.penemunxt.graphics.pc.Icons;
 import org.penemunxt.projects.communicationtest.*;
-import org.penemunxt.projects.communicationtest.pc.connection.DataShare;
-import org.penemunxt.projects.communicationtest.pc.connection.RobotConnection;
+import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
+import org.penemunxt.projects.penemunxtexplorer.pc.connection.RobotConnection;
 
 public class PenemuNXTMapControl extends Applet implements Runnable,
 		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
 		MouseListener, MouseMotionListener {
 
 	// Constants
-	final static String APPLICATION_NAME = "PenemuNXT";
+	final static String APPLICATION_NAME = "PenemuNXT Explorer";
 	final static String APPLICATION_ICON_NAME = "PenemuNXT_Circle_Logo_Icon_16x16.png";
 
 	final static String DEFAULT_FOLDER_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
