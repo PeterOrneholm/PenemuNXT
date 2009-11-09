@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.pc;
+package org.penemunxt.projects.penemunxtexplorer.pc;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
