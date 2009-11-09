@@ -1,6 +1,5 @@
 package org.penemunxt.communication;
 
-
 public class NXTDataProcessor extends Thread {
 	public boolean Active;
 	NXTCommunication NXTC;
@@ -34,12 +33,14 @@ public class NXTDataProcessor extends Thread {
 	public void run() {
 		// Handle retrieved data
 		while (this.isActive()) {
-			INXTCommunicationData DataItem = NXTC
-					.getDataRetrievedQueue().getAndDeleteNextItem();
+			INXTCommunicationData DataItem = NXTC.getDataRetrievedQueue()
+					.getAndDeleteNextItem();
 
-			if (DataItem != null) {
+			if (DataItem != null && NXTC != null) {
 				if (DataItem.getMainStatus() == NXTCommunicationData.MAIN_STATUS_SHUT_DOWN) {
-					this.NXTC.getDataSendQueue().add(DataFactories.getDataOutFactory().getEmptyIsShuttingDownInstance());
+					this.NXTC.getDataSendQueue().add(
+							DataFactories.getDataOutFactory()
+									.getEmptyIsShuttingDownInstance());
 					this.setActive(false);
 				} else if (DataItem.getMainStatus() == NXTCommunicationData.MAIN_STATUS_SHUTTING_DOWN) {
 					this.setActive(false);
@@ -51,8 +52,9 @@ public class NXTDataProcessor extends Thread {
 			Thread.yield();
 		}
 	}
-	
-	public void ProcessItem(INXTCommunicationData dataItem, NXTCommunication NXTComm){
-		//Override by sub
+
+	public void ProcessItem(INXTCommunicationData dataItem,
+			NXTCommunication NXTComm) {
+		// Override by sub
 	}
 }
