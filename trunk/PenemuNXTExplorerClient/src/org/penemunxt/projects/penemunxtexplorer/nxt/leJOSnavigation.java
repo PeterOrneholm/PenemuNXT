@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.nxt;
+package org.penemunxt.projects.penemunxtexplorer.nxt;
 import org.penemunxt.communication.NXTCommunication;
 
 import lejos.robotics.navigation.*;

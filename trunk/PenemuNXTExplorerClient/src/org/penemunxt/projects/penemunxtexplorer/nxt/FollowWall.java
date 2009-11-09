@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest.nxt;
+package org.penemunxt.projects.penemunxtexplorer.nxt;
 
 import lejos.nxt.Motor;
 import lejos.nxt.addon.OpticalDistanceSensor;
