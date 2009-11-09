@@ -1,7 +1,7 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.connection;
 
 import org.penemunxt.communication.*;
-import org.penemunxt.projects.communicationtest.*;
+import org.penemunxt.projects.penemunxtexplorer.*;
 
 public class PositionDataProcessor extends NXTDataProcessor {
 	DataShare DS;

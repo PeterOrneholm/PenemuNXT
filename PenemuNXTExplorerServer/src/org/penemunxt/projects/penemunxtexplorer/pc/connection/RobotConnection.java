@@ -4,8 +4,7 @@ import org.penemunxt.communication.NXTCommunication;
 import org.penemunxt.communication.NXTCommunicationDataFactories;
 import org.penemunxt.communication.NXTConnectionModes;
 import org.penemunxt.communication.pc.PCDataStreamConnection;
-import org.penemunxt.projects.communicationtest.RobotDataFactory;
-import org.penemunxt.projects.communicationtest.ServerDataFactory;
+import org.penemunxt.projects.penemunxtexplorer.*;
 
 public class RobotConnection extends Thread implements Runnable {
 	private boolean connectionActive;
