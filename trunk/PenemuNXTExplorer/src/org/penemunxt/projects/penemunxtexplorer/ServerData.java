@@ -1,4 +1,4 @@
-package org.penemunxt.projects.communicationtest;
+package org.penemunxt.projects.penemunxtexplorer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
