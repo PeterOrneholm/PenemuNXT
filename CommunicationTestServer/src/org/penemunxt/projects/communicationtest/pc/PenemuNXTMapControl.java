@@ -19,7 +19,7 @@ import org.penemunxt.projects.communicationtest.*;
 import org.penemunxt.projects.communicationtest.pc.connection.DataShare;
 import org.penemunxt.projects.communicationtest.pc.connection.RobotConnection;
 
-public class PenemuNXTControl extends Applet implements Runnable,
+public class PenemuNXTMapControl extends Applet implements Runnable,
 		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
 		MouseListener, MouseMotionListener {
 
@@ -178,14 +178,14 @@ public class PenemuNXTControl extends Applet implements Runnable,
 		t.start();
 	}
 
-	public PenemuNXTControl() {
+	public PenemuNXTMapControl() {
 		AppActive = true;
 		this.setLayout(new BorderLayout());
 		this.add(getContentPanel(), BorderLayout.CENTER);
 	}
 
 	private static void createAndShowGUI() {
-		PenemuNXTControl PCCT = new PenemuNXTControl();
+		PenemuNXTMapControl PCCT = new PenemuNXTMapControl();
 
 		JFrame mainFrame = new JFrame(APPLICATION_NAME);
 		mainFrame.addWindowListener(PCCT);
