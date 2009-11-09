@@ -4,10 +4,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import org.penemunxt.projects.communicationtest.ServerMessageData;
+import org.penemunxt.projects.communicationtest.ServerData;
 import org.penemunxt.communication.*;
 
-public class ServerMessageData extends NXTCommunicationData implements
+public class ServerData extends NXTCommunicationData implements
 		INXTCommunicationData {
 
 	/* Read / Write */
@@ -29,20 +29,20 @@ public class ServerMessageData extends NXTCommunicationData implements
 
 	/* Constructors */
 
-	public ServerMessageData(int message) {
+	public ServerData(int message) {
 		this();
 	}
 
-	public ServerMessageData(int MainStatus, int DataStatus,
+	public ServerData(int MainStatus, int DataStatus,
 			boolean IsPrioritated) {
 		super(MainStatus, DataStatus, IsPrioritated);
 	}
 
-	public ServerMessageData(int MainStatus, int DataStatus) {
+	public ServerData(int MainStatus, int DataStatus) {
 		super(MainStatus, DataStatus);
 	}
 
-	public ServerMessageData() {
+	public ServerData() {
 		super();
 	}
 }
