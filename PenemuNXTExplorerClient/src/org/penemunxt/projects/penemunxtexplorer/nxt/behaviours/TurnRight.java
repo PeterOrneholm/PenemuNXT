@@ -1,6 +1,7 @@
-package org.penemunxt.projects.penemunxtexplorer.nxt;
+package org.penemunxt.projects.penemunxtexplorer.nxt.behaviours;
 
 import org.penemunxt.communication.NXTCommunication;
+import org.penemunxt.projects.penemunxtexplorer.nxt.DataShare;
 
 import lejos.robotics.navigation.SimpleNavigator;
 import lejos.robotics.subsumption.Behavior;

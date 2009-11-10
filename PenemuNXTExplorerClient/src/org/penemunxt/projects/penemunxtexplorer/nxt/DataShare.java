@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 
 public class DataShare {
-	int sincelastalign = 0;
-	int sincelastturn = 0;
+	public int sincelastalign = 0;
+	public int sincelastturn = 0;
 	public boolean lockBehaviour;
 	public ArrayList<RobotData> LatestRobotData;
 
