@@ -12,7 +12,6 @@ public class PNXTExplorer implements Runnable {
 	boolean Active;
 	NXTCommunication NXTC;
 
-
 	public static void main(String[] args) {
 		PNXTExplorer NXTCT = new PNXTExplorer();
 		NXTCT.run();
@@ -35,36 +34,33 @@ public class PNXTExplorer implements Runnable {
 		ServerMessageDataProcessor SMDP = new ServerMessageDataProcessor(NXTC,
 				DataFactories);
 		SMDP.start();
-		//Sensors
-		
+		// Sensors
+
 		OpticalDistanceSensor ODS = new OpticalDistanceSensor(SensorPort.S1);
-		
+
 		// Navigation
 		CompassPilot compil = new CompassPilot(
 				new CompassSensor(SensorPort.S2), 49, 125, Motor.C, Motor.B);
 		TachoPilot tacho = new TachoPilot(49, 125, Motor.C, Motor.B);
 		SimpleNavigator simnav = new SimpleNavigator(tacho);
-		
-		//Array med 10 senaste värdena
+
 		DataShare DSL = new DataShare();
-		
-		leJOSnavigation lenav = new leJOSnavigation(simnav, NXTC, ODS, DSL);
+
+		ExplorerNavigator lenav = new ExplorerNavigator(simnav, NXTC, ODS, DSL);
 		lenav.start();
 
 		LCD.clear();
-		
-		
-		
+
 		while (Active) {
 			this.Active = SMDP.Active;
 
 			LCD.clear();
 
-			LCD.drawString("CommTestClient", 1, 1);
-			LCD.drawString("LSO: " + NXTC.getDataSendQueue().getQueueSize(), 1,
+			LCD.drawString("PenemuNXT", 1, 1);
+			LCD.drawString("Out: " + NXTC.getDataSendQueue().getQueueSize(), 1,
 					3);
-			LCD.drawString("LSI: "
-					+ NXTC.getDataRetrievedQueue().getQueueSize(), 1, 4);
+			LCD.drawString(
+					"In: " + NXTC.getDataRetrievedQueue().getQueueSize(), 1, 4);
 
 			LCD.refresh();
 
@@ -75,17 +71,17 @@ public class PNXTExplorer implements Runnable {
 			simnav.updatePosition();
 			RobotData RD = new RobotData(RobotData.POSITION_TYPE_DRIVE,
 					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-					.getHeading(), ODS.getDistance(), Motor.A.getTachoCount());
-			
+							.getHeading(), ODS.getDistance(), Motor.A
+							.getTachoCount());
+
 			NXTC.sendData(RD);
-			
+
 			RobotData RDL = new RobotData(RobotData.POSITION_TYPE_DRIVE,
 					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-					.getHeading(), ODS.getDistance(), Motor.A.getTachoCount());
-			
-			
+							.getHeading(), ODS.getDistance(), Motor.A
+							.getTachoCount());
+
 			DSL.addRobotData(RDL);
-			
 
 			try {
 				Thread.sleep(100);
@@ -98,5 +94,3 @@ public class PNXTExplorer implements Runnable {
 		System.exit(0);
 	}
 }
-
-
