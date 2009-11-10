@@ -31,7 +31,7 @@ public class PNXTExplorer implements Runnable {
 		NXTC.ConnectAndStartAll(NXTConnectionModes.Bluetooth);
 
 		// Setup a data processor
-		ServerMessageDataProcessor SMDP = new ServerMessageDataProcessor(NXTC,
+		ServerDataProcessor SMDP = new ServerDataProcessor(NXTC,
 				DataFactories);
 		SMDP.start();
 		// Sensors
