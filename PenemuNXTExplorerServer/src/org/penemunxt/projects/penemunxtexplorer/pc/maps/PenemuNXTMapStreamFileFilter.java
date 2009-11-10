@@ -1,11 +1,12 @@
-package org.penemunxt.projects.penemunxtexplorer.pc;
+package org.penemunxt.projects.penemunxtexplorer.pc.maps;
 
 import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
-public class PenemuNXTMapFileFilter extends FileFilter {
+public class PenemuNXTMapStreamFileFilter extends FileFilter {
 	public final static String ALLOWED_FILE_EXTENSION = ".penemunxtmap";
+	public final static String DESCRIPTION = "PenemuNXT Stream Map (*" + ALLOWED_FILE_EXTENSION + ")";
 
 	@Override
 	public boolean accept(File f) {
@@ -20,6 +21,6 @@ public class PenemuNXTMapFileFilter extends FileFilter {
 
 	@Override
 	public String getDescription() {
-		return "PenemuNXT Map (*" + ALLOWED_FILE_EXTENSION + ")";
+		return DESCRIPTION;
 	}
 }
