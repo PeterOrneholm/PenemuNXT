@@ -1,6 +1,6 @@
 package org.penemunxt.projects.penemunxtexplorer.nxt.behaviours;
 
-import org.penemunxt.projects.penemunxtexplorer.nxt.DataShare;
+import org.penemunxt.projects.penemunxtexplorer.nxt.connection.DataShare;
 
 import lejos.nxt.Motor;
 import lejos.nxt.addon.OpticalDistanceSensor;
