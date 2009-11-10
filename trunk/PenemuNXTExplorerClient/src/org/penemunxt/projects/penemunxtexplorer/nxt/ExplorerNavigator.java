@@ -34,7 +34,7 @@ public class ExplorerNavigator extends Thread {
 		TouchSensor TS = new TouchSensor(SensorPort.S4);
 		
 		simnav.setTurnSpeed(30);
-		simnav.setMoveSpeed(350);
+		simnav.setMoveSpeed(50);
 		
 		Motor.A.rotate(90);
 		Motor.A.setSpeed(50);
