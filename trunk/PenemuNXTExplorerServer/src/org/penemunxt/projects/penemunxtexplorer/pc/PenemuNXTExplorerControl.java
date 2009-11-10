@@ -25,7 +25,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	// Constants
 	final static String APPLICATION_NAME = "PenemuNXT";
-	final static String APPLICATION_ICON_NAME = "PenemuNXT_Circle_Logo_Icon_16x16.png";
 
 	final static String DEFAULT_FOLDER_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
 	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
@@ -34,7 +33,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static int OPTICAL_DISTANCE_MAX_LENGTH_MM = 1500;
 
 	final static int PANEL_MARGIN = 15;
-	
+
 	final static Color DEFAULT_PANEL_BACKGROUND_COLOR = new Color(197, 209, 215);
 	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
 	final static Color VIEW_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
@@ -86,7 +85,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static String CONNECT_TO_NAME_DEFAULT = "NXT";
 	final static String CONNECT_TO_ADDRESS_DEFAULT = "0016530A9000";
 
-	final static Boolean START_FULLSCREEN = false;
+	final static Boolean START_FULLSCREEN = true;
 
 	// Menu
 	JMenuItem mnuFileOpenButton;
@@ -191,8 +190,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		mainFrame.addWindowListener(PCCT);
 		mainFrame.add(PCCT);
 
-		URL iconURL = Icons.class.getResource(APPLICATION_ICON_NAME);
-		mainFrame.setIconImage(new ImageIcon(iconURL).getImage());
+		mainFrame.setIconImage(Icons.PENEMUNXT_CIRCLE_LOGO_ICON_16_X_16_ICON
+				.getImage());
 
 		mainFrame.setBackground(Color.WHITE);
 		Dimension ScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -251,15 +250,11 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		// Menu bar
 		JMenuBar mnuMainBar = new JMenuBar();
 
-		// Icon
-		URL iconURL = Icons.class.getResource(APPLICATION_ICON_NAME);
-		ImageIcon appIcon = new ImageIcon(iconURL);
-		
 		// Menus
 		JMenu mnuFileMenu = new JMenu("File");
-		
+
 		// File menu
-		mnuFileMenu.setIcon(appIcon);
+		mnuFileMenu.setIcon(Icons.PENEMUNXT_CIRCLE_LOGO_ICON_16_X_16_ICON);
 
 		mnuFileOpenButton = new JMenuItem("Open File...");
 		mnuFileOpenButton.addActionListener(this);
@@ -303,6 +298,15 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		Label lblHeader = new Label(APPLICATION_NAME, Label.CENTER);
 		lblHeader.setFont(fntMainHeader);
 
+		// Image logo
+		JPanel logoPanel = new JPanel(new BorderLayout());
+		JLabel lblLogo = new JLabel("", Icons.PENEMUNXT_LOGO_LANDSCAPE_ICON,
+				JLabel.CENTER);
+
+		logoPanel.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
+		logoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+		logoPanel.add(lblLogo, BorderLayout.CENTER);
+
 		// Exit
 		btnExit = new Button("Exit");
 		btnExit.addActionListener(this);
@@ -314,13 +318,13 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 		Label lblConnectionMode = new Label("Mode:");
 		lblConnectionMode.setFont(fntLabelHeader);
-		
+
 		Label lblConnectionNXTName = new Label("NXT name:");
 		lblConnectionNXTName.setFont(fntLabelHeader);
-		
+
 		Label lblConnectionNXTAddress = new Label("NXT address:");
 		lblConnectionNXTAddress.setFont(fntLabelHeader);
-		
+
 		cboConnectionTypes = new JComboBox(CONNECTION_MODES_NAMES);
 		cboConnectionTypes.setSelectedIndex(CONNECTION_MODES_INIT_SELECTED);
 
@@ -455,8 +459,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		lblTimelineHeader.setFont(fntSectionHeader);
 		JPanel timelineWrapperPanel = new JPanel();
 
-		sldTimeline = new JSlider(SwingConstants.HORIZONTAL, timelineMin, timelineMax,
-				timelineDefault);
+		sldTimeline = new JSlider(SwingConstants.HORIZONTAL, timelineMin,
+				timelineMax, timelineDefault);
 		sldTimeline.setPaintTicks(true);
 		sldTimeline.setPaintLabels(true);
 		sldTimeline.addChangeListener(this);
@@ -487,7 +491,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 		// Control panel
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-		controlPanel.add(lblHeader);
+		// controlPanel.add(lblHeader);
+		controlPanel.add(logoPanel);
 
 		controlPanel.add(btnExit);
 
@@ -518,8 +523,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		timelinePanel.add(sldTimeline);
 
 		// Bottom panel
-		bottomPanel.setBorder(BorderFactory.createEmptyBorder(0,
-				PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN));
+		bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, PANEL_MARGIN,
+				PANEL_MARGIN, PANEL_MARGIN));
 		bottomPanel.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
 		bottomPanel.setLayout(new BorderLayout());
 		bottomPanel.add(timelinePanel, BorderLayout.CENTER);
@@ -590,87 +595,93 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 					break;
 				}
 				RobotData RD = DS.NXTRobotData.get(i);
+				if (RD != null) {
+					int circleSize;
+					Color circleColor;
+					boolean circleShow;
 
-				int circleSize;
-				Color circleColor;
-				boolean circleShow;
+					switch (RD.getType()) {
+					case RobotData.POSITION_TYPE_DRIVE:
+						circleColor = DRIVING_PATH_CIRCLE_COLOR;
+						circleShow = chkShowDrivingPath.getState();
+						circleSize = DRIVING_PATH_CIRCLE_SIZE;
+						break;
+					case RobotData.POSITION_TYPE_BUMP_BUMPER:
+						circleColor = BUMPING_BUMPER_CIRCLE_COLOR;
+						circleShow = chkShowBumpingPositions.getState();
+						circleSize = BUMPING_BUMPER_CIRCLE_SIZE;
+						break;
+					case RobotData.POSITION_TYPE_BUMP_DISTANCE:
+						circleColor = BUMPING_DISTANCE_CIRCLE_COLOR;
+						circleShow = chkShowBumpingPositions.getState();
+						circleSize = BUMPING_DISTANCE_CIRCLE_SIZE;
+						break;
+					case RobotData.POSITION_TYPE_ALIGNED:
+						circleColor = ALIGNED_TO_WALL_CIRCLE_COLOR;
+						circleShow = chkShowAlignedToWall.getState();
+						circleSize = ALIGNED_TO_WALL_CIRCLE_SIZE;
+						break;
+					default:
+						circleColor = DEFAULT_CIRCLE_COLOR;
+						circleShow = false;
+						circleSize = 2;
+						break;
+					}
 
-				switch (RD.getType()) {
-				case RobotData.POSITION_TYPE_DRIVE:
-					circleColor = DRIVING_PATH_CIRCLE_COLOR;
-					circleShow = chkShowDrivingPath.getState();
-					circleSize = DRIVING_PATH_CIRCLE_SIZE;
-					break;
-				case RobotData.POSITION_TYPE_BUMP_BUMPER:
-					circleColor = BUMPING_BUMPER_CIRCLE_COLOR;
-					circleShow = chkShowBumpingPositions.getState();
-					circleSize = BUMPING_BUMPER_CIRCLE_SIZE;
-					break;
-				case RobotData.POSITION_TYPE_BUMP_DISTANCE:
-					circleColor = BUMPING_DISTANCE_CIRCLE_COLOR;
-					circleShow = chkShowBumpingPositions.getState();
-					circleSize = BUMPING_DISTANCE_CIRCLE_SIZE;
-					break;
-				case RobotData.POSITION_TYPE_ALIGNED:
-					circleColor = ALIGNED_TO_WALL_CIRCLE_COLOR;
-					circleShow = chkShowAlignedToWall.getState();
-					circleSize = ALIGNED_TO_WALL_CIRCLE_SIZE;
-					break;
-				default:
-					circleColor = DEFAULT_CIRCLE_COLOR;
-					circleShow = false;
-					circleSize = 2;
-					break;
-				}
+					if (circleShow) {
+						paintOval(RD.getPosY(), RD.getPosX(), circleColor,
+								circleSize, g);
+					}
 
-				if (circleShow) {
-					paintOval(RD.getPosY(), RD.getPosX(), circleColor,
-							circleSize, g);
-				}
+					if (chkShowHeadMap.getState() || chkShowHotspots.getState()) {
+						Point HeadMapPos = getHeadingPos(RD.getPosX(), RD
+								.getPosY(), (-RD.getHeadHeading() + RD
+								.getRobotHeading()), RD.getHeadDistance());
+						if (RD.getHeadDistance() > OPTICAL_DISTANCE_MIN_LENGTH_MM
+								&& RD.getHeadDistance() < OPTICAL_DISTANCE_MAX_LENGTH_MM) {
+							if (chkShowHotspots.getState()) {
+								ObjectPositions.add(new MapPositionPoints(0,
+										(int) HeadMapPos.getX(),
+										(int) HeadMapPos.getY()));
+							}
 
-				if (chkShowHeadMap.getState() || chkShowHotspots.getState()) {
-					Point HeadMapPos = getHeadingPos(RD.getPosX(),
-							RD.getPosY(), (-RD.getHeadHeading() + RD
-									.getRobotHeading()), RD.getHeadDistance());
-					if (RD.getHeadDistance() > OPTICAL_DISTANCE_MIN_LENGTH_MM
-							&& RD.getHeadDistance() < OPTICAL_DISTANCE_MAX_LENGTH_MM) {
-						if (chkShowHotspots.getState()) {
-							ObjectPositions.add(new MapPositionPoints(0,
-									(int) HeadMapPos.getX(), (int) HeadMapPos
-											.getY()));
-						}
-
-						if (chkShowHeadMap.getState()) {
-							paintOval((int) HeadMapPos.getY(), (int) HeadMapPos
-									.getX(), HEAD_MAP_CIRCLE_COLOR,
-									HEAD_MAP_CIRCLE_SIZE, g);
+							if (chkShowHeadMap.getState()) {
+								paintOval((int) HeadMapPos.getY(),
+										(int) HeadMapPos.getX(),
+										HEAD_MAP_CIRCLE_COLOR,
+										HEAD_MAP_CIRCLE_SIZE, g);
+							}
 						}
 					}
 				}
-
 			}
 
 			if (DS.NXTRobotData.size() > 0) {
 				RobotData RD = DS.NXTRobotData.get(Math.max(sldTimeline
 						.getValue() - 1, 0));
 
-				if (chkShowLatestPos.getState()) {
-					Color circleColor;
-					if (DS.NXTRobotData.size() % 2 == 0) {
-						circleColor = LATEST_POS_CIRCLE_COLOR;
-					} else {
-						circleColor = Color.WHITE;
+				if (RD != null) {
+					if (chkShowLatestPos.getState()) {
+						Color circleColor;
+						if (DS.NXTRobotData.size() % 2 == 0) {
+							circleColor = LATEST_POS_CIRCLE_COLOR;
+						} else {
+							circleColor = Color.WHITE;
+						}
+						paintOval(RD.getPosY(), RD.getPosX(), circleColor,
+								LATEST_POS_CIRCLE_SIZE, g);
 					}
-					paintOval(RD.getPosY(), RD.getPosX(), circleColor,
-							LATEST_POS_CIRCLE_SIZE, g);
-				}
 
-				// Update texts
-				lblRDX.setText(String.valueOf(RD.getPosX()));
-				lblRDY.setText(String.valueOf(RD.getPosY()));
-				lblRDRobotHeading.setText(String.valueOf(RD.getRobotHeading()));
-				lblRDHeadDistance.setText(String.valueOf(RD.getHeadDistance()));
-				lblRDHeadHeading.setText(String.valueOf(RD.getHeadHeading()));
+					// Update texts
+					lblRDX.setText(String.valueOf(RD.getPosX()));
+					lblRDY.setText(String.valueOf(RD.getPosY()));
+					lblRDRobotHeading.setText(String.valueOf(RD
+							.getRobotHeading()));
+					lblRDHeadDistance.setText(String.valueOf(RD
+							.getHeadDistance()));
+					lblRDHeadHeading.setText(String
+							.valueOf(RD.getHeadHeading()));
+				}
 			}
 
 			if (ObjectPositions != null && chkShowHotspots.getState()) {
