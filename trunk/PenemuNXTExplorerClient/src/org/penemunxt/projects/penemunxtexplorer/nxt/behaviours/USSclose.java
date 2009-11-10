@@ -2,7 +2,7 @@ package org.penemunxt.projects.penemunxtexplorer.nxt.behaviours;
 
 import org.penemunxt.communication.NXTCommunication;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
-import org.penemunxt.projects.penemunxtexplorer.nxt.DataShare;
+import org.penemunxt.projects.penemunxtexplorer.nxt.connection.DataShare;
 
 import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.navigation.SimpleNavigator;

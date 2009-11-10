@@ -6,6 +6,7 @@ import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.Forward;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.RightCorner;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.TurnRight;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.USSclose;
+import org.penemunxt.projects.penemunxtexplorer.nxt.connection.DataShare;
 
 import lejos.robotics.navigation.*;
 import lejos.nxt.*;

@@ -1,4 +1,4 @@
-package org.penemunxt.projects.penemunxtexplorer.nxt;
+package org.penemunxt.projects.penemunxtexplorer.nxt.connection;
 
 import java.util.ArrayList;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;

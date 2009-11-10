@@ -7,6 +7,8 @@ import lejos.robotics.navigation.*;
 import org.penemunxt.communication.*;
 import org.penemunxt.communication.nxt.NXTDataStreamConnection;
 import org.penemunxt.projects.penemunxtexplorer.*;
+import org.penemunxt.projects.penemunxtexplorer.nxt.connection.DataShare;
+import org.penemunxt.projects.penemunxtexplorer.nxt.connection.ServerDataProcessor;
 
 public class PNXTExplorer implements Runnable {
 	boolean Active;

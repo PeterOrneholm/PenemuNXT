@@ -1,4 +1,4 @@
-package org.penemunxt.projects.penemunxtexplorer.nxt;
+package org.penemunxt.projects.penemunxtexplorer.nxt.connection;
 
 import org.penemunxt.communication.INXTCommunicationData;
 import org.penemunxt.communication.INXTCommunicationDataFactories;
