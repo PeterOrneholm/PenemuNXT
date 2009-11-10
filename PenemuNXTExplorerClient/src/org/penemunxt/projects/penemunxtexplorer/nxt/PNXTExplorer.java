@@ -8,13 +8,13 @@ import org.penemunxt.communication.*;
 import org.penemunxt.communication.nxt.NXTDataStreamConnection;
 import org.penemunxt.projects.penemunxtexplorer.*;
 
-public class CommTest implements Runnable {
+public class PNXTExplorer implements Runnable {
 	boolean Active;
 	NXTCommunication NXTC;
 
 
 	public static void main(String[] args) {
-		CommTest NXTCT = new CommTest();
+		PNXTExplorer NXTCT = new PNXTExplorer();
 		NXTCT.run();
 	}
 
