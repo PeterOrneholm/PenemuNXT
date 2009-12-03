@@ -1,4 +1,4 @@
-package org.penemunxt.projects.penemunxtexplorer.pc.maps;
+package org.penemunxt.projects.penemunxtexplorer.pc.map;
 
 import java.io.File;
 

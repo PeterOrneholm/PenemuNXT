@@ -16,7 +16,7 @@ import org.penemunxt.communication.*;
 import org.penemunxt.graphics.pc.*;
 import org.penemunxt.projects.penemunxtexplorer.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
-import org.penemunxt.projects.penemunxtexplorer.pc.maps.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
 
 public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
@@ -36,8 +36,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	// // Maps
 	final static String DEFAULT_FOLDER_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
-	//final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
-	final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
+	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
+	// final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
 
 	// //Events and Algorithms basics
 	final static boolean LATEST_POS_SHOW_DEFAULT = true;
@@ -563,7 +563,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		// controlPanel.add(lblHeader);
 		controlPanel.add(logoPanel);
-
 		// controlPanel.add(btnExit);
 
 		controlPanel.add(lblConnectionHeader);
@@ -849,6 +848,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 		while (AppActive) {
 			repaint();
+
 			sldMapScale.setValue(curScale);
 
 			if (DS != null && DS.NXTRobotData != null
@@ -1208,8 +1208,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	private void startTimelineAutoPlay() {
 		stopTimelineAutoPlay();
-		
-		if(sldTimeline.getValue()==sldTimeline.getMaximum()){
+
+		if (sldTimeline.getValue() == sldTimeline.getMaximum()) {
 			sldTimeline.setValue(sldTimeline.getMinimum());
 		}
 
