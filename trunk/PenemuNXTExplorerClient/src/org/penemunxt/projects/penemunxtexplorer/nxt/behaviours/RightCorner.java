@@ -11,6 +11,17 @@ public class RightCorner implements Behavior {
 	SimpleNavigator simnav;
 	DataShare DSL;
 	NXTCommunication NXTC;
+	
+	final int MIN_NUMBER_OF_VALUES = 15;
+	final int SINCELASTALIGN_THRESHOLD = 5;
+	
+	final int CORNER_STARTING_VALUE = 6;
+	final int CORNER_ENDING_VALUE = 8;
+	
+	final int SCAN_DIF_MIN = 200;
+	
+	final int OLD_WALL_STARTING_VALUE = 8;
+	final int OLD_WALL_ENDING_VALUE = 12;
 
 	public RightCorner(SimpleNavigator simnav, DataShare dsl,
 			NXTCommunication nxtc) {
@@ -36,10 +47,10 @@ public class RightCorner implements Behavior {
 
 	public boolean takeControl() {
 		if (!DSL.lockBehaviour) {
-			if (DSL.LatestRobotData.size() > 9 && DSL.sincelastturn > 5) {
-				if ((DSL.LatestRobotData.get(4).getHeadDistance() - DSL.LatestRobotData
-						.get(6).getHeadDistance()) > 200
-						&& DSL.isLinear(DSL, 6, 9) != 0) {
+			if (DSL.LatestRobotData.size() > MIN_NUMBER_OF_VALUES && DSL.sincelastturn > SINCELASTALIGN_THRESHOLD) {
+				if ((DSL.LatestRobotData.get(CORNER_STARTING_VALUE).getHeadDistance() - DSL.LatestRobotData
+						.get(CORNER_ENDING_VALUE).getHeadDistance()) > SCAN_DIF_MIN
+						&& DSL.isLinear(DSL, OLD_WALL_STARTING_VALUE, OLD_WALL_ENDING_VALUE) != 0) {
 					return true;
 				} else
 					return false;

@@ -4,6 +4,7 @@ import org.penemunxt.communication.NXTCommunication;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.nxt.connection.DataShare;
 
+import lejos.nxt.Motor;
 import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.navigation.SimpleNavigator;
 import lejos.robotics.subsumption.Behavior;
@@ -13,6 +14,10 @@ public class USSclose implements Behavior {
 	UltrasonicSensor USS;
 	NXTCommunication NXTC;
 	DataShare DSL;
+	
+	final int DISTANCE_THRESHOLD = 30;
+	
+	final int NUMBER_OF_VALUES = 10;
 
 	public USSclose(SimpleNavigator simnav, UltrasonicSensor USS,
 			NXTCommunication NXTC, DataShare dsl) {
@@ -28,7 +33,30 @@ public class USSclose implements Behavior {
 				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 						.getHeading(), 0, 0));
 
-		simnav.rotate(90);
+		Motor.A.rotate(-90);
+		
+		boolean isgrowing = false;
+		int shortestdist = 1000;
+		int shortestdistangle = 0;
+		
+		for (int x = NUMBER_OF_VALUES; x > 0; x--) {
+			if (DSL.LatestRobotData.get(x).getHeadDistance()
+					- DSL.LatestRobotData.get(x - 1).getHeadDistance() > 0) {
+				isgrowing = true;
+			}
+			
+			if (isgrowing) {
+				if ( DSL.LatestRobotData.get(x).getHeadDistance() < shortestdist){
+					shortestdist = DSL.LatestRobotData.get(x).getHeadDistance();
+					shortestdistangle = DSL.LatestRobotData.get(x).getHeadHeading();
+				}	
+			}
+		}
+		
+		Motor.A.rotate(90);
+		simnav.rotate(90-shortestdistangle);
+		
+		
 		DSL.leftturnUsed();
 		DSL.alignUsed();
 	}
@@ -40,7 +68,7 @@ public class USSclose implements Behavior {
 
 	@Override
 	public boolean takeControl() {
-		return (USS.getDistance() < 30);
+		return (USS.getDistance() < DISTANCE_THRESHOLD);
 	}
 
 }
