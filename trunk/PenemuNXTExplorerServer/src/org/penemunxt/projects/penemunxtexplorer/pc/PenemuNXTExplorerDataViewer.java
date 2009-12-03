@@ -17,7 +17,7 @@ import org.penemunxt.communication.*;
 import org.penemunxt.graphics.pc.*;
 import org.penemunxt.projects.penemunxtexplorer.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
-import org.penemunxt.projects.penemunxtexplorer.pc.maps.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
 
 public class PenemuNXTExplorerDataViewer extends Thread implements Runnable,
 		WindowListener {
