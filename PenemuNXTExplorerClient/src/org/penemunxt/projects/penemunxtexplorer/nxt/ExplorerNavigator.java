@@ -47,7 +47,7 @@ public class ExplorerNavigator extends Thread {
 	    Behavior b5 = new Bumperclose (simnav, TS, NXTC, DSL);
 	    //Behavior b4 = (Behavior) new FollowWall (simnav, ODS);
 	    //Behavior [] bArray = {b1, b2, b3, b4, b5};
-	    Behavior [] bArray = {b1, b2, b4, b5};
+	    Behavior [] bArray = {b1, b1_5, b2, b4, b5};
 	    Arbitrator arby = new Arbitrator(bArray);
 	    arby.start();
 	}
