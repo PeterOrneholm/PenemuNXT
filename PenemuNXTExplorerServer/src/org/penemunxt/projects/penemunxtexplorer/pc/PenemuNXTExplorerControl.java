@@ -29,14 +29,15 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static int OPTICAL_DISTANCE_MAX_LENGTH_MM = 1500;
 
 	// // Application
-	final static String APPLICATION_NAME = "PenemuNXT";
+	final static String APPLICATION_NAME = "PenemuNXT - Explorer control";
 	final static ImageIcon APPLICATION_ICON = Icons.PENEMUNXT_CIRCLE_LOGO_ICON_16_X_16_ICON;
 	final static ImageIcon APPLICATION_LOGO = Icons.PENEMUNXT_LOGO_LANDSCAPE_ICON;
 	final static Boolean APPLICATION_START_FULLSCREEN = true;
 
 	// // Maps
 	final static String DEFAULT_FOLDER_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
-	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
+	//final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
+	final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
 
 	// //Events and Algorithms basics
 	final static boolean LATEST_POS_SHOW_DEFAULT = true;
@@ -56,7 +57,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static String HEAD_MAP_DESCRIPTION = "All the places the robot recognizes as objects.";
 	final static String HOT_SPOTS_DESCRIPTION = "Places calculated to be \"real\" objects.";
 	final static String FIND_WALLS_DESCRIPTION = "Calculation of where the walls are.";
-	
+
 	// //// Drawings
 	final static Color DEFAULT_CIRCLE_COLOR = Color.BLACK;
 	final static Color LATEST_POS_CIRCLE_COLOR = Color.GREEN;
@@ -64,7 +65,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static Color BUMPING_BUMPER_CIRCLE_COLOR = Color.RED;
 	final static Color BUMPING_DISTANCE_CIRCLE_COLOR = Color.BLUE;
 	final static Color ALIGNED_TO_WALL_CIRCLE_COLOR = Color.CYAN;
-	final static Color HEAD_MAP_CIRCLE_COLOR = Color.ORANGE;
+	final static Color HEAD_MAP_CIRCLE_COLOR = Color.DARK_GRAY;
 
 	final static int DEFAULT_CIRCLE_SIZE = 2;
 	final static int LATEST_POS_CIRCLE_SIZE = 15;
@@ -199,6 +200,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	DataShare DS;
 	RobotConnection RC;
 	VolatileImage OSI;
+	PenemuNXTExplorerDataViewer DataView;
 
 	// Functions
 
@@ -255,37 +257,49 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		mnuMapClearButton = new JMenuItem("Clear");
 		mnuMapClearButton.addActionListener(this);
 
-		chkShowLatestPos = new JCheckBoxMenuItem("Latest position", LATEST_POS_SHOW_DEFAULT);
+		chkShowLatestPos = new JCheckBoxMenuItem("Latest position",
+				LATEST_POS_SHOW_DEFAULT);
 		chkShowLatestPos.setBackground(LATEST_POS_CIRCLE_COLOR);
 		chkShowLatestPos.setToolTipText(LATEST_POS_DESCRIPTION);
 
-		chkShowDrivingPath = new JCheckBoxMenuItem("Driving path", DRIVING_PATH_SHOW_DEFAULT);
+		chkShowDrivingPath = new JCheckBoxMenuItem("Driving path",
+				DRIVING_PATH_SHOW_DEFAULT);
 		chkShowDrivingPath.setBackground(DRIVING_PATH_CIRCLE_COLOR);
 		chkShowDrivingPath.setForeground(Color.WHITE);
 		chkShowDrivingPath.setToolTipText(DRIVING_PATH_DESCRIPTION);
 
-		chkShowBumpingDistancePositions = new JCheckBoxMenuItem("Bumps (distance)", BUMPING_DISTANCE_SHOW_DEFAULT);
-		chkShowBumpingDistancePositions.setBackground(BUMPING_DISTANCE_CIRCLE_COLOR);
-		chkShowBumpingDistancePositions.setToolTipText(BUMPING_DISTANCE_DESCRIPTION);
-		
-		chkShowBumpingBumperPositions = new JCheckBoxMenuItem("Bumps (bumper)", BUMPING_BUMPER_SHOW_DEFAULT);
-		chkShowBumpingBumperPositions.setBackground(BUMPING_BUMPER_CIRCLE_COLOR);
-		chkShowBumpingBumperPositions.setToolTipText(BUMPING_BUMPER_DESCRIPTION);
-		
-		chkShowAlignedToWall = new JCheckBoxMenuItem("Aligned to wall", ALIGNED_TO_WALL_SHOW_DEFAULT);
+		chkShowBumpingDistancePositions = new JCheckBoxMenuItem(
+				"Bumps (distance)", BUMPING_DISTANCE_SHOW_DEFAULT);
+		chkShowBumpingDistancePositions
+				.setBackground(BUMPING_DISTANCE_CIRCLE_COLOR);
+		chkShowBumpingDistancePositions
+				.setToolTipText(BUMPING_DISTANCE_DESCRIPTION);
+
+		chkShowBumpingBumperPositions = new JCheckBoxMenuItem("Bumps (bumper)",
+				BUMPING_BUMPER_SHOW_DEFAULT);
+		chkShowBumpingBumperPositions
+				.setBackground(BUMPING_BUMPER_CIRCLE_COLOR);
+		chkShowBumpingBumperPositions
+				.setToolTipText(BUMPING_BUMPER_DESCRIPTION);
+
+		chkShowAlignedToWall = new JCheckBoxMenuItem("Aligned to wall",
+				ALIGNED_TO_WALL_SHOW_DEFAULT);
 		chkShowAlignedToWall.setBackground(ALIGNED_TO_WALL_CIRCLE_COLOR);
 		chkShowAlignedToWall.setToolTipText(ALIGNED_TO_WALL_DESCRIPTION);
-		
-		chkShowHeadMap = new JCheckBoxMenuItem("Map from head", HEAD_MAP_SHOW_DEFAULT);
+
+		chkShowHeadMap = new JCheckBoxMenuItem("Map from head",
+				HEAD_MAP_SHOW_DEFAULT);
 		chkShowHeadMap.setBackground(HEAD_MAP_CIRCLE_COLOR);
 		chkShowHeadMap.setToolTipText(HEAD_MAP_DESCRIPTION);
-		
-		chkShowHotspots = new JCheckBoxMenuItem("Hotspots", HOT_SPOTS_SHOW_DEFAULT);
+
+		chkShowHotspots = new JCheckBoxMenuItem("Hotspots",
+				HOT_SPOTS_SHOW_DEFAULT);
 		chkShowHotspots.setToolTipText(HOT_SPOTS_DESCRIPTION);
-		
-		chkShowFindWalls = new JCheckBoxMenuItem("Find walls", FIND_WALLS_SHOW_DEFAULT);
+
+		chkShowFindWalls = new JCheckBoxMenuItem("Find walls",
+				FIND_WALLS_SHOW_DEFAULT);
 		chkShowFindWalls.setToolTipText(FIND_WALLS_DESCRIPTION);
-		
+
 		mnuMapAlgorithmsMenu.add(chkShowHotspots);
 		mnuMapAlgorithmsMenu.add(chkShowFindWalls);
 
@@ -295,7 +309,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		mnuMapEventsMenu.add(chkShowBumpingBumperPositions);
 		mnuMapEventsMenu.add(chkShowAlignedToWall);
 		mnuMapEventsMenu.add(chkShowHeadMap);
-		
+
 		mnuMapMenu.add(mnuMapClearButton);
 		mnuMapMenu.add(new JSeparator());
 		mnuMapMenu.add(mnuMapAlgorithmsMenu);
@@ -464,12 +478,12 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		lblAlgorithmsSensitivityFilterHeader.setFont(fntSectionHeader);
 
 		sldAlgorithmsSensitivityFilter = new JSlider(SwingConstants.HORIZONTAL,
-				ALGORITHMS_SENSITIVITY_MIN,
-				ALGORITHMS_SENSITIVITY_MAX,
+				ALGORITHMS_SENSITIVITY_MIN, ALGORITHMS_SENSITIVITY_MAX,
 				ALGORITHMS_SENSITIVITY_DEFAULT);
 		sldAlgorithmsSensitivityFilter.setMajorTickSpacing(5);
 		sldAlgorithmsSensitivityFilter.setMinorTickSpacing(1);
-		sldAlgorithmsSensitivityFilter.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
+		sldAlgorithmsSensitivityFilter
+				.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 
 		// Current data
 		Label lblCurrentDataHeader = new Label("Current");
@@ -650,6 +664,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 				if (i >= sldTimeline.getValue()) {
 					break;
 				}
+
 				RobotData RD = DS.NXTRobotData.get(i);
 				if (RD != null) {
 					int circleSize;
@@ -696,7 +711,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 								.getRobotHeading()), RD.getHeadDistance());
 						if (RD.getHeadDistance() > OPTICAL_DISTANCE_MIN_LENGTH_MM
 								&& RD.getHeadDistance() < OPTICAL_DISTANCE_MAX_LENGTH_MM) {
-							if (chkShowHotspots.getState()|| chkShowFindWalls.getState()) {
+							if (chkShowHotspots.getState()
+									|| chkShowFindWalls.getState()) {
 								ObjectPositions.add(new MapPositionPoints(0,
 										(int) HeadMapPos.getX(),
 										(int) HeadMapPos.getY()));
@@ -755,14 +771,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 						Color c = new Color((int) (pointPercentage * 255),
 								255 - (int) (pointPercentage * 255), 0);
 
-						MapPositionPoints PositionWithMostPoints = ScanPoint
-								.GetPositionWithMostPoints();
-
-						Point mapPosFrom = getMapPos(ScanPoint.getY(),
-								ScanPoint.getX());
-						Point mapPosTo = getMapPos(PositionWithMostPoints
-								.getY(), PositionWithMostPoints.getX());
-
 						paintOval(
 								ScanPoint.getY(),
 								ScanPoint.getX(),
@@ -779,7 +787,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 							.GetFilteredPositionsPoints(
 									FilteredPositions,
 									HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON * 100,
-									25, 5, sldAlgorithmsSensitivityFilter.getValue());
+									25, 5, sldAlgorithmsSensitivityFilter
+											.getValue());
 
 					int maxPoints = MapPositionPoints
 							.GetMaxPoints(ObjectPositions);
@@ -939,9 +948,14 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	}
 
 	private void openDataView() {
-		PenemuNXTExplorerDataViewer DataView = new PenemuNXTExplorerDataViewer(
-				DS.NXTRobotData, APPLICATION_NAME + " - Data view");
-		DataView.open();
+		if (DataView != null
+				&& DataView.getWindowState() == PenemuNXTExplorerDataViewer.WINDOW_STATE_OPEN) {
+			DataView.refresh();
+		} else {
+			DataView = new PenemuNXTExplorerDataViewer(DS.NXTRobotData,
+					APPLICATION_NAME + " - Data view");
+			DataView.open();
+		}
 	}
 
 	private void exitApp() {
@@ -1194,6 +1208,11 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	private void startTimelineAutoPlay() {
 		stopTimelineAutoPlay();
+		
+		if(sldTimeline.getValue()==sldTimeline.getMaximum()){
+			sldTimeline.setValue(sldTimeline.getMinimum());
+		}
+
 		timelinePlay = true;
 		btnTimelinePlayPause.setLabel("Pause");
 		TimelinePlayer = new MapTimelinePlayer(sldTimeline,

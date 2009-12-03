@@ -19,11 +19,48 @@ import org.penemunxt.projects.penemunxtexplorer.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.maps.*;
 
-public class PenemuNXTExplorerDataViewer extends Thread implements Runnable {
+public class PenemuNXTExplorerDataViewer extends Thread implements Runnable,
+		WindowListener {
 
-	ArrayList<RobotData> RobotData;
+	public final static String POSITION_TYPE_DRIVE_NAME = "Drive path";
+	public final static String POSITION_TYPE_BUMP_BUMPER_NAME = "Bumber (Front bumper)";
+	public final static String POSITION_TYPE_BUMP_DISTANCE_NAME = "Bumper (Distance)";
+	public final static String POSITION_TYPE_ALIGNED_NAME = "Aligned to wall";
+	public final static String POSITION_TYPE_RIGHT_CORNER_NAME = "Turn in right corner";
+	
+	public static String getPositionTypeName(int PositionType) {
+		switch (PositionType) {
+		case RobotData.POSITION_TYPE_DRIVE:
+			return POSITION_TYPE_DRIVE_NAME;
+		case RobotData.POSITION_TYPE_BUMP_BUMPER:
+			return POSITION_TYPE_BUMP_BUMPER_NAME;
+		case RobotData.POSITION_TYPE_BUMP_DISTANCE:
+			return POSITION_TYPE_BUMP_DISTANCE_NAME;
+		case RobotData.POSITION_TYPE_ALIGNED:
+			return POSITION_TYPE_ALIGNED_NAME;
+		case RobotData.POSITION_TYPE_RIGHT_CORNER:
+			return POSITION_TYPE_RIGHT_CORNER_NAME;
+		default:
+			return "Unknown type";
+		}
+	}
+	
+	public static int WINDOW_STATE_OPEN = 100;
+	public static int WINDOW_STATE_CLOSED = 200;
+
+	ArrayList<RobotData> TableData;
 	String ApplicationName;
 	JTable DataTable;
+	JFrame mainFrame;
+	int WindowState;
+
+	public int getWindowState() {
+		return WindowState;
+	}
+
+	public void setWindowState(int windowState) {
+		WindowState = windowState;
+	}
 
 	@Override
 	public void start() {
@@ -33,13 +70,15 @@ public class PenemuNXTExplorerDataViewer extends Thread implements Runnable {
 
 	public PenemuNXTExplorerDataViewer(ArrayList<RobotData> robotData,
 			String applicationName) {
-		this.RobotData = robotData;
+		this.TableData = robotData;
 		this.ApplicationName = applicationName;
+		this.WindowState = PenemuNXTExplorerDataViewer.WINDOW_STATE_OPEN;
 		refresh();
 	}
 
 	private void createAndShowGUI() {
-		JFrame mainFrame = new JFrame(ApplicationName);
+		mainFrame = new JFrame(ApplicationName);
+		mainFrame.setAlwaysOnTop(true);
 		mainFrame.setContentPane(getContentPanel());
 		mainFrame.setIconImage(Icons.PENEMUNXT_CIRCLE_LOGO_ICON_16_X_16_ICON
 				.getImage());
@@ -50,6 +89,7 @@ public class PenemuNXTExplorerDataViewer extends Thread implements Runnable {
 
 		mainFrame.setBackground(Color.WHITE);
 		mainFrame.setVisible(true);
+		mainFrame.addWindowListener(this);
 	}
 
 	public Panel getContentPanel() {
@@ -74,16 +114,18 @@ public class PenemuNXTExplorerDataViewer extends Thread implements Runnable {
 
 	private Object[][] getDataArray(ArrayList<RobotData> rawData) {
 		if (rawData.size() > 0) {
-			Object[][] tableData = new Object[rawData.size()][6];
+			Object[][] tableData = new Object[rawData.size()][8];
 
 			for (int i = 0; i < rawData.size(); i++) {
 				RobotData robotData = rawData.get(i);
-				tableData[i][0] = String.valueOf(robotData.getType());
-				tableData[i][1] = String.valueOf(robotData.getPosX());
-				tableData[i][2] = String.valueOf(robotData.getPosY());
-				tableData[i][3] = String.valueOf(robotData.getRobotHeading());
-				tableData[i][4] = String.valueOf(robotData.getHeadDistance());
-				tableData[i][5] = String.valueOf(robotData.getHeadHeading());
+				tableData[i][0] = String.valueOf(i + 1);
+				tableData[i][1] = getPositionTypeName(robotData.getType());
+				tableData[i][2] = String.valueOf(robotData.getType());
+				tableData[i][3] = String.valueOf(robotData.getPosX());
+				tableData[i][4] = String.valueOf(robotData.getPosY());
+				tableData[i][5] = String.valueOf(robotData.getRobotHeading());
+				tableData[i][6] = String.valueOf(robotData.getHeadDistance());
+				tableData[i][7] = String.valueOf(robotData.getHeadHeading());
 			}
 			return tableData;
 		} else {
@@ -92,13 +134,13 @@ public class PenemuNXTExplorerDataViewer extends Thread implements Runnable {
 	}
 
 	private void setupTable(Object[][] tableData) {
-		String[] columnNames = { "Type", "PosX", "PosY", "RobotHeading",
-				"HeadDistance", "HeadHeading" };
-		
-		if(tableData==null){
+		String[] columnNames = { "Frame", "Type", "Type code", "PosX", "PosY",
+				"RobotHeading", "HeadDistance", "HeadHeading" };
+
+		if (tableData == null) {
 			tableData = new Object[0][5];
 		}
-		
+
 		DataTable = new JTable(tableData, columnNames);
 		DataTable.setFillsViewportHeight(true);
 		DataTable.setCellSelectionEnabled(false);
@@ -107,6 +149,47 @@ public class PenemuNXTExplorerDataViewer extends Thread implements Runnable {
 	}
 
 	public void refresh() {
-		setupTable(getDataArray(RobotData));
+		setupTable(getDataArray(TableData));
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		setWindowState(PenemuNXTExplorerDataViewer.WINDOW_STATE_CLOSED);
+	}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
 	}
 }
