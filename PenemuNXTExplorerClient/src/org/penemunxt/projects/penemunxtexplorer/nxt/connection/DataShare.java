@@ -8,6 +8,8 @@ public class DataShare {
 	public int sincelastturn = 0;
 	public boolean lockBehaviour;
 	public ArrayList<RobotData> LatestRobotData;
+	
+	final double ISLINEAR_THRESHOLD = 0.1;
 
 	public DataShare() {
 		super();
@@ -29,8 +31,8 @@ public class DataShare {
 		double coef = linCoef ( dsl, startpos, endpos);
 
 		for (int n = startpos; n < endpos; n++) {
-			if (!((linCoef ( dsl, n, (n+1)) / coef) > 1.1 
-					||  ((linCoef ( dsl, n, (n+1)) / coef) < 0.9))) return coef;
+			if (!((linCoef ( dsl, n, (n+1)) / coef) > (1+ISLINEAR_THRESHOLD) 
+					||  ((linCoef ( dsl, n, (n+1)) / coef) < (1 - ISLINEAR_THRESHOLD)))) return coef;
 				
 		}
 
