@@ -20,6 +20,7 @@ public class ExplorerNavigator extends Thread {
 	OpticalDistanceSensor ODS;
 	DataShare DSL;
 	
+	
 	public ExplorerNavigator(SimpleNavigator simnav, NXTCommunication NXTC,
 			OpticalDistanceSensor ODS, DataShare DSL) {
 		this.simnav = simnav;
@@ -36,7 +37,25 @@ public class ExplorerNavigator extends Thread {
 		simnav.setTurnSpeed(30);
 		simnav.setMoveSpeed(50);
 		
-		Motor.A.rotate(90);
+		//set slow rotate speed
+		Motor.A.rotate(360);
+		
+		int shortestdist = 1000;
+		int shortestdistangle = 0;
+		
+		for (int x = DSL.LatestRobotData.size(); x > 0; x--) {
+				if ( DSL.LatestRobotData.get(x).getHeadDistance() < shortestdist){
+					shortestdist = DSL.LatestRobotData.get(x).getHeadDistance();
+					shortestdistangle = DSL.LatestRobotData.get(x).getHeadHeading();
+				}	
+		}
+		
+		simnav.rotate(shortestdistangle);
+		
+		
+		
+		// set fast rotate speed
+		Motor.A.rotate(-270);
 		Motor.A.setSpeed(50);
 
 		Behavior b1 = new Forward(simnav, DSL);
