@@ -9,6 +9,10 @@ import lejos.nxt.UltrasonicSensor;
 import lejos.robotics.navigation.SimpleNavigator;
 import lejos.robotics.subsumption.Behavior;
 
+
+
+
+
 public class USSclose implements Behavior {
 	SimpleNavigator simnav;
 	UltrasonicSensor USS;
@@ -32,7 +36,8 @@ public class USSclose implements Behavior {
 		NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_BUMP_DISTANCE,
 				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 						.getHeading(), 0, 0));
-
+		
+		//set slow rotate
 		Motor.A.rotate(-90);
 		
 		boolean isgrowing = false;
@@ -53,6 +58,7 @@ public class USSclose implements Behavior {
 			}
 		}
 		
+		//set fast rotate
 		Motor.A.rotate(90);
 		simnav.rotate(90-shortestdistangle);
 		
