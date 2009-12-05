@@ -4,19 +4,23 @@ import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.beans.*;
-import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.penemunt.windows.pc.DataTableWindow;
 import org.penemunxt.communication.*;
 import org.penemunxt.graphics.pc.*;
 import org.penemunxt.projects.penemunxtexplorer.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.IMapProcessor;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessors;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessorsList;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapUtilities;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.*;
 
 public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
@@ -24,15 +28,11 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	// Constants
 
-	// // Sensors
-	final static int OPTICAL_DISTANCE_MIN_LENGTH_MM = 200;
-	final static int OPTICAL_DISTANCE_MAX_LENGTH_MM = 1500;
-
 	// // Application
 	final static String APPLICATION_NAME = "PenemuNXT - Explorer control";
 	final static ImageIcon APPLICATION_ICON = Icons.PENEMUNXT_CIRCLE_LOGO_ICON_16_X_16_ICON;
 	final static ImageIcon APPLICATION_LOGO = Icons.PENEMUNXT_LOGO_LANDSCAPE_ICON;
-	final static Boolean APPLICATION_START_FULLSCREEN = true;
+	final static Boolean APPLICATION_START_FULLSCREEN = false;
 
 	// // Maps
 	final static String DEFAULT_FOLDER_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
@@ -48,15 +48,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static boolean HEAD_MAP_SHOW_DEFAULT = true;
 	final static boolean HOT_SPOTS_SHOW_DEFAULT = false;
 	final static boolean FIND_WALLS_SHOW_DEFAULT = true;
-
-	final static String LATEST_POS_DESCRIPTION = "The current (from timeline) position of the robot.";
-	final static String DRIVING_PATH_DESCRIPTION = "The path the bot has traveled.";
-	final static String BUMPING_BUMPER_DESCRIPTION = "When the robot drives into a wall and the touchsensor is pressed.";
-	final static String BUMPING_DISTANCE_DESCRIPTION = "When the robot gets to close to a wall.";
-	final static String ALIGNED_TO_WALL_DESCRIPTION = "When the robot recognizes that it's not aligned to the wall.";
-	final static String HEAD_MAP_DESCRIPTION = "All the places the robot recognizes as objects.";
-	final static String HOT_SPOTS_DESCRIPTION = "Places calculated to be \"real\" objects.";
-	final static String FIND_WALLS_DESCRIPTION = "Calculation of where the walls are.";
 
 	// //// Drawings
 	final static Color DEFAULT_CIRCLE_COLOR = Color.BLACK;
@@ -104,10 +95,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static String CONNECT_TO_NAME_DEFAULT = "NXT";
 	final static String CONNECT_TO_ADDRESS_DEFAULT = "0016530A9000";
 
-	// // Algorithms
-	final static int HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON = 800;
-	final static int HOT_SPOTS_FIND_CONNECTIONS = 10;
-
 	final static int ALGORITHMS_SENSITIVITY_DEFAULT = 5;
 	final static int ALGORITHMS_SENSITIVITY_MIN = 0;
 	final static int ALGORITHMS_SENSITIVITY_MAX = 15;
@@ -122,22 +109,14 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	// // Menu
 	JMenuItem mnuFileOpenDataViewButton;
+	JMenuItem mnuFileOpenMapProcessorsButton;
 	JMenuItem mnuFileOpenButton;
 	JMenuItem mnuFileSaveButton;
 	JMenuItem mnuFileExitButton;
 
 	// // Map menu
 	JMenuItem mnuMapClearButton;
-	JCheckBoxMenuItem chkShowLatestPos;
-	JCheckBoxMenuItem chkShowDrivingPath;
-	JCheckBoxMenuItem chkShowBumpingDistancePositions;
-	JCheckBoxMenuItem chkShowBumpingBumperPositions;
-	JCheckBoxMenuItem chkShowAlignedToWall;
-	JCheckBoxMenuItem chkShowHeadMap;
-
-	// // Map -> Algorithms
-	JCheckBoxMenuItem chkShowHotspots;
-	JCheckBoxMenuItem chkShowFindWalls;
+	JMenu mnuMapProcessors;
 
 	// // Buttons
 	Button btnExit;
@@ -178,6 +157,17 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	Point startDrag;
 	Point mapCenterBeforeDrag;
 
+	// // Processors
+	MapProcessors mapProcessors;
+	MapAligned mapProcessorAligned;
+	MapBumpBumper mapProcessorBumpBumper;
+	MapCurrentPos mapProcessorCurrentPos;
+	MapBumpDistance mapProcessorBumpDistance;
+	MapDrivingPath mapProcessorDrivingPath;
+	MapFindLines mapProcessorFindLines;
+	MapHeadObjects mapProcessorHeadObjects;
+	MapHotspots mapProcessorHotspots;
+
 	// // Timeline
 	int timelineMin = 0;
 	int timelineMax = 1;
@@ -201,6 +191,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	RobotConnection RC;
 	VolatileImage OSI;
 	PenemuNXTExplorerDataViewer DataView;
+	MapProcessorsList MapProcessorsListView;
 
 	// Functions
 
@@ -250,70 +241,15 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	public JMenu getMapMenu() {
 		JMenu mnuMapMenu = new JMenu("Map");
-		JMenu mnuMapAlgorithmsMenu = new JMenu("Algorithms");
-		JMenu mnuMapEventsMenu = new JMenu("Events");
+		mnuMapProcessors = new JMenu("Map processors");
 
 		// Map menu items
 		mnuMapClearButton = new JMenuItem("Clear");
 		mnuMapClearButton.addActionListener(this);
 
-		chkShowLatestPos = new JCheckBoxMenuItem("Latest position",
-				LATEST_POS_SHOW_DEFAULT);
-		chkShowLatestPos.setBackground(LATEST_POS_CIRCLE_COLOR);
-		chkShowLatestPos.setToolTipText(LATEST_POS_DESCRIPTION);
-
-		chkShowDrivingPath = new JCheckBoxMenuItem("Driving path",
-				DRIVING_PATH_SHOW_DEFAULT);
-		chkShowDrivingPath.setBackground(DRIVING_PATH_CIRCLE_COLOR);
-		chkShowDrivingPath.setForeground(Color.WHITE);
-		chkShowDrivingPath.setToolTipText(DRIVING_PATH_DESCRIPTION);
-
-		chkShowBumpingDistancePositions = new JCheckBoxMenuItem(
-				"Bumps (distance)", BUMPING_DISTANCE_SHOW_DEFAULT);
-		chkShowBumpingDistancePositions
-				.setBackground(BUMPING_DISTANCE_CIRCLE_COLOR);
-		chkShowBumpingDistancePositions
-				.setToolTipText(BUMPING_DISTANCE_DESCRIPTION);
-
-		chkShowBumpingBumperPositions = new JCheckBoxMenuItem("Bumps (bumper)",
-				BUMPING_BUMPER_SHOW_DEFAULT);
-		chkShowBumpingBumperPositions
-				.setBackground(BUMPING_BUMPER_CIRCLE_COLOR);
-		chkShowBumpingBumperPositions
-				.setToolTipText(BUMPING_BUMPER_DESCRIPTION);
-
-		chkShowAlignedToWall = new JCheckBoxMenuItem("Aligned to wall",
-				ALIGNED_TO_WALL_SHOW_DEFAULT);
-		chkShowAlignedToWall.setBackground(ALIGNED_TO_WALL_CIRCLE_COLOR);
-		chkShowAlignedToWall.setToolTipText(ALIGNED_TO_WALL_DESCRIPTION);
-
-		chkShowHeadMap = new JCheckBoxMenuItem("Map from head",
-				HEAD_MAP_SHOW_DEFAULT);
-		chkShowHeadMap.setBackground(HEAD_MAP_CIRCLE_COLOR);
-		chkShowHeadMap.setToolTipText(HEAD_MAP_DESCRIPTION);
-
-		chkShowHotspots = new JCheckBoxMenuItem("Hotspots",
-				HOT_SPOTS_SHOW_DEFAULT);
-		chkShowHotspots.setToolTipText(HOT_SPOTS_DESCRIPTION);
-
-		chkShowFindWalls = new JCheckBoxMenuItem("Find walls",
-				FIND_WALLS_SHOW_DEFAULT);
-		chkShowFindWalls.setToolTipText(FIND_WALLS_DESCRIPTION);
-
-		mnuMapAlgorithmsMenu.add(chkShowHotspots);
-		mnuMapAlgorithmsMenu.add(chkShowFindWalls);
-
-		mnuMapEventsMenu.add(chkShowLatestPos);
-		mnuMapEventsMenu.add(chkShowDrivingPath);
-		mnuMapEventsMenu.add(chkShowBumpingDistancePositions);
-		mnuMapEventsMenu.add(chkShowBumpingBumperPositions);
-		mnuMapEventsMenu.add(chkShowAlignedToWall);
-		mnuMapEventsMenu.add(chkShowHeadMap);
-
 		mnuMapMenu.add(mnuMapClearButton);
 		mnuMapMenu.add(new JSeparator());
-		mnuMapMenu.add(mnuMapAlgorithmsMenu);
-		mnuMapMenu.add(mnuMapEventsMenu);
+		mnuMapMenu.add(mnuMapProcessors);
 
 		return mnuMapMenu;
 	}
@@ -330,6 +266,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 		mnuFileOpenDataViewButton = new JMenuItem("Show data...");
 		mnuFileOpenDataViewButton.addActionListener(this);
+		mnuFileOpenMapProcessorsButton = new JMenuItem("Show map processors...");
+		mnuFileOpenMapProcessorsButton.addActionListener(this);
 		mnuFileOpenButton = new JMenuItem("Open File...");
 		mnuFileOpenButton.addActionListener(this);
 		mnuFileSaveButton = new JMenuItem("Save As...");
@@ -345,6 +283,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		mnuFileMenu.add(mnuFileSaveButton);
 		mnuFileMenu.add(new JSeparator());
 		mnuFileMenu.add(mnuFileOpenDataViewButton);
+		mnuFileMenu.add(mnuFileOpenMapProcessorsButton);
 		mnuFileMenu.add(new JSeparator());
 		mnuFileMenu.add(mnuFileExitButton);
 
@@ -376,7 +315,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 		// Image logo
 		JPanel logoPanel = new JPanel(new BorderLayout());
-		JLabel lblLogo = new JLabel("", APPLICATION_LOGO, JLabel.CENTER);
+		JLabel lblLogo = new JLabel("", APPLICATION_LOGO, SwingConstants.CENTER);
 
 		logoPanel.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 		logoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0,
@@ -641,6 +580,62 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		return mainPanel;
 	}
 
+	private void setupMapProcessors() {
+		ArrayList<IMapProcessor> defaultProcessors = new ArrayList<IMapProcessor>();
+
+		mapProcessorAligned = new MapAligned(ALIGNED_TO_WALL_CIRCLE_COLOR,
+				ALIGNED_TO_WALL_CIRCLE_SIZE, true);
+		mapProcessorBumpBumper = new MapBumpBumper(BUMPING_BUMPER_CIRCLE_COLOR,
+				BUMPING_BUMPER_CIRCLE_SIZE, true);
+		mapProcessorBumpDistance = new MapBumpDistance(
+				BUMPING_DISTANCE_CIRCLE_COLOR, BUMPING_DISTANCE_CIRCLE_SIZE,
+				true);
+		mapProcessorCurrentPos = new MapCurrentPos(LATEST_POS_CIRCLE_COLOR,
+				LATEST_POS_CIRCLE_SIZE, true);
+		mapProcessorDrivingPath = new MapDrivingPath(DRIVING_PATH_CIRCLE_COLOR,
+				DRIVING_PATH_CIRCLE_SIZE, true);
+		mapProcessorHeadObjects = new MapHeadObjects(HEAD_MAP_CIRCLE_COLOR,
+				HEAD_MAP_CIRCLE_SIZE, false);
+
+		mapProcessorHotspots = new MapHotspots(HOT_SPOTS_MAX_CIRCLE_SIZE, false);
+		mapProcessorFindLines = new MapFindLines(true);
+
+		defaultProcessors.add(mapProcessorCurrentPos);
+		defaultProcessors.add(mapProcessorDrivingPath);
+		defaultProcessors.add(mapProcessorHeadObjects);
+
+		defaultProcessors.add(mapProcessorBumpBumper);
+		defaultProcessors.add(mapProcessorBumpDistance);
+		defaultProcessors.add(mapProcessorAligned);
+
+		defaultProcessors.add(mapProcessorHotspots);
+		defaultProcessors.add(mapProcessorFindLines);
+
+		mapProcessors = new MapProcessors(defaultProcessors);
+
+		setupMapProcessorsMenu();
+	}
+
+	private void setupMapProcessorsMenu() {
+		mnuMapProcessors.removeAll();
+		for (final IMapProcessor mapProcessor : mapProcessors.getList()) {
+			final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(
+					mapProcessor.getName(), mapProcessor.isEnabled());
+			menuItem.setBackground(mapProcessor.getColor());
+			menuItem.setForeground(Color.WHITE);
+			menuItem.setToolTipText(mapProcessor.getDescription());
+			menuItem.setActionCommand(mapProcessor.toString());
+			menuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					mapProcessor.setEnabled(menuItem.getState());
+					refreshMap();
+				}
+			});
+
+			mnuMapProcessors.add(menuItem);
+		}
+	}
+
 	@Override
 	public void update(Graphics g) {
 		if (OSI == null || OSI.getWidth() != getWidth()
@@ -656,179 +651,43 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	@Override
 	public void paint(Graphics g) {
-		ArrayList<MapPositionPoints> ObjectPositions = new ArrayList<MapPositionPoints>();
-
-		if (DS != null && DS.NXTRobotData != null) {
-			for (int i = 0; i < DS.NXTRobotData.size(); i++) {
-				if (i >= sldTimeline.getValue()) {
-					break;
-				}
-
-				RobotData RD = DS.NXTRobotData.get(i);
-				if (RD != null) {
-					int circleSize;
-					Color circleColor;
-					boolean circleShow;
-
-					switch (RD.getType()) {
-					case RobotData.POSITION_TYPE_DRIVE:
-						circleColor = DRIVING_PATH_CIRCLE_COLOR;
-						circleShow = chkShowDrivingPath.getState();
-						circleSize = DRIVING_PATH_CIRCLE_SIZE;
-						break;
-					case RobotData.POSITION_TYPE_BUMP_BUMPER:
-						circleColor = BUMPING_BUMPER_CIRCLE_COLOR;
-						circleShow = chkShowBumpingBumperPositions.getState();
-						circleSize = BUMPING_BUMPER_CIRCLE_SIZE;
-						break;
-					case RobotData.POSITION_TYPE_BUMP_DISTANCE:
-						circleColor = BUMPING_DISTANCE_CIRCLE_COLOR;
-						circleShow = chkShowBumpingDistancePositions.getState();
-						circleSize = BUMPING_DISTANCE_CIRCLE_SIZE;
-						break;
-					case RobotData.POSITION_TYPE_ALIGNED:
-						circleColor = ALIGNED_TO_WALL_CIRCLE_COLOR;
-						circleShow = chkShowAlignedToWall.getState();
-						circleSize = ALIGNED_TO_WALL_CIRCLE_SIZE;
-						break;
-					default:
-						circleColor = DEFAULT_CIRCLE_COLOR;
-						circleShow = false;
-						circleSize = 2;
-						break;
-					}
-
-					if (circleShow) {
-						paintOval(RD.getPosY(), RD.getPosX(), circleColor,
-								circleSize, g);
-					}
-
-					if (chkShowHeadMap.getState() || chkShowHotspots.getState()
-							|| chkShowFindWalls.getState()) {
-						Point HeadMapPos = getHeadingPos(RD.getPosX(), RD
-								.getPosY(), (-RD.getHeadHeading() + RD
-								.getRobotHeading()), RD.getHeadDistance());
-						if (RD.getHeadDistance() > OPTICAL_DISTANCE_MIN_LENGTH_MM
-								&& RD.getHeadDistance() < OPTICAL_DISTANCE_MAX_LENGTH_MM) {
-							if (chkShowHotspots.getState()
-									|| chkShowFindWalls.getState()) {
-								ObjectPositions.add(new MapPositionPoints(0,
-										(int) HeadMapPos.getX(),
-										(int) HeadMapPos.getY()));
-							}
-
-							if (chkShowHeadMap.getState()) {
-								paintOval((int) HeadMapPos.getY(),
-										(int) HeadMapPos.getX(),
-										HEAD_MAP_CIRCLE_COLOR,
-										HEAD_MAP_CIRCLE_SIZE, g);
-							}
-						}
-					}
-				}
-			}
-
-			if (DS.NXTRobotData.size() > 0) {
-				RobotData RD = DS.NXTRobotData.get(Math.max(sldTimeline
-						.getValue() - 1, 0));
-
-				if (RD != null) {
-					if (chkShowLatestPos.getState()) {
-						paintOval(RD.getPosY(), RD.getPosX(),
-								LATEST_POS_CIRCLE_COLOR,
-								LATEST_POS_CIRCLE_SIZE, g);
-					}
-
-					// Update texts
-					lblRDX.setText(String.valueOf(RD.getPosX()));
-					lblRDY.setText(String.valueOf(RD.getPosY()));
-					lblRDRobotHeading.setText(String.valueOf(RD
-							.getRobotHeading()));
-					lblRDHeadDistance.setText(String.valueOf(RD
-							.getHeadDistance()));
-					lblRDHeadHeading.setText(String
-							.valueOf(RD.getHeadHeading()));
-					lblTimelineCurrentFrame.setText(String.valueOf(sldTimeline
-							.getValue()));
-				}
-			}
-
-			if (ObjectPositions != null
-					&& (chkShowHotspots.getState() || chkShowFindWalls
-							.getState())) {
-				ArrayList<MapPositionPoints> FilteredPositions = MapPositionPoints
-						.GetFilteredPositionsPoints(ObjectPositions,
-								HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON,
-								HOT_SPOTS_FIND_CONNECTIONS, 1,
-								sldAlgorithmsSensitivityFilter.getValue());
-
-				if (chkShowHotspots.getState()) {
-					for (MapPositionPoints ScanPoint : FilteredPositions) {
-						int maxPoints = MapPositionPoints
-								.GetMaxPoints(ObjectPositions);
-						float pointPercentage = (ScanPoint.getPoints() / (float) maxPoints);
-						Color c = new Color((int) (pointPercentage * 255),
-								255 - (int) (pointPercentage * 255), 0);
-
-						paintOval(
-								ScanPoint.getY(),
-								ScanPoint.getX(),
-								c,
-								(int) (pointPercentage * HOT_SPOTS_MAX_CIRCLE_SIZE),
-								g);
-
-					}
-				}
-
-				if (chkShowFindWalls.getState()) {
-					MapPositionPoints.ClearList(FilteredPositions);
-					FilteredPositions = MapPositionPoints
-							.GetFilteredPositionsPoints(
-									FilteredPositions,
-									HOT_SPOTS_MAX_DISTANCE_SQ_TO_NEXT_POSITON * 100,
-									25, 5, sldAlgorithmsSensitivityFilter
-											.getValue());
-
-					int maxPoints = MapPositionPoints
-							.GetMaxPoints(ObjectPositions);
-
-					for (MapPositionPoints ScanPoint : FilteredPositions) {
-						MapPositionPoints PositionWithMostPoints = ScanPoint
-								.GetPositionWithMostPoints();
-						if (PositionWithMostPoints.getNeighborsLinesToThis() == null) {
-							PositionWithMostPoints
-									.setNeighborsLinesToThis(new ArrayList<MapPositionPoints>());
-						}
-
-						PositionWithMostPoints.getNeighborsLinesToThis().add(
-								ScanPoint);
-					}
-
-					for (MapPositionPoints ScanPoint : FilteredPositions) {
-						float pointPercentage = (ScanPoint.getPoints() / (float) maxPoints);
-						Color c = new Color((int) (pointPercentage * 255),
-								255 - (int) (pointPercentage * 255), 0);
-
-						MapPositionPoints PositionWithMostPoints = ScanPoint
-								.GetPositionWithMostPoints();
-
-						Point mapPosFrom = getMapPos(ScanPoint.getY(),
-								ScanPoint.getX());
-						Point mapPosTo = getMapPos(PositionWithMostPoints
-								.getY(), PositionWithMostPoints.getX());
-
-						if (ScanPoint.getNeighborsLinesToThis() != null
-								&& ScanPoint.getNeighborsLinesToThis().size() > 0) {
-
-							g.setColor(c);
-							g.drawLine((int) mapPosFrom.getX(),
-									(int) mapPosFrom.getY(), (int) mapPosTo
-											.getX(), (int) mapPosTo.getY());
-						}
-					}
-				}
-			}
+		if (mapProcessors != null && DS != null && DS.NXTRobotData != null) {
+			mapProcessors.processData(DS.NXTRobotData, sldTimeline.getValue(),
+					(curScale * MAP_DEFAULT_SCALE_FACTOR), (int) mapCenter
+							.getX(), (int) mapCenter.getY(), g);
 		}
+	}
+
+	public void refreshLatestData() {
+		RobotData LatestData = null;
+		if (DS != null && DS.NXTRobotData != null) {
+			LatestData = MapUtilities.getLatestData(DS.NXTRobotData,
+					sldTimeline.getValue() - 1);
+		}
+
+		if (DS != null && DS.NXTRobotData != null && LatestData != null) {
+			lblRDX.setText(String.valueOf(LatestData.getPosX()));
+			lblRDY.setText(String.valueOf(LatestData.getPosY()));
+			lblRDRobotHeading.setText(String.valueOf(LatestData
+					.getRobotHeading()));
+			lblRDHeadDistance.setText(String.valueOf(LatestData
+					.getHeadDistance()));
+			lblRDHeadHeading.setText(String
+					.valueOf(LatestData.getHeadHeading()));
+			lblTimelineCurrentFrame.setText(String.valueOf(sldTimeline
+					.getValue()));
+		} else {
+			lblRDHeadDistance.setText("");
+			lblRDHeadHeading.setText("");
+			lblRDRobotHeading.setText("");
+			lblRDX.setText("");
+			lblRDY.setText("");
+			lblTimelineCurrentFrame.setText("");
+		}
+	}
+
+	public void refreshMap() {
+		repaint();
 	}
 
 	@Override
@@ -840,15 +699,17 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		mapCenter = new Point((mapPanel.getWidth() / 2),
 				(mapPanel.getHeight() / 2));
 
+		// Setup the map data processors
+		setupMapProcessors();
+
 		// Auto open
 		if (PRELOAD_PENEMUNXT_MAP_PATH.length() > 0) {
 			disableTimeline();
-			openData(PRELOAD_PENEMUNXT_MAP_PATH);
+			MapFileUtilities.openData(PRELOAD_PENEMUNXT_MAP_PATH, DS, this,
+					DEFAULT_FOLDER_PATH);
 		}
 
 		while (AppActive) {
-			repaint();
-
 			sldMapScale.setValue(curScale);
 
 			if (DS != null && DS.NXTRobotData != null
@@ -931,11 +792,13 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		} else if (ae.getSource() == btnDisconnectAndStop) {
 			disconnectAndStop();
 		} else if (ae.getSource() == mnuFileOpenButton) {
-			openData(null);
+			MapFileUtilities.openData(null, DS, this, DEFAULT_FOLDER_PATH);
 		} else if (ae.getSource() == mnuFileSaveButton) {
-			saveData(null);
+			MapFileUtilities.saveData(null, DS, this, DEFAULT_FOLDER_PATH);
 		} else if (ae.getSource() == mnuFileOpenDataViewButton) {
 			openDataView();
+		} else if (ae.getSource() == mnuFileOpenMapProcessorsButton) {
+			openMapProcessorsListView();
 		} else if (ae.getSource() == btnTimelinePlayPause) {
 			switchTimelineAutoPlay();
 		} else if (ae.getSource() == btnTimelineEnableDisable) {
@@ -947,14 +810,43 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		}
 	}
 
+	@Override
+	public void stateChanged(ChangeEvent ce) {
+		if (ce.getSource() == sldMapScale) {
+			curScale = sldMapScale.getValue();
+			refreshMap();
+		} else if (ce.getSource() == sldTimelineSpeed) {
+			timelinePlaySpeed = sldTimelineSpeed.getValue();
+			if (TimelinePlayer != null) {
+				TimelinePlayer
+						.setDelay(getTimelineDelayFromSpeed(timelinePlaySpeed));
+			}
+		} else if (ce.getSource() == sldTimeline) {
+			timelineChanged();
+		}
+	}
+
 	private void openDataView() {
 		if (DataView != null
-				&& DataView.getWindowState() == PenemuNXTExplorerDataViewer.WINDOW_STATE_OPEN) {
-			DataView.refresh();
+				&& DataView.getWindowState() == DataTableWindow.WINDOW_STATE_OPEN) {
+			DataView.refresh(sldTimeline.getValue(), true);
 		} else {
 			DataView = new PenemuNXTExplorerDataViewer(DS.NXTRobotData,
-					APPLICATION_NAME + " - Data view");
+					APPLICATION_NAME + " - Data view", APPLICATION_ICON
+							.getImage());
 			DataView.open();
+		}
+	}
+
+	private void openMapProcessorsListView() {
+		if (MapProcessorsListView != null
+				&& MapProcessorsListView.getWindowState() == DataTableWindow.WINDOW_STATE_OPEN) {
+			MapProcessorsListView.refresh(true);
+		} else {
+			MapProcessorsListView = new MapProcessorsList(mapProcessors,
+					APPLICATION_NAME + " - Map Processors", APPLICATION_ICON
+							.getImage());
+			MapProcessorsListView.open();
 		}
 	}
 
@@ -968,12 +860,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			DS.NXTRobotData.clear();
 		}
 
-		lblRDHeadDistance.setText("");
-		lblRDHeadHeading.setText("");
-		lblRDRobotHeading.setText("");
-		lblRDX.setText("");
-		lblRDY.setText("");
-		lblTimelineCurrentFrame.setText("");
+		refreshLatestData();
+		refreshMap();
 	}
 
 	private void disconnectAndStop() {
@@ -998,168 +886,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		txtConnectToAddress.setEnabled(false);
 
 		connectRobot();
-	}
-
-	private void openData(String filePath) {
-		JFileChooser FC = new JFileChooser(DEFAULT_FOLDER_PATH);
-		FC.addChoosableFileFilter(new PenemuNXTMapXMLFileFilter());
-		FC.addChoosableFileFilter(new PenemuNXTMapStreamFileFilter());
-		FC.addChoosableFileFilter(new PenemuNXTMapFileFilter());
-
-		if (filePath == null || filePath.length() == 0) {
-			if (FC.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-				try {
-					filePath = FC.getSelectedFile().getPath();
-				} catch (Exception ex) {
-					filePath = "";
-				}
-			} else {
-				filePath = "";
-			}
-		}
-
-		FileInputStream FIS = null;
-
-		if (filePath.length() > 0) {
-			XMLDecoder xdec;
-			ArrayList<RobotData> OpenedRobotData = null;
-
-			try {
-				FIS = new FileInputStream(filePath);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				OpenedRobotData = null;
-			}
-
-			if (FIS != null) {
-				if (filePath
-						.endsWith(PenemuNXTMapXMLFileFilter.ALLOWED_FILE_EXTENSION)) {
-					xdec = new XMLDecoder(FIS);
-					OpenedRobotData = (ArrayList<RobotData>) xdec.readObject();
-					xdec.close();
-				} else {
-					try {
-						ObjectInputStream objIn;
-						objIn = new ObjectInputStream(FIS);
-						OpenedRobotData = (ArrayList<RobotData>) objIn
-								.readObject();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			if (OpenedRobotData != null) {
-				for (RobotData robotData : OpenedRobotData) {
-					if (robotData == null) {
-						OpenedRobotData.remove(robotData);
-					}
-				}
-				if (OpenedRobotData.size() > 0) {
-					DS.NXTRobotData = OpenedRobotData;
-				}
-			}
-		}
-	}
-
-	private void saveData(String filePath) {
-		JFileChooser FC = new JFileChooser(DEFAULT_FOLDER_PATH);
-		FC.addChoosableFileFilter(new PenemuNXTMapXMLFileFilter());
-		FC.addChoosableFileFilter(new PenemuNXTMapStreamFileFilter());
-
-		if (filePath == null || filePath.length() == 0) {
-			if (FC.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-				try {
-					filePath = FC.getSelectedFile().getPath();
-				} catch (Exception ex) {
-					filePath = "";
-				}
-			}
-		}
-
-		String fileExtension = "";
-		if (FC.getFileFilter().getDescription() == PenemuNXTMapXMLFileFilter.DESCRIPTION) {
-			fileExtension = PenemuNXTMapXMLFileFilter.ALLOWED_FILE_EXTENSION;
-		} else {
-			fileExtension = PenemuNXTMapStreamFileFilter.ALLOWED_FILE_EXTENSION;
-		}
-
-		if (!filePath.endsWith(fileExtension)) {
-			filePath += fileExtension;
-		}
-
-		FileOutputStream FOS = null;
-
-		if (filePath.length() > 0 && DS != null && DS.NXTRobotData != null) {
-			try {
-				FOS = new FileOutputStream(filePath);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-
-			if (FOS != null) {
-				if (filePath
-						.endsWith(PenemuNXTMapXMLFileFilter.ALLOWED_FILE_EXTENSION)) {
-					XMLEncoder xenc = new XMLEncoder(FOS);
-					xenc.writeObject(DS.NXTRobotData);
-					xenc.close();
-				} else {
-					try {
-						ObjectOutputStream objOut = new ObjectOutputStream(FOS);
-						objOut.writeObject(DS.NXTRobotData);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-
-				try {
-					FOS.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	private Point getMapPos(int x, int y) {
-		return getMapPos(x, y, (curScale * MAP_DEFAULT_SCALE_FACTOR),
-				mapCenter.x, mapCenter.y);
-	}
-
-	private Point getMapPos(int x, int y, float scale, int centerX, int centerY) {
-		return new Point((int) (-y * scale + centerX),
-				(int) (x * scale + centerY));
-	}
-
-	private Point getHeadingPos(int x, int y, int heading, int distance) {
-		int nx;
-		int ny;
-
-		nx = (int) (distance * Math.cos(heading * Math.PI / 180)) + x;
-		ny = (int) (distance * Math.sin(heading * Math.PI / 180)) + y;
-
-		return new Point(nx, ny);
-	}
-
-	private void paintArrow(Graphics g, int x0, int y0, int x1, int y1) {
-		int deltaX = x1 - x0;
-		int deltaY = y1 - y0;
-		double frac = 0.2;
-
-		g.drawLine(x0, y0, x1, y1);
-		g.drawLine(x0 + (int) ((1 - frac) * deltaX + frac * deltaY), y0
-				+ (int) ((1 - frac) * deltaY - frac * deltaX), x1, y1);
-		g.drawLine(x0 + (int) ((1 - frac) * deltaX - frac * deltaY), y0
-				+ (int) ((1 - frac) * deltaY + frac * deltaX), x1, y1);
-
-	}
-
-	private void paintOval(int x, int y, Color c, int size, Graphics g) {
-		g.setColor(c);
-		Point pos = getMapPos(x, y);
-		g.fillOval(pos.x - (size / 2), pos.y - (size / 2), size, size);
 	}
 
 	private void switchTimelineEnabled() {
@@ -1191,7 +917,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		sldTimelineSpeed.setEnabled(false);
 		sldTimeline.setEnabled(false);
 		sldTimeline.setVisible(false);
-
 	}
 
 	private void rewindTimeline() {
@@ -1229,30 +954,28 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		}
 	}
 
+	private void timelineChanged() {
+		refreshMap();
+		refreshLatestData();
+
+		if (DataView != null
+				&& DataView.getWindowState() == DataTableWindow.WINDOW_STATE_OPEN) {
+			DataView.selectFrame(sldTimeline.getValue());
+			DataView.focus();
+		}
+	}
+
 	private int getTimelineDelayFromSpeed(int speed) {
 		return ((TIMELINE_PLAY_SPEED_MAX - speed + TIMELINE_PLAY_SPEED_MIN) * TIMELINE_PLAY_SPEED_MULTIPLIER);
 	}
 
 	@Override
-	public void stateChanged(ChangeEvent ce) {
-		if (ce.getSource() == sldMapScale) {
-			curScale = sldMapScale.getValue();
-		} else if (ce.getSource() == sldTimelineSpeed) {
-			timelinePlaySpeed = sldTimelineSpeed.getValue();
-			if (TimelinePlayer != null) {
-				TimelinePlayer
-						.setDelay(getTimelineDelayFromSpeed(timelinePlaySpeed));
-			}
-		} else if (ce.getSource() == sldTimeline) {
-			// stopTimelineAutoPlay();
-		}
-	}
-
-	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		curScale += -e.getWheelRotation();
+		curScale += -e.getWheelRotation() * 2;
 		curScale = Math.max(curScale, MAP_MIN_SCALE);
 		curScale = Math.min(curScale, MAP_MAX_SCALE);
+
+		refreshMap();
 	}
 
 	@Override
@@ -1261,6 +984,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			mapCenterBeforeDrag = (Point) mapCenter.clone();
 			startDrag = new Point(e.getX(), e.getY());
 		}
+
+		refreshMap();
 	}
 
 	@Override
@@ -1270,6 +995,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			mapCenter = new Point((mapPanel.getWidth() / 2), (mapPanel
 					.getHeight() / 2));
 		}
+
+		refreshMap();
 	}
 
 	@Override
@@ -1281,6 +1008,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 					.getY()));
 			mapCenter.setLocation(x, y);
 		}
+
+		refreshMap();
 	}
 
 	@Override
