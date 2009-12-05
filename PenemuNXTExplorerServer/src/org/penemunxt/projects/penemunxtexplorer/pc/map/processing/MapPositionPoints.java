@@ -1,4 +1,4 @@
-package org.penemunxt.projects.penemunxtexplorer.pc;
+package org.penemunxt.projects.penemunxtexplorer.pc.map.processing;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
