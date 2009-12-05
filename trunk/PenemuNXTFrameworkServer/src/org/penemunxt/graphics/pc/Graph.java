@@ -92,7 +92,7 @@ public class Graph {
 		if (drawBox) {
 			g2.setColor(Color.BLACK);
 			g2.setStroke(new BasicStroke(1));
-			g2.drawRect((int) 0, 0, (int) bounds.getWidth(), (int) bounds
+			g2.drawRect(0, 0, (int) bounds.getWidth(), (int) bounds
 					.getHeight());
 		}
 		g.drawImage(VI, (int) bounds.getX(), (int) bounds.getY(), null);
