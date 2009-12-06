@@ -3,7 +3,8 @@ package org.penemunxt.projects.penemunxtexplorer.pc.map.processing;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import org.penemunxt.projects.penemunxtexplorer.*;
+
+import org.penemunxt.projects.penemunxtexplorer.RobotData;
 
 public interface IMapProcessor {
 	public static enum MapProcessorType {

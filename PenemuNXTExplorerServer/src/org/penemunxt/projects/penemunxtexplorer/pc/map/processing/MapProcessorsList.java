@@ -1,9 +1,10 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.processing;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Image;
+import java.util.ArrayList;
 
 import javax.swing.*;
+
 import org.penemunt.windows.pc.DataTableWindow;
 
 public class MapProcessorsList extends DataTableWindow {
@@ -53,6 +54,7 @@ public class MapProcessorsList extends DataTableWindow {
 		getDataTable().setCellSelectionEnabled(false);
 		getDataTable().setColumnSelectionAllowed(false);
 		getDataTable().setRowSelectionAllowed(true);
+		getDataTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 	public void refresh() {

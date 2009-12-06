@@ -1,10 +1,13 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.IMapProcessor;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapPositionPoints;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapUtilities;
 
 public class MapHotspots extends MapObjectPositions implements IMapProcessor {
 	public MapHotspots() {
