@@ -36,8 +36,10 @@ public class MapProcessors {
 
 		if (list != null && list.size() > 0) {
 			for (IMapProcessor mapProcessor : this.getList()) {
+				mapProcessor.reset();
+			}
+			for (IMapProcessor mapProcessor : this.getList()) {
 				if (mapProcessor.isEnabled()) {
-					mapProcessor.reset();
 					mapProcessor.processData(data, scale, centerX, centerY, g);
 				}
 			}

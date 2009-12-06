@@ -1,26 +1,73 @@
 package org.penemunxt.projects.penemunxtexplorer.pc;
 
 import java.applet.Applet;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.Point;
+import java.awt.TextField;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.image.VolatileImage;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.penemunt.windows.pc.DataTableWindow;
-import org.penemunxt.communication.*;
-import org.penemunxt.graphics.pc.*;
-import org.penemunxt.projects.penemunxtexplorer.*;
-import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
+import org.penemunxt.communication.NXTCommunication;
+import org.penemunxt.communication.NXTConnectionModes;
+import org.penemunxt.graphics.pc.Icons;
+import org.penemunxt.projects.penemunxtexplorer.RobotData;
+import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
+import org.penemunxt.projects.penemunxtexplorer.pc.connection.RobotConnection;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.MapFileUtilities;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.IMapProcessor;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessors;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessorsList;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapUtilities;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapAligned;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapBumpBumper;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapBumpDistance;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapCurrentPos;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapDrivingPath;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapFindLines;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapHeadObjects;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapHotspots;
 
 public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
@@ -823,6 +870,11 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			}
 		} else if (ce.getSource() == sldTimeline) {
 			timelineChanged();
+		} else if (ce.getSource() == DataView) {
+			if (DataView != null && timelineEnabled
+					&& DataView.getSelectedFrame() >= 0) {
+				sldTimeline.setValue(DataView.getSelectedFrame());
+			}
 		}
 	}
 
@@ -834,6 +886,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			DataView = new PenemuNXTExplorerDataViewer(DS.NXTRobotData,
 					APPLICATION_NAME + " - Data view", APPLICATION_ICON
 							.getImage());
+			DataView.setSelectedFrameChanged(this);
 			DataView.open();
 		}
 	}

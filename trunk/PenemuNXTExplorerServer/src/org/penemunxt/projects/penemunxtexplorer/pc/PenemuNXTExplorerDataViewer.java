@@ -1,14 +1,21 @@
 package org.penemunxt.projects.penemunxtexplorer.pc;
 
-import java.awt.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Image;
+import java.util.ArrayList;
+
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.penemunt.windows.pc.DataTableWindow;
 import org.penemunt.windows.pc.WindowUtilities;
-import org.penemunxt.projects.penemunxtexplorer.*;
+import org.penemunxt.projects.penemunxtexplorer.RobotData;
 
-public class PenemuNXTExplorerDataViewer extends DataTableWindow {
+public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
+		ListSelectionListener {
 
 	public final static String POSITION_TYPE_DRIVE_NAME = "Drive path";
 	public final static String POSITION_TYPE_BUMP_BUMPER_NAME = "Bumber (Front bumper)";
@@ -33,12 +40,31 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow {
 		}
 	}
 
-	ArrayList<RobotData> TableData;
+	private ArrayList<RobotData> TableData;
+	private boolean isAutoChange;
+	private ChangeListener selectedFrameChanged;
+
+	public ChangeListener getSelectedFrameChanged() {
+		return selectedFrameChanged;
+	}
+
+	public void setSelectedFrameChanged(ChangeListener selectedFrameChanged) {
+		this.selectedFrameChanged = selectedFrameChanged;
+	}
+	
+	public int getSelectedFrame(){
+		if(getDataTable().getSelectedRows()!=null && getDataTable().getSelectedRows().length > 0){
+			return getDataTable().getSelectedRows()[0] + 1;
+		}else{
+			return -1;
+		}
+	}
 
 	public PenemuNXTExplorerDataViewer(ArrayList<RobotData> robotData,
 			String applicationName, Image applicationIcon) {
 		super(applicationName, applicationIcon);
 		this.TableData = robotData;
+		this.isAutoChange = false;
 		refresh();
 	}
 
@@ -72,14 +98,18 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow {
 		}
 
 		setDataTable(new JTable(tableData, columnNames));
+		getDataTable().getSelectionModel().addListSelectionListener(this);
+		;
 		getDataTable().setFillsViewportHeight(true);
 		getDataTable().setCellSelectionEnabled(false);
 		getDataTable().setColumnSelectionAllowed(false);
 		getDataTable().setRowSelectionAllowed(true);
+		getDataTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
 	public void selectFrame(int frame) {
 		if (getDataTable() != null) {
+			isAutoChange = true;
 			ListSelectionModel selectionModel = getDataTable()
 					.getSelectionModel();
 			WindowUtilities.scrollToVisible(getDataTable(), frame - 1, 0);
@@ -101,6 +131,21 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow {
 		setupTable(getDataArray(TableData));
 		if (frame >= 0) {
 			selectFrame(frame);
+		}
+	}
+
+	public void valueChanged(ListSelectionEvent event) {
+		if (isAutoChange) {
+			isAutoChange = false;
+			return;
+		} else {
+			if (event.getValueIsAdjusting()) {
+				return;
+			}
+
+			if (getSelectedFrameChanged() != null) {
+				getSelectedFrameChanged().stateChanged(new ChangeEvent(this));
+			}
 		}
 	}
 }

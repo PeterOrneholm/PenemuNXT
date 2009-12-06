@@ -1,11 +1,15 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.ArrayList;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.*;
-import org.penemunxt.sensors.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.IMapProcessor;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapPositionPoints;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapUtilities;
+import org.penemunxt.sensors.SensorRanges;
 
 public abstract class MapObjectPositions extends MapSimplePosition implements
 		IMapProcessor {
