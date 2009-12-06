@@ -9,7 +9,7 @@ import org.penemunxt.projects.penemunxtexplorer.RobotData;
 public interface IMapProcessor {
 	public static enum MapProcessorType {
 		SimpleData,
-		Improvement
+		CalculatedData
 	}
 	
 	public Color getColor();

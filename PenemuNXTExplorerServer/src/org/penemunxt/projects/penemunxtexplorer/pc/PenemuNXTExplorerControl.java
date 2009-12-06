@@ -20,6 +20,8 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -70,7 +72,7 @@ import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.Map
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapHotspots;
 
 public class PenemuNXTExplorerControl extends Applet implements Runnable,
-		ActionListener, WindowListener, ChangeListener, MouseWheelListener,
+		ActionListener, WindowListener, ComponentListener, ChangeListener, MouseWheelListener,
 		MouseListener, MouseMotionListener {
 
 	// Constants
@@ -103,7 +105,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static Color BUMPING_BUMPER_CIRCLE_COLOR = Color.RED;
 	final static Color BUMPING_DISTANCE_CIRCLE_COLOR = Color.BLUE;
 	final static Color ALIGNED_TO_WALL_CIRCLE_COLOR = Color.CYAN;
-	final static Color HEAD_MAP_CIRCLE_COLOR = Color.DARK_GRAY;
+	final static Color HEAD_MAP_CIRCLE_COLOR = Color.ORANGE;
 
 	final static int DEFAULT_CIRCLE_SIZE = 2;
 	final static int LATEST_POS_CIRCLE_SIZE = 15;
@@ -288,7 +290,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	public JMenu getMapMenu() {
 		JMenu mnuMapMenu = new JMenu("Map");
-		mnuMapProcessors = new JMenu("Map processors");
+		mnuMapProcessors = new JMenu("Processors");
 
 		// Map menu items
 		mnuMapClearButton = new JMenuItem("Clear");
@@ -557,8 +559,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		controlPanel.add(lblMapScalesHeader);
 		controlPanel.add(sldMapScale);
 
-		controlPanel.add(lblAlgorithmsSensitivityFilterHeader);
-		controlPanel.add(sldAlgorithmsSensitivityFilter);
+		//controlPanel.add(lblAlgorithmsSensitivityFilterHeader);
+		//controlPanel.add(sldAlgorithmsSensitivityFilter);
 
 		controlPanel.add(lblCurrentDataHeader);
 		controlPanel.add(pnlCurrentData);
@@ -631,18 +633,18 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		ArrayList<IMapProcessor> defaultProcessors = new ArrayList<IMapProcessor>();
 
 		mapProcessorAligned = new MapAligned(ALIGNED_TO_WALL_CIRCLE_COLOR,
-				ALIGNED_TO_WALL_CIRCLE_SIZE, true);
+				ALIGNED_TO_WALL_CIRCLE_SIZE, ALIGNED_TO_WALL_SHOW_DEFAULT);
 		mapProcessorBumpBumper = new MapBumpBumper(BUMPING_BUMPER_CIRCLE_COLOR,
-				BUMPING_BUMPER_CIRCLE_SIZE, true);
+				BUMPING_BUMPER_CIRCLE_SIZE, BUMPING_BUMPER_SHOW_DEFAULT);
 		mapProcessorBumpDistance = new MapBumpDistance(
 				BUMPING_DISTANCE_CIRCLE_COLOR, BUMPING_DISTANCE_CIRCLE_SIZE,
-				true);
+				BUMPING_DISTANCE_SHOW_DEFAULT);
 		mapProcessorCurrentPos = new MapCurrentPos(LATEST_POS_CIRCLE_COLOR,
-				LATEST_POS_CIRCLE_SIZE, true);
+				LATEST_POS_CIRCLE_SIZE, LATEST_POS_SHOW_DEFAULT);
 		mapProcessorDrivingPath = new MapDrivingPath(DRIVING_PATH_CIRCLE_COLOR,
-				DRIVING_PATH_CIRCLE_SIZE, true);
+				DRIVING_PATH_CIRCLE_SIZE, DRIVING_PATH_SHOW_DEFAULT);
 		mapProcessorHeadObjects = new MapHeadObjects(HEAD_MAP_CIRCLE_COLOR,
-				HEAD_MAP_CIRCLE_SIZE, false);
+				HEAD_MAP_CIRCLE_SIZE, HEAD_MAP_SHOW_DEFAULT);
 
 		mapProcessorHotspots = new MapHotspots(HOT_SPOTS_MAX_CIRCLE_SIZE, false);
 		mapProcessorFindLines = new MapFindLines(true);
@@ -665,21 +667,30 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	private void setupMapProcessorsMenu() {
 		mnuMapProcessors.removeAll();
-		for (final IMapProcessor mapProcessor : mapProcessors.getList()) {
-			final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(
-					mapProcessor.getName(), mapProcessor.isEnabled());
-			menuItem.setBackground(mapProcessor.getColor());
-			menuItem.setForeground(Color.WHITE);
-			menuItem.setToolTipText(mapProcessor.getDescription());
-			menuItem.setActionCommand(mapProcessor.toString());
-			menuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					mapProcessor.setEnabled(menuItem.getState());
-					refreshMap();
-				}
-			});
+		for (IMapProcessor.MapProcessorType processorType : IMapProcessor.MapProcessorType
+				.values()) {
+			JMenu mnuCategory = new JMenu(processorType.name());
+			for (final IMapProcessor mapProcessor : mapProcessors.getList()) {
+				if (mapProcessor.getType() == processorType) {
+					final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(
+							mapProcessor.getName(), mapProcessor.isEnabled());
+					// menuItem.setBackground(mapProcessor.getColor());
+					menuItem.setForeground(mapProcessor.getColor());
+					menuItem.setToolTipText(mapProcessor.getDescription());
 
-			mnuMapProcessors.add(menuItem);
+					menuItem.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							mapProcessor.setEnabled(menuItem.getState());
+							if(MapProcessorsListView!=null){
+								MapProcessorsListView.refresh();
+							}
+							refreshMap();
+						}
+					});
+					mnuCategory.add(menuItem);
+				}
+			}
+			mnuMapProcessors.add(mnuCategory);
 		}
 	}
 
@@ -875,6 +886,9 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 					&& DataView.getSelectedFrame() >= 0) {
 				sldTimeline.setValue(DataView.getSelectedFrame());
 			}
+		} else if (ce.getSource() == MapProcessorsListView) {
+			refreshMap();
+			setupMapProcessorsMenu();
 		}
 	}
 
@@ -899,6 +913,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			MapProcessorsListView = new MapProcessorsList(mapProcessors,
 					APPLICATION_NAME + " - Map Processors", APPLICATION_ICON
 							.getImage());
+			MapProcessorsListView.setDataChanged(this);
 			MapProcessorsListView.open();
 		}
 	}
@@ -1076,8 +1091,18 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	}
 
 	public void windowActivated(WindowEvent arg0) {
+		refreshMap();
 	}
 
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		refreshMap();
+	}
+	
+	public void windowOpened(WindowEvent arg0) {
+		refreshMap();
+	}
+	
 	public void windowClosed(WindowEvent arg0) {
 	}
 
@@ -1088,9 +1113,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	}
 
 	public void windowIconified(WindowEvent arg0) {
-	}
-
-	public void windowOpened(WindowEvent arg0) {
 	}
 
 	@Override
@@ -1107,5 +1129,17 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {		
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {		
 	}
 }
