@@ -98,8 +98,8 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 		}
 
 		setDataTable(new JTable(tableData, columnNames));
+		getDataTable().setAutoCreateRowSorter(true);
 		getDataTable().getSelectionModel().addListSelectionListener(this);
-		;
 		getDataTable().setFillsViewportHeight(true);
 		getDataTable().setCellSelectionEnabled(false);
 		getDataTable().setColumnSelectionAllowed(false);

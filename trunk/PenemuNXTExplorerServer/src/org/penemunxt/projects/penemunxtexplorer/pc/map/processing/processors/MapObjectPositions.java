@@ -59,7 +59,7 @@ public abstract class MapObjectPositions extends MapSimplePosition implements
 
 	@Override
 	public MapProcessorType getType() {
-		return MapProcessorType.Improvement;
+		return MapProcessorType.CalculatedData;
 	}
 
 	@Override
