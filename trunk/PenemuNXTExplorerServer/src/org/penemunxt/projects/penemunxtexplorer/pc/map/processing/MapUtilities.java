@@ -11,7 +11,7 @@ public class MapUtilities {
 	public static RobotData getLatestData(ArrayList<RobotData> data) {
 		if (data != null && data.size() > 0) {
 			return MapUtilities.getLatestData(data, data.size() - 1);
-		}else{
+		} else {
 			return null;
 		}
 	}
@@ -58,6 +58,8 @@ public class MapUtilities {
 			int centerX, int centerY, Graphics g) {
 		g.setColor(c);
 		Point pos = getMapPos(x, y, scale, centerX, centerY);
-		g.fillOval(pos.x - (size / 2), pos.y - (size / 2), size, size);
+		int scaledSize = (int) (size * scale);
+		g.fillOval(pos.x - (scaledSize / 2), pos.y - (scaledSize / 2), scaledSize,
+				scaledSize);
 	}
 }

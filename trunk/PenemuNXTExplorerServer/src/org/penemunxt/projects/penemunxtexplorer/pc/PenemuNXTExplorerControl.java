@@ -1,78 +1,27 @@
 package org.penemunxt.projects.penemunxtexplorer.pc;
 
 import java.applet.Applet;
-import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.Point;
-import java.awt.TextField;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.VolatileImage;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
-import org.penemunt.windows.pc.DataTableWindow;
-import org.penemunxt.communication.NXTCommunication;
-import org.penemunxt.communication.NXTConnectionModes;
+import org.penemunxt.communication.*;
 import org.penemunxt.graphics.pc.Icons;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
-import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
-import org.penemunxt.projects.penemunxtexplorer.pc.connection.RobotConnection;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.MapFileUtilities;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.IMapProcessor;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessors;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessorsList;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapUtilities;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapAligned;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapBumpBumper;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapBumpDistance;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapCurrentPos;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapDrivingPath;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapFindLines;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapHeadObjects;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.MapHotspots;
+import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.*;
+import org.penemunxt.windows.pc.DataTableWindow;
 
-public class PenemuNXTExplorerControl extends Applet implements Runnable,
-		ActionListener, WindowListener, ComponentListener, ChangeListener, MouseWheelListener,
+import com.sun.j3d.utils.applet.MainFrame;
+
+public class PenemuNXTExplorerControl extends JPanel implements Runnable,
+		ActionListener, WindowListener, ComponentListener, ChangeListener,
 		MouseListener, MouseMotionListener {
 
 	// Constants
@@ -84,9 +33,20 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static Boolean APPLICATION_START_FULLSCREEN = false;
 
 	// // Maps
-	final static String DEFAULT_FOLDER_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
-	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
+
+	// None
+	// final static String DEFAULT_FOLDER_PATH = "";
 	// final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
+
+	// PeterF-01
+	final static String DEFAULT_FOLDER_PATH = "C:\\Users\\Peter\\Desktop\\PMaps\\";
+	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Users\\Peter\\Desktop\\PMaps\\Berzan\\8.penemunxtmap";
+
+	// PeterF-04
+	// final static String DEFAULT_FOLDER_PATH =
+	// "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
+	// final static String PRELOAD_PENEMUNXT_MAP_PATH =
+	// "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
 
 	// //Events and Algorithms basics
 	final static boolean LATEST_POS_SHOW_DEFAULT = true;
@@ -107,20 +67,17 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static Color ALIGNED_TO_WALL_CIRCLE_COLOR = Color.CYAN;
 	final static Color HEAD_MAP_CIRCLE_COLOR = Color.ORANGE;
 
-	final static int DEFAULT_CIRCLE_SIZE = 2;
-	final static int LATEST_POS_CIRCLE_SIZE = 15;
-	final static int DRIVING_PATH_CIRCLE_SIZE = 2;
-	final static int BUMPING_BUMPER_CIRCLE_SIZE = 10;
-	final static int BUMPING_DISTANCE_CIRCLE_SIZE = 10;
-	final static int ALIGNED_TO_WALL_CIRCLE_SIZE = 10;
-	final static int HEAD_MAP_CIRCLE_SIZE = 5;
-	final static int HOT_SPOTS_MAX_CIRCLE_SIZE = 20;
+	final static int DEFAULT_CIRCLE_SIZE = 10;
+	final static int LATEST_POS_CIRCLE_SIZE = 75;
+	final static int DRIVING_PATH_CIRCLE_SIZE = 10;
+	final static int BUMPING_BUMPER_CIRCLE_SIZE = 50;
+	final static int BUMPING_DISTANCE_CIRCLE_SIZE = 50;
+	final static int ALIGNED_TO_WALL_CIRCLE_SIZE = 50;
+	final static int HEAD_MAP_CIRCLE_SIZE = 25;
+	final static int HOT_SPOTS_MAX_CIRCLE_SIZE = 100;
 
 	// //// Scale
-	final static float MAP_DEFAULT_SCALE_FACTOR = 0.004f;
-	final static int MAP_MIN_SCALE = 1;
-	final static int MAP_MAX_SCALE = 100;
-	final static int MAP_DEFAULT_SCALE = 35;
+	final static int MAP_INIT_SCALE = 35;
 
 	// // UI
 	final static Color DEFAULT_PANEL_BACKGROUND_COLOR = new Color(197, 209, 215);
@@ -144,10 +101,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	final static String CONNECT_TO_NAME_DEFAULT = "NXT";
 	final static String CONNECT_TO_ADDRESS_DEFAULT = "0016530A9000";
 
-	final static int ALGORITHMS_SENSITIVITY_DEFAULT = 5;
-	final static int ALGORITHMS_SENSITIVITY_MIN = 0;
-	final static int ALGORITHMS_SENSITIVITY_MAX = 15;
-
 	// // Timeline
 	final static int TIMELINE_PLAY_SPEED_MIN = 1;
 	final static int TIMELINE_PLAY_SPEED_MAX = 15;
@@ -168,7 +121,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	JMenu mnuMapProcessors;
 
 	// // Buttons
-	Button btnExit;
 	Button btnConnectAndStart;
 	Button btnDisconnectAndStop;
 	Button btnTimelineEnableDisable;
@@ -201,10 +153,9 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	TextField txtConnectToAddress;
 
 	// // Map
-	int curScale = MAP_DEFAULT_SCALE;
-	Point mapCenter;
-	Point startDrag;
-	Point mapCenterBeforeDrag;
+	MapVisulaisation mapVisulaisation;
+	MapVisulaisation mapVisulaisationThumbnail;
+	MapThumbnail mapThumbnail;
 
 	// // Processors
 	MapProcessors mapProcessors;
@@ -252,16 +203,15 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		});
 	}
 
-	@Override
-	public void start() {
-		Thread t = new Thread(this);
-		t.start();
-	}
-
 	public PenemuNXTExplorerControl() {
 		AppActive = true;
 		this.setLayout(new BorderLayout());
 		this.add(getContentPanel(), BorderLayout.CENTER);
+
+		mapThumbnail = new MapThumbnail();
+
+		Thread t = new Thread(this);
+		t.start();
 	}
 
 	private static void createAndShowGUI() {
@@ -285,7 +235,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		}
 		mainFrame.setVisible(true);
-		PCCT.start();
 	}
 
 	public JMenu getMapMenu() {
@@ -336,6 +285,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		mnuFileMenu.add(new JSeparator());
 		mnuFileMenu.add(mnuFileExitButton);
 
+		setupMapProcessorsMenu();
+
 		return mnuMainBar;
 	}
 
@@ -349,18 +300,23 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		JPanel mapPanelWrapper = new JPanel();
 
 		controlPanel = new Panel();
-		mapPanel = new JPanel();
+		mapPanel = new JPanel(new BorderLayout());
 		Panel timelinePanel = new Panel();
 		Panel timelineControlPanel = new Panel();
 
 		// Fonts
-		Font fntMainHeader = new Font("Arial", Font.BOLD, 22);
 		Font fntSectionHeader = new Font("Arial", Font.BOLD, 14);
 		Font fntLabelHeader = new Font("Arial", Font.BOLD, 12);
 
-		// Header
-		Label lblHeader = new Label(APPLICATION_NAME, Label.CENTER);
-		lblHeader.setFont(fntMainHeader);
+		// Map
+		setupMapProcessors();
+		mapVisulaisation = new MapVisulaisation(MAP_INIT_SCALE, mapProcessors,
+				true);
+		mapVisulaisation.mapCenterChanged = this;
+		mapVisulaisation.mapScaleChanged = this;
+
+		mapVisulaisationThumbnail = new MapVisulaisation(MAP_INIT_SCALE,
+				mapProcessors, false);
 
 		// Image logo
 		JPanel logoPanel = new JPanel(new BorderLayout());
@@ -370,11 +326,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		logoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0,
 				LOGO_MARGIN_BOTTOM, 0));
 		logoPanel.add(lblLogo, BorderLayout.CENTER);
-
-		// Exit
-		btnExit = new Button("Exit");
-		btnExit.addActionListener(this);
-		btnExit.setEnabled(true);
 
 		// Connect
 		Label lblConnectionHeader = new Label("Connection");
@@ -441,37 +392,25 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		Label lblMapScalesHeader = new Label("Map scale");
 		lblMapScalesHeader.setFont(fntSectionHeader);
 
-		sldMapScale = new JSlider(SwingConstants.HORIZONTAL, MAP_MIN_SCALE,
-				MAP_MAX_SCALE, curScale);
+		sldMapScale = new JSlider(SwingConstants.HORIZONTAL,
+				MapVisulaisation.MAP_MIN_SCALE, MapVisulaisation.MAP_MAX_SCALE,
+				MAP_INIT_SCALE);
 		sldMapScale.setMajorTickSpacing(10);
 		sldMapScale.setMinorTickSpacing(5);
 		sldMapScale.setPaintTicks(true);
 		sldMapScale.setPaintLabels(true);
 
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-		labelTable.put(new Integer(MAP_MIN_SCALE), new JLabel(MAP_MIN_SCALE
-				+ "%"));
+		labelTable.put(new Integer(MapVisulaisation.MAP_MIN_SCALE), new JLabel(
+				MapVisulaisation.MAP_MIN_SCALE + "%"));
 		labelTable.put(new Integer(25), new JLabel("25%"));
 		labelTable.put(new Integer(50), new JLabel("50%"));
 		labelTable.put(new Integer(75), new JLabel("75%"));
-		labelTable.put(new Integer(MAP_MAX_SCALE), new JLabel(MAP_MAX_SCALE
-				+ "%"));
+		labelTable.put(new Integer(MapVisulaisation.MAP_MAX_SCALE), new JLabel(
+				MapVisulaisation.MAP_MAX_SCALE + "%"));
 		sldMapScale.setLabelTable(labelTable);
 		sldMapScale.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 		sldMapScale.addChangeListener(this);
-
-		// Algorithms sensitivity
-		Label lblAlgorithmsSensitivityFilterHeader = new Label(
-				"Algorithms sensitivity");
-		lblAlgorithmsSensitivityFilterHeader.setFont(fntSectionHeader);
-
-		sldAlgorithmsSensitivityFilter = new JSlider(SwingConstants.HORIZONTAL,
-				ALGORITHMS_SENSITIVITY_MIN, ALGORITHMS_SENSITIVITY_MAX,
-				ALGORITHMS_SENSITIVITY_DEFAULT);
-		sldAlgorithmsSensitivityFilter.setMajorTickSpacing(5);
-		sldAlgorithmsSensitivityFilter.setMinorTickSpacing(1);
-		sldAlgorithmsSensitivityFilter
-				.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 
 		// Current data
 		Label lblCurrentDataHeader = new Label("Current");
@@ -515,7 +454,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		// Timeline
 		Label lblTimelineHeader = new Label("Timeline");
 		lblTimelineHeader.setFont(fntSectionHeader);
-		JPanel timelineWrapperPanel = new JPanel();
 
 		sldTimeline = new JSlider(SwingConstants.HORIZONTAL, timelineMin,
 				timelineMax, timelineDefault);
@@ -523,6 +461,9 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		sldTimeline.setPaintLabels(true);
 		sldTimeline.addChangeListener(this);
 		sldTimeline.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
+
+		sldTimeline.addMouseListener(this);
+		sldTimeline.addMouseMotionListener(this);
 
 		// Timeline speed
 		Label lblTimelineSpeedHeader = new Label("Speed");
@@ -537,7 +478,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		sldTimelineSpeed.addChangeListener(this);
 
 		// Timeline buttons
-
 		btnTimelineEnableDisable = new Button("Enable");
 		btnTimelineEnableDisable.addActionListener(this);
 
@@ -549,18 +489,13 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 		// Control panel
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-		// controlPanel.add(lblHeader);
 		controlPanel.add(logoPanel);
-		// controlPanel.add(btnExit);
 
 		controlPanel.add(lblConnectionHeader);
 		controlPanel.add(pnlConnection);
 
 		controlPanel.add(lblMapScalesHeader);
 		controlPanel.add(sldMapScale);
-
-		//controlPanel.add(lblAlgorithmsSensitivityFilterHeader);
-		//controlPanel.add(sldAlgorithmsSensitivityFilter);
 
 		controlPanel.add(lblCurrentDataHeader);
 		controlPanel.add(pnlCurrentData);
@@ -618,13 +553,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BORDER_WIDTH));
 
 		// Map panel
+		mapPanel.add(mapVisulaisation, BorderLayout.CENTER);
 		mapPanel.setBackground(MAP_PANEL_BACKGROUND_COLOR);
-		mapPanel.setCursor(new Cursor(Cursor.MOVE_CURSOR));
-
-		// Map Listeners
-		mapPanel.addMouseMotionListener(this);
-		mapPanel.addMouseListener(this);
-		mapPanel.addMouseWheelListener(this);
 
 		return mainPanel;
 	}
@@ -661,8 +591,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		defaultProcessors.add(mapProcessorFindLines);
 
 		mapProcessors = new MapProcessors(defaultProcessors);
-
-		setupMapProcessorsMenu();
 	}
 
 	private void setupMapProcessorsMenu() {
@@ -681,7 +609,7 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 					menuItem.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							mapProcessor.setEnabled(menuItem.getState());
-							if(MapProcessorsListView!=null){
+							if (MapProcessorsListView != null) {
 								MapProcessorsListView.refresh();
 							}
 							refreshMap();
@@ -691,28 +619,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 				}
 			}
 			mnuMapProcessors.add(mnuCategory);
-		}
-	}
-
-	@Override
-	public void update(Graphics g) {
-		if (OSI == null || OSI.getWidth() != getWidth()
-				|| OSI.getHeight() != getHeight()) {
-			OSI = createVolatileImage(mapPanel.getWidth(), mapPanel.getHeight());
-		}
-
-		OSI.getGraphics().clearRect(0, 0, OSI.getWidth(), OSI.getHeight());
-
-		paint(OSI.getGraphics());
-		mapPanel.getGraphics().drawImage(OSI, 0, 0, null);
-	}
-
-	@Override
-	public void paint(Graphics g) {
-		if (mapProcessors != null && DS != null && DS.NXTRobotData != null) {
-			mapProcessors.processData(DS.NXTRobotData, sldTimeline.getValue(),
-					(curScale * MAP_DEFAULT_SCALE_FACTOR), (int) mapCenter
-							.getX(), (int) mapCenter.getY(), g);
 		}
 	}
 
@@ -745,7 +651,10 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	}
 
 	public void refreshMap() {
-		repaint();
+		if (mapVisulaisation != null) {
+			mapVisulaisation.refresh();
+			mapVisulaisationThumbnail.refresh();
+		}
 	}
 
 	@Override
@@ -753,22 +662,20 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		// Object to share data internal
 		DS = new DataShare();
 
-		// Map init center
-		mapCenter = new Point((mapPanel.getWidth() / 2),
-				(mapPanel.getHeight() / 2));
+		mapVisulaisation.setDS(DS);
+		mapVisulaisationThumbnail.setDS(DS);
 
-		// Setup the map data processors
-		setupMapProcessors();
+		disableTimeline();
 
 		// Auto open
 		if (PRELOAD_PENEMUNXT_MAP_PATH.length() > 0) {
-			disableTimeline();
-			MapFileUtilities.openData(PRELOAD_PENEMUNXT_MAP_PATH, DS, this,
-					DEFAULT_FOLDER_PATH);
+			MapFileUtilities.openData(PRELOAD_PENEMUNXT_MAP_PATH, DS);
 		}
 
 		while (AppActive) {
-			sldMapScale.setValue(curScale);
+			if (mapVisulaisation != null) {
+				sldMapScale.setValue(mapVisulaisation.getMapScale());
+			}
 
 			if (DS != null && DS.NXTRobotData != null
 					&& DS.NXTRobotData.size() > 0) {
@@ -785,6 +692,10 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 				if (sldTimeline.getValue() == sldTimeline.getMaximum()) {
 					stopTimelineAutoPlay();
+				}
+
+				if (mapVisulaisation != null) {
+					mapVisulaisation.setMapCurrentFrame(sldTimeline.getValue());
 				}
 
 				sldTimeline
@@ -843,16 +754,16 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	}
 
 	public void actionPerformed(ActionEvent ae) {
-		if (ae.getSource() == btnExit || ae.getSource() == mnuFileExitButton) {
+		if (ae.getSource() == mnuFileExitButton) {
 			exitApp();
 		} else if (ae.getSource() == btnConnectAndStart) {
 			connectAndStart();
 		} else if (ae.getSource() == btnDisconnectAndStop) {
 			disconnectAndStop();
 		} else if (ae.getSource() == mnuFileOpenButton) {
-			MapFileUtilities.openData(null, DS, this, DEFAULT_FOLDER_PATH);
+			MapFileUtilities.openData(DEFAULT_FOLDER_PATH, this, DS);
 		} else if (ae.getSource() == mnuFileSaveButton) {
-			MapFileUtilities.saveData(null, DS, this, DEFAULT_FOLDER_PATH);
+			MapFileUtilities.saveData(DEFAULT_FOLDER_PATH, this, DS);
 		} else if (ae.getSource() == mnuFileOpenDataViewButton) {
 			openDataView();
 		} else if (ae.getSource() == mnuFileOpenMapProcessorsButton) {
@@ -871,7 +782,9 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	@Override
 	public void stateChanged(ChangeEvent ce) {
 		if (ce.getSource() == sldMapScale) {
-			curScale = sldMapScale.getValue();
+			if (mapVisulaisation != null) {
+				mapVisulaisation.setMapScale(sldMapScale.getValue(), false);
+			}
 			refreshMap();
 		} else if (ce.getSource() == sldTimelineSpeed) {
 			timelinePlaySpeed = sldTimelineSpeed.getValue();
@@ -889,6 +802,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 		} else if (ce.getSource() == MapProcessorsListView) {
 			refreshMap();
 			setupMapProcessorsMenu();
+		} else if (ce.getSource() == mapVisulaisation) {
+			refreshMap();
 		}
 	}
 
@@ -911,8 +826,8 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			MapProcessorsListView.refresh(true);
 		} else {
 			MapProcessorsListView = new MapProcessorsList(mapProcessors,
-					APPLICATION_NAME + " - Map Processors", APPLICATION_ICON
-							.getImage());
+					DS, APPLICATION_NAME + " - Map Processors",
+					APPLICATION_ICON.getImage());
 			MapProcessorsListView.setDataChanged(this);
 			MapProcessorsListView.open();
 		}
@@ -920,7 +835,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 
 	private void exitApp() {
 		AppActive = false;
-		btnExit.setEnabled(false);
 	}
 
 	private void clearMap() {
@@ -937,7 +851,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 			RC.disconnect();
 		}
 
-		btnExit.setEnabled(true);
 		btnConnectAndStart.setEnabled(true);
 		btnDisconnectAndStop.setEnabled(false);
 		cboConnectionTypes.setEnabled(true);
@@ -946,7 +859,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	}
 
 	private void connectAndStart() {
-		btnExit.setEnabled(false);
 		btnConnectAndStart.setEnabled(false);
 		btnDisconnectAndStop.setEnabled(true);
 		cboConnectionTypes.setEnabled(false);
@@ -1038,49 +950,6 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	}
 
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		curScale += -e.getWheelRotation() * 2;
-		curScale = Math.max(curScale, MAP_MIN_SCALE);
-		curScale = Math.min(curScale, MAP_MAX_SCALE);
-
-		refreshMap();
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (mapCenter != null) {
-			mapCenterBeforeDrag = (Point) mapCenter.clone();
-			startDrag = new Point(e.getX(), e.getY());
-		}
-
-		refreshMap();
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2) {
-			curScale = MAP_DEFAULT_SCALE;
-			mapCenter = new Point((mapPanel.getWidth() / 2), (mapPanel
-					.getHeight() / 2));
-		}
-
-		refreshMap();
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		if (mapCenterBeforeDrag != null && startDrag != null) {
-			int x = (int) (mapCenterBeforeDrag.getX() + (e.getX() - startDrag
-					.getX()));
-			int y = (int) (mapCenterBeforeDrag.getY() + (e.getY() - startDrag
-					.getY()));
-			mapCenter.setLocation(x, y);
-		}
-
-		refreshMap();
-	}
-
-	@Override
 	public void windowClosing(WindowEvent arg0) {
 		if (RC != null && RC.isConnectionActive()) {
 			disconnectAndStop();
@@ -1098,11 +967,46 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	public void componentResized(ComponentEvent arg0) {
 		refreshMap();
 	}
-	
+
 	public void windowOpened(WindowEvent arg0) {
 		refreshMap();
 	}
-	
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		mapThumbnail.hide();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		refreshMap();
+		if (!mapThumbnail.isOpen()) {
+			mapThumbnail.open(mapVisulaisationThumbnail, 250, 250);
+			mapThumbnail.setScale(25);
+		}
+
+		int x = e.getXOnScreen();
+		int y = e.getYOnScreen();
+
+		float percentage = (e.getX() / (float) sldTimeline.getWidth());
+		int frame = (int) (percentage * sldTimeline.getMaximum());
+
+		x -= (int) (mapThumbnail.getWidth() / 2);
+
+		int finalX;
+		finalX = Math.min(x,
+				((int) sldTimeline.getLocationOnScreen().getX()
+						+ sldTimeline.getWidth() - mapVisulaisationThumbnail
+						.getWidth()));
+		finalX = Math.max(finalX, (int) sldTimeline.getLocationOnScreen()
+				.getX());
+		int finalY = (int) sldTimeline.getLocationOnScreen().getY()
+				- mapThumbnail.mainWindow.getHeight() - 100;
+
+		mapThumbnail.setFrame(frame);
+		mapThumbnail.move(finalX, finalY);
+	}
+
 	public void windowClosed(WindowEvent arg0) {
 	}
 
@@ -1116,30 +1020,35 @@ public class PenemuNXTExplorerControl extends Applet implements Runnable,
 	}
 
 	@Override
+	public void componentHidden(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+	}
+
+	@Override
 	public void mouseEntered(MouseEvent arg0) {
+
 	}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
+	public void mousePressed(MouseEvent arg0) {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
+	public void mouseReleased(MouseEvent arg0) {
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	@Override
-	public void componentHidden(ComponentEvent arg0) {		
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent arg0) {		
-	}
-
-	@Override
-	public void componentShown(ComponentEvent arg0) {		
+	public void mouseDragged(MouseEvent e) {
 	}
 }

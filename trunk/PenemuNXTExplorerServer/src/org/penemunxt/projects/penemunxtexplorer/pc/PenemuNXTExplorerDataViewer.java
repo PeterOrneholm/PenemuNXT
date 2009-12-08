@@ -10,9 +10,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.penemunt.windows.pc.DataTableWindow;
-import org.penemunt.windows.pc.WindowUtilities;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
+import org.penemunxt.windows.pc.DataTableWindow;
+import org.penemunxt.windows.pc.WindowUtilities;
 
 public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 		ListSelectionListener {
