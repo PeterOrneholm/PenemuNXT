@@ -8,15 +8,31 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import org.penemunt.windows.pc.*;
-import org.penemunt.windows.tables.pc.ColorEditor;
-import org.penemunt.windows.tables.pc.ColorRenderer;
-import org.penemunt.windows.tables.pc.SliderEditor;
+import org.penemunxt.projects.penemunxtexplorer.RobotData;
+import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.MapVisulaisation;
+import org.penemunxt.windows.pc.*;
+import org.penemunxt.windows.tables.pc.ColorEditor;
+import org.penemunxt.windows.tables.pc.ColorRenderer;
+import org.penemunxt.windows.tables.pc.SliderEditor;
 
-public class MapProcessorsList extends DataTableWindow {
+public class MapProcessorsList extends DataTableWindow implements
+		ListSelectionListener {
+
+	final static Color DEFAULT_PANEL_BACKGROUND_COLOR = new Color(197, 209, 215);
+	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
+	final static Color MAIN_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
+
+	final static Color MAP_PANEL_BORDER_COLOR = Color.BLACK;
+	final static int MAP_PANEL_BORDER_WIDTH = 2;
+
+	final static int PANEL_MARGIN = 15;
 
 	MapProcessors mapProcessors;
+	MapProcessors mapPreviewProcessors;
 	private ChangeListener dataChanged;
+	MapVisulaisation mapPreview;
+	DataShare DS;
 
 	public ChangeListener getDataChanged() {
 		return dataChanged;
@@ -26,11 +42,80 @@ public class MapProcessorsList extends DataTableWindow {
 		this.dataChanged = dataChanged;
 	}
 
-	public MapProcessorsList(MapProcessors mapProcessors,
+	public MapProcessorsList(MapProcessors mapProcessors, DataShare DS,
 			String applicationName, Image applicationIcon) {
 		super(applicationName, applicationIcon);
+
 		this.mapProcessors = mapProcessors;
+		this.DS = DS;
+
 		refresh();
+	}
+
+	@Override
+	public Panel getContentPanel() {
+		Font fntSectionHeader = new Font("Arial", Font.BOLD, 14);
+
+		// Panels
+		panelMain = new Panel(new BorderLayout());
+		Panel pnlLeft = new Panel(new BorderLayout());
+		Panel pnlRight = new Panel(new BorderLayout());
+
+		// Left
+
+		JPanel pnlMapProcessorsBorder = new JPanel(new BorderLayout());
+		JPanel pnlMapProcessorsSpacer = new JPanel(new BorderLayout());
+
+		pnlMapProcessorsSpacer.setBorder(BorderFactory.createEmptyBorder(
+				PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN));
+		pnlMapProcessorsSpacer.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
+		pnlMapProcessorsBorder.setBorder(BorderFactory.createLineBorder(
+				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BORDER_WIDTH));
+
+		Label lblMapProcessorsHeader = new Label("Map Processors", Label.CENTER);
+		lblMapProcessorsHeader.setFont(fntSectionHeader);
+
+		JScrollPane scrollTable = new JScrollPane(getDataTable());
+
+		pnlMapProcessorsBorder.add(scrollTable, BorderLayout.CENTER);
+		pnlMapProcessorsSpacer.add(pnlMapProcessorsBorder, BorderLayout.CENTER);
+
+		pnlLeft.add(lblMapProcessorsHeader, BorderLayout.NORTH);
+		pnlLeft.add(pnlMapProcessorsSpacer, BorderLayout.CENTER);
+
+		// Right
+		mapPreview = new MapVisulaisation(null);
+
+		Panel pnlMapPreviewWrapper = new Panel(new BorderLayout());
+		JPanel pnlMapPreviewBorder = new JPanel(new BorderLayout());
+		JPanel pnlMapPreviewSpacer = new JPanel(new BorderLayout());
+
+		Label lblPreviewHeader = new Label("Preview", Label.CENTER);
+		lblPreviewHeader.setFont(fntSectionHeader);
+
+		pnlRight.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
+
+		pnlMapPreviewSpacer.setBorder(BorderFactory.createEmptyBorder(
+				PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN));
+		pnlMapPreviewSpacer.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
+		pnlMapPreviewBorder.setBorder(BorderFactory.createLineBorder(
+				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BORDER_WIDTH));
+		pnlMapPreviewWrapper.setBackground(MAP_PANEL_BACKGROUND_COLOR);
+
+		pnlMapPreviewWrapper.add(mapPreview, BorderLayout.CENTER);
+		pnlMapPreviewBorder.add(pnlMapPreviewWrapper, BorderLayout.CENTER);
+		pnlMapPreviewSpacer.add(pnlMapPreviewBorder, BorderLayout.CENTER);
+
+		pnlRight.setPreferredSize(new Dimension(400, 200));
+		pnlRight.add(pnlMapPreviewSpacer, BorderLayout.CENTER);
+		pnlRight.add(lblPreviewHeader, BorderLayout.NORTH);
+
+		// Main
+		panelMain.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
+		panelMain.add(pnlLeft, BorderLayout.CENTER);
+		panelMain.add(pnlRight, BorderLayout.EAST);
+
+		return panelMain;
 	}
 
 	private void setupTable() {
@@ -49,7 +134,10 @@ public class MapProcessorsList extends DataTableWindow {
 		getDataTable().setCellSelectionEnabled(false);
 		getDataTable().setColumnSelectionAllowed(false);
 		getDataTable().setRowSelectionAllowed(true);
-		getDataTable().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		getDataTable().setSelectionMode(
+				ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+		getDataTable().getSelectionModel().addListSelectionListener(this);
 	}
 
 	public void refresh() {
@@ -60,6 +148,27 @@ public class MapProcessorsList extends DataTableWindow {
 	public void refresh(boolean focus) {
 		super.refresh(focus);
 		setupTable();
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		ArrayList<IMapProcessor> previewProcessors = new ArrayList<IMapProcessor>();
+		for (int i = 0; i < getDataTable().getSelectedRows().length; i++) {
+			IMapProcessor mp = mapProcessors.list.get(getDataTable()
+					.getSelectedRows()[i]);
+			previewProcessors.add(mp);
+		}
+
+		if (mapPreviewProcessors == null) {
+			mapPreviewProcessors = new MapProcessors(previewProcessors);
+		} else {
+			mapPreviewProcessors.setList(previewProcessors);
+		}
+
+		mapPreview.setMapCurrentFrame(MapVisulaisation.MAP_FRAME_LAST);
+		mapPreview.setDS(DS);
+		mapPreview.setMapProcessors(mapPreviewProcessors);
+		mapPreview.refresh();
 	}
 
 	private class MapProcessorsTableModel extends AbstractTableModel {

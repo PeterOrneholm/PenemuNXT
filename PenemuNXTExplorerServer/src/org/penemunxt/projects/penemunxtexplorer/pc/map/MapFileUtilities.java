@@ -11,100 +11,101 @@ import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
 
 public class MapFileUtilities {
-	public static void openData(String filePath, DataShare DS) {
-		MapFileUtilities.openData(filePath, DS, null, "");
-	}
-
-	public static void openData(String filePath, DataShare DS,
-			Object parent, String defaultFolderPath) {
+	public static void openData(String defaultFolderPath, Object parent,
+			DataShare DS) {
+		String filePath = "";
 		JFileChooser FC = new JFileChooser(defaultFolderPath);
 		FC.addChoosableFileFilter(new PenemuNXTMapXMLFileFilter());
 		FC.addChoosableFileFilter(new PenemuNXTMapStreamFileFilter());
 		FC.addChoosableFileFilter(new PenemuNXTMapFileFilter());
 
-		if (filePath == null || filePath.length() == 0) {
-			int dialogResult;
-			if(parent!=null){
-				dialogResult = FC.showOpenDialog((Component)parent);
-			}else{
-				dialogResult = FC.showOpenDialog(null);
-			}
-			
-			if (dialogResult == JFileChooser.APPROVE_OPTION) {
-				try {
-					filePath = FC.getSelectedFile().getPath();
-				} catch (Exception ex) {
-					filePath = "";
-				}
-			} else {
-				filePath = "";
-			}
+		int dialogResult;
+		if (parent != null) {
+			dialogResult = FC.showOpenDialog((Component) parent);
+		} else {
+			dialogResult = FC.showOpenDialog(null);
 		}
 
+		if (dialogResult == JFileChooser.APPROVE_OPTION) {
+			try {
+				filePath = FC.getSelectedFile().getPath();
+			} catch (Exception ex) {
+				filePath = "";
+			}
+		} else {
+			filePath = "";
+		}
+
+		MapFileUtilities.openData(filePath, DS);
+	}
+
+	public static void openData(String filePath, DataShare DS) {
 		FileInputStream FIS = null;
 
 		if (filePath.length() > 0) {
 			XMLDecoder xdec;
 			ArrayList<RobotData> OpenedRobotData = null;
+			File f = new File(filePath);
 
-			try {
-				FIS = new FileInputStream(filePath);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				OpenedRobotData = null;
-			}
+			if (f.exists()) {
+				try {
+					FIS = new FileInputStream(filePath);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					FIS = null;
+					OpenedRobotData = null;
+				}
 
-			if (FIS != null) {
-				if (filePath
-						.endsWith(PenemuNXTMapXMLFileFilter.ALLOWED_FILE_EXTENSION)) {
-					xdec = new XMLDecoder(FIS);
-					OpenedRobotData = (ArrayList<RobotData>) xdec.readObject();
-					xdec.close();
-				} else {
-					try {
-						ObjectInputStream objIn;
-						objIn = new ObjectInputStream(FIS);
-						OpenedRobotData = (ArrayList<RobotData>) objIn
+				if (FIS != null) {
+					if (filePath
+							.endsWith(PenemuNXTMapXMLFileFilter.ALLOWED_FILE_EXTENSION)) {
+						xdec = new XMLDecoder(FIS);
+						OpenedRobotData = (ArrayList<RobotData>) xdec
 								.readObject();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
+						xdec.close();
+					} else {
+						try {
+							ObjectInputStream objIn;
+							objIn = new ObjectInputStream(FIS);
+							OpenedRobotData = (ArrayList<RobotData>) objIn
+									.readObject();
+						} catch (IOException e) {
+							e.printStackTrace();
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						}
 					}
 				}
-			}
 
-			if (OpenedRobotData != null) {
-				for (RobotData robotData : OpenedRobotData) {
-					if (robotData == null) {
-						OpenedRobotData.remove(robotData);
+				if (OpenedRobotData != null) {
+					for (RobotData robotData : OpenedRobotData) {
+						if (robotData == null) {
+							OpenedRobotData.remove(robotData);
+						}
 					}
-				}
-				if (OpenedRobotData.size() > 0) {
-					DS.NXTRobotData = OpenedRobotData;
+					if (OpenedRobotData.size() > 0) {
+						DS.NXTRobotData = OpenedRobotData;
+					}
 				}
 			}
 		}
 	}
 
-	public static void saveData(String filePath, DataShare DS) {
-		MapFileUtilities.saveData(filePath, DS, null, "");
-	}
-	
-	public static void saveData(String filePath, DataShare DS,
-			Object parent, String defaultFolderPath) {
+	public static void saveData(String defaultFolderPath, Object parent,
+			DataShare DS) {
+		String filePath = "";
 		JFileChooser FC = new JFileChooser(defaultFolderPath);
 		FC.addChoosableFileFilter(new PenemuNXTMapXMLFileFilter());
 		FC.addChoosableFileFilter(new PenemuNXTMapStreamFileFilter());
 
 		if (filePath == null || filePath.length() == 0) {
 			int dialogResult;
-			if(parent!=null){
-				dialogResult = FC.showSaveDialog((Component)parent);
-			}else{
+			if (parent != null) {
+				dialogResult = FC.showSaveDialog((Component) parent);
+			} else {
 				dialogResult = FC.showSaveDialog(null);
 			}
-			
+
 			if (dialogResult == JFileChooser.APPROVE_OPTION) {
 				try {
 					filePath = FC.getSelectedFile().getPath();
@@ -125,6 +126,10 @@ public class MapFileUtilities {
 			filePath += fileExtension;
 		}
 
+		MapFileUtilities.saveData(filePath, DS);
+	}
+
+	public static void saveData(String filePath, DataShare DS) {
 		FileOutputStream FOS = null;
 
 		if (filePath.length() > 0 && DS != null && DS.NXTRobotData != null) {
@@ -132,6 +137,7 @@ public class MapFileUtilities {
 				FOS = new FileOutputStream(filePath);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+				FOS = null;
 			}
 
 			if (FOS != null) {

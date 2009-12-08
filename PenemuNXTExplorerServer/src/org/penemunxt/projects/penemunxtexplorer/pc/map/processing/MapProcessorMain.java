@@ -6,9 +6,9 @@ import java.util.ArrayList;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 
-public abstract class MapProcessorMain implements IMapProcessor {
+public abstract class MapProcessorMain implements IMapProcessor, Cloneable {
 	private final static Color DEFAULT_COLOR = Color.BLACK;
-	private final static int DEFAULT_SIZE = 5;
+	private final static int DEFAULT_SIZE = 25;
 	
 	private boolean enabled;
 	private Color c;
