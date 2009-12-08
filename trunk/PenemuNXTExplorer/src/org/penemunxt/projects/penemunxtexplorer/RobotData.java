@@ -3,12 +3,13 @@ package org.penemunxt.projects.penemunxtexplorer;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.penemunxt.communication.INXTCommunicationData;
 import org.penemunxt.communication.NXTCommunicationData;
 
 public class RobotData extends NXTCommunicationData implements
-		INXTCommunicationData {
+		INXTCommunicationData, Serializable {
 
 	/* Read / Write */
 	@Override
