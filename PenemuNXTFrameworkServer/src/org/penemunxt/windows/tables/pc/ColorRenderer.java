@@ -3,7 +3,6 @@ package org.penemunxt.windows.tables.pc;
 import java.awt.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 public class ColorRenderer extends JLabel implements TableCellRenderer {

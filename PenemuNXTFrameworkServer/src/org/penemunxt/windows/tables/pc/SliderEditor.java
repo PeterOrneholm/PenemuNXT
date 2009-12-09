@@ -23,7 +23,7 @@ public class SliderEditor extends AbstractCellEditor implements TableCellEditor 
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		if (value == null) {
-			return (Component) sldSlider;
+			return sldSlider;
 		}
 		if (value instanceof Integer) {
 			int v = (Integer) value;
@@ -31,7 +31,7 @@ public class SliderEditor extends AbstractCellEditor implements TableCellEditor 
 		} else {
 			sldSlider.setValue(max);
 		}
-		return (Component) sldSlider;
+		return sldSlider;
 	}
 
 	@Override
