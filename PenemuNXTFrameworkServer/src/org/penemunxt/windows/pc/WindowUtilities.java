@@ -1,4 +1,4 @@
-package org.penemunt.windows.pc;
+package org.penemunxt.windows.pc;
 
 import java.awt.*;
 import javax.swing.*;

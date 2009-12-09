@@ -31,8 +31,6 @@ public class PCDataStreamConnection extends DataStreamConnection {
 		}
 
 		ConnectSuccess = Connection.connectTo(Name, Address, ConnectionMode);
-
-		//
 		
 		this.setDataIn(Connection.getDataIn());
 		this.setDataOut(Connection.getDataOut());
