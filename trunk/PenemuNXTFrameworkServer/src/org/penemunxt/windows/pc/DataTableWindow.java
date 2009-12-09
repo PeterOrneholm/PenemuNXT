@@ -10,7 +10,7 @@ public abstract class DataTableWindow extends Thread implements Runnable,
 	public static int WINDOW_STATE_OPEN = 100;
 	public static int WINDOW_STATE_CLOSED = 200;
 
-	public static float WINDOW_WIDTH_PERCENTAGE = 0.5f;
+	public static float WINDOW_WIDTH_PERCENTAGE = 0.6f;
 	public static float WINDOW_HEIGHT_PERCENTAGE = 0.25f;
 
 	String ApplicationName;
