@@ -1,6 +1,5 @@
 package org.penemunxt.projects.penemunxtexplorer.pc;
 
-import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.VolatileImage;
@@ -14,11 +13,11 @@ import org.penemunxt.graphics.pc.Icons;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.file.MapFileUtilities;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.*;
+import org.penemunxt.windows.pc.ComponentSpacer;
 import org.penemunxt.windows.pc.DataTableWindow;
-
-import com.sun.j3d.utils.applet.MainFrame;
 
 public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		ActionListener, WindowListener, ComponentListener, ChangeListener,
@@ -129,7 +128,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	// // Panels
 	Panel controlPanel;
-	JPanel mapPanel;
 
 	// // Labels
 	Label lblRDX;
@@ -297,10 +295,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		JPanel rightPanel = new JPanel();
 		JPanel bottomPanel = new JPanel();
 		JPanel viewPanel = new JPanel();
-		JPanel mapPanelWrapper = new JPanel();
 
 		controlPanel = new Panel();
-		mapPanel = new JPanel(new BorderLayout());
 		Panel timelinePanel = new Panel();
 		Panel timelineControlPanel = new Panel();
 
@@ -541,20 +537,10 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 		// View panel
 		viewPanel.setLayout(new BorderLayout());
-		viewPanel.setBackground(VIEW_PANEL_BACKGROUND_COLOR);
-		viewPanel.setBorder(BorderFactory.createEmptyBorder(PANEL_MARGIN,
-				PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN));
-		viewPanel.add(mapPanelWrapper, BorderLayout.CENTER);
-
-		// Map panel wrapper
-		mapPanelWrapper.setLayout(new BorderLayout());
-		mapPanelWrapper.add(mapPanel, BorderLayout.CENTER);
-		mapPanelWrapper.setBorder(BorderFactory.createLineBorder(
-				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BORDER_WIDTH));
-
-		// Map panel
-		mapPanel.add(mapVisulaisation, BorderLayout.CENTER);
-		mapPanel.setBackground(MAP_PANEL_BACKGROUND_COLOR);
+		viewPanel.add(new ComponentSpacer(mapVisulaisation, PANEL_MARGIN,
+				VIEW_PANEL_BACKGROUND_COLOR, MAP_PANEL_BORDER_WIDTH,
+				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BACKGROUND_COLOR),
+				BorderLayout.CENTER);
 
 		return mainPanel;
 	}
@@ -602,7 +588,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 				if (mapProcessor.getType() == processorType) {
 					final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(
 							mapProcessor.getName(), mapProcessor.isEnabled());
-					// menuItem.setBackground(mapProcessor.getColor());
 					menuItem.setForeground(mapProcessor.getColor());
 					menuItem.setToolTipText(mapProcessor.getDescription());
 
@@ -761,7 +746,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		} else if (ae.getSource() == btnDisconnectAndStop) {
 			disconnectAndStop();
 		} else if (ae.getSource() == mnuFileOpenButton) {
-			MapFileUtilities.openData(DEFAULT_FOLDER_PATH, this, DS);
+			MapFileUtilities.openData(DEFAULT_FOLDER_PATH, this, DS,
+					mapProcessors);
 		} else if (ae.getSource() == mnuFileSaveButton) {
 			MapFileUtilities.saveData(DEFAULT_FOLDER_PATH, this, DS);
 		} else if (ae.getSource() == mnuFileOpenDataViewButton) {
@@ -825,9 +811,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 				&& MapProcessorsListView.getWindowState() == DataTableWindow.WINDOW_STATE_OPEN) {
 			MapProcessorsListView.refresh(true);
 		} else {
-			MapProcessorsListView = new MapProcessorsList(mapProcessors,
-					DS, APPLICATION_NAME + " - Map Processors",
-					APPLICATION_ICON.getImage());
+			MapProcessorsListView = new MapProcessorsList(mapProcessors, DS,
+					APPLICATION_NAME + " - Map Processors", APPLICATION_ICON
+							.getImage());
 			MapProcessorsListView.setDataChanged(this);
 			MapProcessorsListView.open();
 		}
@@ -991,7 +977,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		float percentage = (e.getX() / (float) sldTimeline.getWidth());
 		int frame = (int) (percentage * sldTimeline.getMaximum());
 
-		x -= (int) (mapThumbnail.getWidth() / 2);
+		x -= (mapThumbnail.getWidth() / 2);
 
 		int finalX;
 		finalX = Math.min(x,
@@ -1037,7 +1023,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-
 	}
 
 	@Override
