@@ -1,4 +1,4 @@
-package org.penemunt.windows.tables.pc;
+package org.penemunxt.windows.tables.pc;
 
 import java.awt.*;
 import java.awt.event.*;
