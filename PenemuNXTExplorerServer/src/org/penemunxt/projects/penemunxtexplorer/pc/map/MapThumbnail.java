@@ -2,17 +2,16 @@ package org.penemunxt.projects.penemunxtexplorer.pc.map;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Panel;
-import java.awt.Toolkit;
-
 import javax.swing.*;
+
+import org.penemunxt.windows.pc.ComponentSpacer;
 
 public class MapThumbnail extends Thread implements Runnable {
 	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
 	final static Color MAP_PANEL_BORDER_COLOR = Color.BLACK;
 	final static int MAP_PANEL_BORDER_WIDTH = 2;
+	final static int MAP_PANEL_MARGIN = 0;
 
 	public JWindow mainWindow;
 	MapVisulaisation mapVisulaisation;
@@ -57,11 +56,6 @@ public class MapThumbnail extends Thread implements Runnable {
 
 	public JPanel getThumbnailPanel() {
 		pnlMapVisulaisationThumbnailWrapper = new JPanel(new BorderLayout());
-		pnlMapVisulaisationThumbnailWrapper
-				.setBackground(MAP_PANEL_BACKGROUND_COLOR);
-		pnlMapVisulaisationThumbnailWrapper.setBorder(BorderFactory
-				.createLineBorder(MAP_PANEL_BORDER_COLOR,
-						MAP_PANEL_BORDER_WIDTH));
 
 		return pnlMapVisulaisationThumbnailWrapper;
 	}
@@ -78,7 +72,9 @@ public class MapThumbnail extends Thread implements Runnable {
 
 	private void show() {
 		pnlMapVisulaisationThumbnailWrapper.removeAll();
-		pnlMapVisulaisationThumbnailWrapper.add(mapVisulaisation,
+		pnlMapVisulaisationThumbnailWrapper.add(new ComponentSpacer(
+				mapVisulaisation, MAP_PANEL_MARGIN, MAP_PANEL_BORDER_WIDTH,
+				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BACKGROUND_COLOR),
 				BorderLayout.CENTER);
 		mainWindow.setVisible(true);
 		mapVisulaisation.refresh();
@@ -100,17 +96,17 @@ public class MapThumbnail extends Thread implements Runnable {
 	public void setScale(int scale) {
 		mapVisulaisation.setMapScale(scale);
 	}
-	
+
 	public void setSize(int width, int height) {
 		mainWindow.setBounds(mainWindow.getX(), mainWindow.getY(), width,
 				height);
 	}
-	
-	public int getWidth(){
+
+	public int getWidth() {
 		return mainWindow.getWidth();
 	}
 
-	public int getHeight(){
+	public int getHeight() {
 		return mainWindow.getHeight();
 	}
 }

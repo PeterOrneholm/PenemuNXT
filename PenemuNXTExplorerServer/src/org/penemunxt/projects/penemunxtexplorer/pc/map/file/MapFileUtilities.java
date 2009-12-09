@@ -1,4 +1,4 @@
-package org.penemunxt.projects.penemunxtexplorer.pc.map;
+package org.penemunxt.projects.penemunxtexplorer.pc.map.file;
 
 import java.awt.Component;
 import java.beans.*;
@@ -9,15 +9,25 @@ import javax.swing.JFileChooser;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessors;
 
 public class MapFileUtilities {
 	public static void openData(String defaultFolderPath, Object parent,
 			DataShare DS) {
+		MapFileUtilities.openData(defaultFolderPath, parent, DS, null);
+	}
+
+	public static void openData(String defaultFolderPath, Object parent,
+			DataShare DS, MapProcessors mapProcessors) {
 		String filePath = "";
 		JFileChooser FC = new JFileChooser(defaultFolderPath);
 		FC.addChoosableFileFilter(new PenemuNXTMapXMLFileFilter());
 		FC.addChoosableFileFilter(new PenemuNXTMapStreamFileFilter());
 		FC.addChoosableFileFilter(new PenemuNXTMapFileFilter());
+
+		if (mapProcessors != null) {
+			FC.setAccessory(new MapFilePreview(FC, mapProcessors));
+		}
 
 		int dialogResult;
 		if (parent != null) {

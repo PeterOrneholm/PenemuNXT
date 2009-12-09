@@ -4,11 +4,9 @@ import java.awt.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.MapVisulaisation;
 import org.penemunxt.windows.pc.*;
@@ -25,7 +23,6 @@ public class MapProcessorsList extends DataTableWindow implements
 
 	final static Color MAP_PANEL_BORDER_COLOR = Color.BLACK;
 	final static int MAP_PANEL_BORDER_WIDTH = 2;
-
 	final static int PANEL_MARGIN = 15;
 
 	MapProcessors mapProcessors;
@@ -63,51 +60,28 @@ public class MapProcessorsList extends DataTableWindow implements
 
 		// Left
 
-		JPanel pnlMapProcessorsBorder = new JPanel(new BorderLayout());
-		JPanel pnlMapProcessorsSpacer = new JPanel(new BorderLayout());
-
-		pnlMapProcessorsSpacer.setBorder(BorderFactory.createEmptyBorder(
-				PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN));
-		pnlMapProcessorsSpacer.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
-		pnlMapProcessorsBorder.setBorder(BorderFactory.createLineBorder(
-				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BORDER_WIDTH));
-
 		Label lblMapProcessorsHeader = new Label("Map Processors", Label.CENTER);
 		lblMapProcessorsHeader.setFont(fntSectionHeader);
 
 		JScrollPane scrollTable = new JScrollPane(getDataTable());
 
-		pnlMapProcessorsBorder.add(scrollTable, BorderLayout.CENTER);
-		pnlMapProcessorsSpacer.add(pnlMapProcessorsBorder, BorderLayout.CENTER);
-
 		pnlLeft.add(lblMapProcessorsHeader, BorderLayout.NORTH);
-		pnlLeft.add(pnlMapProcessorsSpacer, BorderLayout.CENTER);
+		pnlLeft.add(new ComponentSpacer(scrollTable, PANEL_MARGIN, MAIN_PANEL_BACKGROUND_COLOR,
+				MAP_PANEL_BORDER_WIDTH, MAP_PANEL_BORDER_COLOR,
+				MAP_PANEL_BACKGROUND_COLOR), BorderLayout.CENTER);
 
 		// Right
 		mapPreview = new MapVisulaisation(null);
-
-		Panel pnlMapPreviewWrapper = new Panel(new BorderLayout());
-		JPanel pnlMapPreviewBorder = new JPanel(new BorderLayout());
-		JPanel pnlMapPreviewSpacer = new JPanel(new BorderLayout());
 
 		Label lblPreviewHeader = new Label("Preview", Label.CENTER);
 		lblPreviewHeader.setFont(fntSectionHeader);
 
 		pnlRight.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
 
-		pnlMapPreviewSpacer.setBorder(BorderFactory.createEmptyBorder(
-				PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN, PANEL_MARGIN));
-		pnlMapPreviewSpacer.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
-		pnlMapPreviewBorder.setBorder(BorderFactory.createLineBorder(
-				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BORDER_WIDTH));
-		pnlMapPreviewWrapper.setBackground(MAP_PANEL_BACKGROUND_COLOR);
-
-		pnlMapPreviewWrapper.add(mapPreview, BorderLayout.CENTER);
-		pnlMapPreviewBorder.add(pnlMapPreviewWrapper, BorderLayout.CENTER);
-		pnlMapPreviewSpacer.add(pnlMapPreviewBorder, BorderLayout.CENTER);
-
 		pnlRight.setPreferredSize(new Dimension(400, 200));
-		pnlRight.add(pnlMapPreviewSpacer, BorderLayout.CENTER);
+		pnlRight.add(new ComponentSpacer(mapPreview, PANEL_MARGIN, MAIN_PANEL_BACKGROUND_COLOR,
+				MAP_PANEL_BORDER_WIDTH, MAP_PANEL_BORDER_COLOR,
+				MAP_PANEL_BACKGROUND_COLOR), BorderLayout.CENTER);
 		pnlRight.add(lblPreviewHeader, BorderLayout.NORTH);
 
 		// Main
@@ -192,6 +166,7 @@ public class MapProcessorsList extends DataTableWindow implements
 			return rawData.size();
 		}
 
+		@Override
 		public String getColumnName(int col) {
 			return columnNames[col];
 		}
@@ -216,10 +191,12 @@ public class MapProcessorsList extends DataTableWindow implements
 			return "";
 		}
 
+		@Override
 		public Class getColumnClass(int c) {
 			return getValueAt(0, c).getClass();
 		}
 
+		@Override
 		public boolean isCellEditable(int row, int col) {
 			if (col == 1 || col == 5 || col == 6) {
 				return true;
@@ -228,6 +205,7 @@ public class MapProcessorsList extends DataTableWindow implements
 			}
 		}
 
+		@Override
 		public void setValueAt(Object value, int row, int col) {
 			switch (col) {
 			case 1:
