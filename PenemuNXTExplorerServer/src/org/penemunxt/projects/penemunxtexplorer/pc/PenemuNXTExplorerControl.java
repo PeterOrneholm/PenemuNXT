@@ -113,6 +113,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	JMenuItem mnuFileOpenMapProcessorsButton;
 	JMenuItem mnuFileOpenButton;
 	JMenuItem mnuFileSaveButton;
+	JMenuItem mnuFileExportMapAsImageButton;
 	JMenuItem mnuFileExitButton;
 
 	// // Map menu
@@ -142,6 +143,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	// // Sliders
 	JSlider sldMapScale;
+	JSlider sldMapRotate;
 	JSlider sldAlgorithmsSensitivityFilter;
 	JSlider sldTimeline;
 	JSlider sldTimelineSpeed;
@@ -268,6 +270,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		mnuFileOpenButton.addActionListener(this);
 		mnuFileSaveButton = new JMenuItem("Save As...");
 		mnuFileSaveButton.addActionListener(this);
+		mnuFileExportMapAsImageButton = new JMenuItem("Export rendered map...");
+		mnuFileExportMapAsImageButton.addActionListener(this);		
 		mnuFileExitButton = new JMenuItem("Exit");
 		mnuFileExitButton.addActionListener(this);
 
@@ -277,6 +281,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 		mnuFileMenu.add(mnuFileOpenButton);
 		mnuFileMenu.add(mnuFileSaveButton);
+		mnuFileMenu.add(mnuFileExportMapAsImageButton);
 		mnuFileMenu.add(new JSeparator());
 		mnuFileMenu.add(mnuFileOpenDataViewButton);
 		mnuFileMenu.add(mnuFileOpenMapProcessorsButton);
@@ -396,17 +401,39 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		sldMapScale.setPaintTicks(true);
 		sldMapScale.setPaintLabels(true);
 
-		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-		labelTable.put(new Integer(MapVisulaisation.MAP_MIN_SCALE), new JLabel(
+		Hashtable<Integer, JLabel> mapScaleLabelTable = new Hashtable<Integer, JLabel>();
+		mapScaleLabelTable.put(new Integer(MapVisulaisation.MAP_MIN_SCALE), new JLabel(
 				MapVisulaisation.MAP_MIN_SCALE + "%"));
-		labelTable.put(new Integer(25), new JLabel("25%"));
-		labelTable.put(new Integer(50), new JLabel("50%"));
-		labelTable.put(new Integer(75), new JLabel("75%"));
-		labelTable.put(new Integer(MapVisulaisation.MAP_MAX_SCALE), new JLabel(
+		
+		mapScaleLabelTable.put(new Integer((int) (MapVisulaisation.MAP_MAX_SCALE - MapVisulaisation.MAP_MAX_SCALE / 2)), new JLabel(
+				(int) (MapVisulaisation.MAP_MAX_SCALE - MapVisulaisation.MAP_MAX_SCALE / 2) + "%"));
+		
+		
+		mapScaleLabelTable.put(new Integer(MapVisulaisation.MAP_MAX_SCALE), new JLabel(
 				MapVisulaisation.MAP_MAX_SCALE + "%"));
-		sldMapScale.setLabelTable(labelTable);
+		sldMapScale.setLabelTable(mapScaleLabelTable);
 		sldMapScale.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
 		sldMapScale.addChangeListener(this);
+
+		// Map rotate
+		Label lblMapRotateHeader = new Label("Map orientation");
+		lblMapRotateHeader.setFont(fntSectionHeader);
+
+		sldMapRotate = new JSlider(SwingConstants.HORIZONTAL, 0, 360,
+				0);
+		sldMapRotate.setMajorTickSpacing(36);
+		sldMapRotate.setMinorTickSpacing(18);
+		sldMapRotate.setPaintTicks(true);
+		sldMapRotate.setPaintLabels(true);
+
+		Hashtable<Integer, JLabel> mapRotateLabelTable = new Hashtable<Integer, JLabel>();
+		mapRotateLabelTable.put(new Integer(0), new JLabel("0°"));
+		mapRotateLabelTable.put(new Integer(180), new JLabel("180°"));
+		mapRotateLabelTable.put(new Integer(360), new JLabel("360°"));
+
+		sldMapRotate.setLabelTable(mapRotateLabelTable);
+		sldMapRotate.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
+		sldMapRotate.addChangeListener(this);
 
 		// Current data
 		Label lblCurrentDataHeader = new Label("Current");
@@ -492,6 +519,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 		controlPanel.add(lblMapScalesHeader);
 		controlPanel.add(sldMapScale);
+
+		controlPanel.add(lblMapRotateHeader);
+		controlPanel.add(sldMapRotate);
 
 		controlPanel.add(lblCurrentDataHeader);
 		controlPanel.add(pnlCurrentData);
@@ -750,6 +780,10 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 					mapProcessors);
 		} else if (ae.getSource() == mnuFileSaveButton) {
 			MapFileUtilities.saveData(DEFAULT_FOLDER_PATH, this, DS);
+		} else if (ae.getSource() == mnuFileExportMapAsImageButton) {
+			if(mapVisulaisation!=null){
+				MapFileUtilities.saveRenderedMap(DEFAULT_FOLDER_PATH, this, mapVisulaisation);
+			}
 		} else if (ae.getSource() == mnuFileOpenDataViewButton) {
 			openDataView();
 		} else if (ae.getSource() == mnuFileOpenMapProcessorsButton) {
@@ -770,6 +804,12 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		if (ce.getSource() == sldMapScale) {
 			if (mapVisulaisation != null) {
 				mapVisulaisation.setMapScale(sldMapScale.getValue(), false);
+			}
+			refreshMap();
+		} else if (ce.getSource() == sldMapRotate) {
+			if (mapVisulaisation != null) {
+				mapVisulaisation.setMapRotate(Math
+						.toRadians((double) sldMapRotate.getValue()));
 			}
 			refreshMap();
 		} else if (ce.getSource() == sldTimelineSpeed) {

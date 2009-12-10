@@ -27,6 +27,5 @@ public interface IMapProcessor {
 	
 	public void reset();
 	
-	public void processData(ArrayList<RobotData> data, float scale,
-			int centerX, int centerY, Graphics g);
+	public void processData(ArrayList<RobotData> data, Graphics g);
 }

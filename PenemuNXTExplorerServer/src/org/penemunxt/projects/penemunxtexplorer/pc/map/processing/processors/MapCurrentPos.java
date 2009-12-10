@@ -18,11 +18,10 @@ public class MapCurrentPos extends MapSimplePosition implements IMapProcessor {
 	}
 
 	@Override
-	public void processData(ArrayList<RobotData> data, float scale,
-			int centerX, int centerY, Graphics g) {
+	public void processData(ArrayList<RobotData> data, Graphics g) {
 		if (data != null && data.size() > 0) {
 			RobotData LatestData = MapUtilities.getLatestData(data);
-			super.processPositionData(LatestData, scale, centerX, centerY, g);
+			super.processPositionData(LatestData, g);
 		}
 	}
 

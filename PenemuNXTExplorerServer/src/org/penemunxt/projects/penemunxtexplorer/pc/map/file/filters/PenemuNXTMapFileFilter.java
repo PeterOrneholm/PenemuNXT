@@ -1,4 +1,4 @@
-package org.penemunxt.projects.penemunxtexplorer.pc.map.file;
+package org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters;
 
 import java.io.File;
 

@@ -23,7 +23,7 @@ public class MapFilePreview extends JPanel implements PropertyChangeListener {
 
 	public MapFilePreview(JFileChooser fc, MapProcessors mapProcessors) {
 		super(new BorderLayout());
-		setPreferredSize(new Dimension(200, 200));
+		setPreferredSize(new Dimension(300, 300));
 		fc.addPropertyChangeListener(this);
 
 		this.mapProcessors = mapProcessors;

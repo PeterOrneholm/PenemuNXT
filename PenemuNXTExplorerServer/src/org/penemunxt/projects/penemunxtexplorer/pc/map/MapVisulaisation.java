@@ -3,10 +3,14 @@ package org.penemunxt.projects.penemunxtexplorer.pc.map;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.VolatileImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import org.penemunxt.graphics.pc.Images;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.*;
 
@@ -20,6 +24,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 	final static int MAP_INIT_SCALE = 35;
 
 	int mapScale;
+	double mapRotate;
 	Point mapCenter;
 
 	Point mapStartDrag;
@@ -50,6 +55,14 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 		if (triggerChanged && mapScaleChanged != null) {
 			mapScaleChanged.stateChanged(new ChangeEvent(this));
 		}
+	}
+
+	public double getMapRotate() {
+		return mapRotate;
+	}
+
+	public void setMapRotate(double mapRotate) {
+		this.mapRotate = mapRotate;
 	}
 
 	public Point getMapCenter() {
@@ -105,21 +118,28 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 	}
 
 	public MapVisulaisation(MapProcessors mapProcessors) {
-		this(0, null, mapProcessors, true);
+		this(0, 0, null, mapProcessors, true);
 	}
 
 	public MapVisulaisation(int mapScale, MapProcessors mapProcessors,
 			boolean enableInteraction) {
-		this(mapScale, null, mapProcessors, enableInteraction);
+		this(mapScale, 0, null, mapProcessors, enableInteraction);
 	}
 
-	public MapVisulaisation(int mapScale, Point mapCenter,
+	public MapVisulaisation(int mapScale, double mapRotate,
+			MapProcessors mapProcessors, boolean enableInteraction) {
+		this(mapScale, mapRotate, null, mapProcessors, enableInteraction);
+	}
+
+	public MapVisulaisation(int mapScale, double mapRotate, Point mapCenter,
 			MapProcessors mapProcessors, boolean enableInteraction) {
 		super();
 		this.reset();
 		if (mapScale >= MAP_MIN_SCALE && mapScale <= MAP_MAX_SCALE) {
 			this.mapScale = mapScale;
 		}
+
+		this.mapRotate = mapRotate;
 
 		if (mapCenter != null) {
 			this.mapCenter = mapCenter;
@@ -135,6 +155,18 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 
 		this.setCursor(new Cursor(Cursor.MOVE_CURSOR));
 		mapCentered = false;
+	}
+
+	public Image getMapImage() {
+		if (OSI != null) {
+			try {
+				return Images.toBufferedImage(OSI);
+			} catch (Exception e) {
+				return null;
+			}
+		} else {
+			return null;
+		}
 	}
 
 	public void refresh() {
@@ -164,16 +196,22 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 
 		if (OSI == null || OSI.getWidth() != getWidth()
 				|| OSI.getHeight() != getHeight()) {
-			OSI = createVolatileImage(this.getWidth(), this.getHeight());
+			GraphicsEnvironment ge = GraphicsEnvironment
+					.getLocalGraphicsEnvironment();
+			GraphicsConfiguration gc = ge.getDefaultScreenDevice()
+					.getDefaultConfiguration();
+
+			OSI = gc.createCompatibleVolatileImage(this.getWidth(), this
+					.getHeight());
 		}
 
-		OSI.getGraphics().clearRect(0, 0, OSI.getWidth(), OSI.getHeight());
 		Graphics OSIG = OSI.getGraphics();
+		OSIG.clearRect(0, 0, OSI.getWidth(), OSI.getHeight());
 
 		if (mapProcessors != null && DS != null && DS.NXTRobotData != null) {
 			mapProcessors.processData(DS.NXTRobotData, mapCurrentFrame,
-					(mapScale * MAP_DEFAULT_SCALE_FACTOR), (int) mapCenter
-							.getX(), (int) mapCenter.getY(), OSIG);
+					(mapScale * MAP_DEFAULT_SCALE_FACTOR), mapRotate,
+					(int) mapCenter.getX(), (int) mapCenter.getY(), OSIG);
 		}
 
 		g.drawImage(OSI, 0, 0, null);

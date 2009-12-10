@@ -78,7 +78,7 @@ public class MapProcessorsList extends DataTableWindow implements
 
 		pnlRight.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
 
-		pnlRight.setPreferredSize(new Dimension(400, 200));
+		pnlRight.setPreferredSize(new Dimension(500, 200));
 		pnlRight.add(new ComponentSpacer(mapPreview, PANEL_MARGIN, MAIN_PANEL_BACKGROUND_COLOR,
 				MAP_PANEL_BORDER_WIDTH, MAP_PANEL_BORDER_COLOR,
 				MAP_PANEL_BACKGROUND_COLOR), BorderLayout.CENTER);

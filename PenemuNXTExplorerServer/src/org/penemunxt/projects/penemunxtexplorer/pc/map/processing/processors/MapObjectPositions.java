@@ -63,8 +63,7 @@ public abstract class MapObjectPositions extends MapSimplePosition implements
 	}
 
 	@Override
-	public void processData(ArrayList<RobotData> data, float scale,
-			int centerX, int centerY, Graphics g) {
+	public void processData(ArrayList<RobotData> data, Graphics g) {
 	}
 
 	@Override

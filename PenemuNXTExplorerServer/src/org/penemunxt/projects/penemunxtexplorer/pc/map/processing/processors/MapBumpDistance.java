@@ -17,9 +17,8 @@ public class MapBumpDistance extends MapSimplePosition implements IMapProcessor 
 	}
 
 	@Override
-	public void processData(ArrayList<RobotData> data, float scale,
-			int centerX, int centerY, Graphics g) {
-		super.processPositionData(data, RobotData.POSITION_TYPE_BUMP_DISTANCE, scale, centerX, centerY, g);
+	public void processData(ArrayList<RobotData> data, Graphics g) {
+		super.processPositionData(data, RobotData.POSITION_TYPE_BUMP_DISTANCE, g);
 	}
 	
 	@Override
