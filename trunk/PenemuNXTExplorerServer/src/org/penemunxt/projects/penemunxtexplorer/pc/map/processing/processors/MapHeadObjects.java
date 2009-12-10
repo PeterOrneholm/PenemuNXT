@@ -19,13 +19,12 @@ public class MapHeadObjects extends MapObjectPositions implements IMapProcessor 
 	}
 
 	@Override
-	public void processData(ArrayList<RobotData> data, float scale,
-			int centerX, int centerY, Graphics g) {
+	public void processData(ArrayList<RobotData> data, Graphics g) {
 		if (data != null) {
 			for (Point objectPos : this.getObjectPositions(data)) {
 				MapUtilities
 						.paintOval(objectPos.y, objectPos.x, this.getColor(),
-								this.getSize(), scale, centerX, centerY, g);
+								this.getSize(), g);
 			}
 		}
 	}

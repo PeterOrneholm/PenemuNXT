@@ -19,8 +19,7 @@ public class MapHotspots extends MapObjectPositions implements IMapProcessor {
 	}
 
 	@Override
-	public void processData(ArrayList<RobotData> data, float scale,
-			int centerX, int centerY, Graphics g) {
+	public void processData(ArrayList<RobotData> data, Graphics g) {
 		ArrayList<MapPositionPoints> tempObjectPoitionsPoints = this
 				.getObjectPositionsPoints(data);
 		int maxPoints = MapPositionPoints
@@ -32,8 +31,7 @@ public class MapHotspots extends MapObjectPositions implements IMapProcessor {
 					255 - (int) (pointPercentage * 255), 0);
 
 			MapUtilities.paintOval(ScanPoint.getY(), ScanPoint.getX(), c,
-					(int) (pointPercentage * this.getSize()), scale, centerX,
-					centerY, g);
+					(int) (pointPercentage * this.getSize()), g);
 
 		}
 	}

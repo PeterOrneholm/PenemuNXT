@@ -25,10 +25,8 @@ public class MapUtilities {
 		}
 	}
 
-	public static Point getMapPos(int x, int y, float scale, int centerX,
-			int centerY) {
-		return new Point((int) (-y * scale + centerX),
-				(int) (x * scale + centerY));
+	public static Point getMapPos(int x, int y) {
+		return new Point(-y, x);
 	}
 
 	public static Point getHeadingPos(int x, int y, int heading, int distance) {
@@ -54,12 +52,9 @@ public class MapUtilities {
 
 	}
 
-	public static void paintOval(int x, int y, Color c, int size, float scale,
-			int centerX, int centerY, Graphics g) {
+	public static void paintOval(int x, int y, Color c, int size, Graphics g) {
 		g.setColor(c);
-		Point pos = getMapPos(x, y, scale, centerX, centerY);
-		int scaledSize = (int) (size * scale);
-		g.fillOval(pos.x - (scaledSize / 2), pos.y - (scaledSize / 2), scaledSize,
-				scaledSize);
+		Point pos = getMapPos(x, y);
+		g.fillOval(pos.x - (size / 2), pos.y - (size / 2), size, size);
 	}
 }

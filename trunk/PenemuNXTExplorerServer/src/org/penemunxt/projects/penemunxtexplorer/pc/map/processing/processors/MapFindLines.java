@@ -20,8 +20,7 @@ public class MapFindLines extends MapObjectPositions implements IMapProcessor {
 	}
 
 	@Override
-	public void processData(ArrayList<RobotData> data, float scale,
-			int centerX, int centerY, Graphics g) {
+	public void processData(ArrayList<RobotData> data, Graphics g) {
 		ArrayList<MapPositionPoints> tempObjectPoitionsPoints = this
 				.getObjectPositionsPoints(data);
 
@@ -54,10 +53,9 @@ public class MapFindLines extends MapObjectPositions implements IMapProcessor {
 					.GetPositionWithMostPoints();
 
 			Point mapPosFrom = MapUtilities.getMapPos(ScanPoint.getY(),
-					ScanPoint.getX(), scale, centerX, centerY);
+					ScanPoint.getX());
 			Point mapPosTo = MapUtilities.getMapPos(PositionWithMostPoints
-					.getY(), PositionWithMostPoints.getX(), scale, centerX,
-					centerY);
+					.getY(), PositionWithMostPoints.getX());
 
 			if (ScanPoint.getNeighborsLinesToThis() != null
 					&& ScanPoint.getNeighborsLinesToThis().size() > 0) {

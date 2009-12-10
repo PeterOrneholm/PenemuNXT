@@ -8,7 +8,7 @@ import javax.swing.*;
 import org.penemunxt.windows.pc.ComponentSpacer;
 
 public class MapThumbnail extends Thread implements Runnable {
-	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
+	final static Color MAP_PANEL_BACKGROUND_COLOR = new Color(227, 227, 227);
 	final static Color MAP_PANEL_BORDER_COLOR = Color.BLACK;
 	final static int MAP_PANEL_BORDER_WIDTH = 2;
 	final static int MAP_PANEL_MARGIN = 0;

@@ -1,14 +1,24 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.file;
 
 import java.awt.Component;
+import java.awt.Image;
+import java.awt.image.RenderedImage;
 import java.beans.*;
 import java.io.*;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 
+import org.penemunxt.graphics.pc.Images;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.MapVisulaisation;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.ImageJPEGFileFilter;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.ImagePNGFileFilter;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.PenemuNXTMapFileFilter;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.PenemuNXTMapStreamFileFilter;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.PenemuNXTMapXMLFileFilter;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessors;
 
 public class MapFileUtilities {
@@ -170,6 +180,60 @@ public class MapFileUtilities {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			}
+		}
+	}
+
+	public static void saveRenderedMap(String defaultFolderPath, Object parent,
+			MapVisulaisation map) {
+		String filePath = "";
+		JFileChooser FC = new JFileChooser(defaultFolderPath);
+		FC.addChoosableFileFilter(new ImageJPEGFileFilter());
+		FC.addChoosableFileFilter(new ImagePNGFileFilter());
+
+		if (filePath == null || filePath.length() == 0) {
+			int dialogResult;
+			if (parent != null) {
+				dialogResult = FC.showSaveDialog((Component) parent);
+			} else {
+				dialogResult = FC.showSaveDialog(null);
+			}
+
+			if (dialogResult == JFileChooser.APPROVE_OPTION) {
+				try {
+					filePath = FC.getSelectedFile().getPath();
+				} catch (Exception ex) {
+					filePath = "";
+				}
+			}
+		}
+
+		String fileExtension = "";
+		String imageFormat = "";
+		if (FC.getFileFilter().getDescription() == ImageJPEGFileFilter.DESCRIPTION) {
+			fileExtension = ImageJPEGFileFilter.ALLOWED_FILE_EXTENSION;
+			imageFormat = ImageJPEGFileFilter.IMAGE_FORMAT_NAME;
+		} else {
+			fileExtension = ImagePNGFileFilter.ALLOWED_FILE_EXTENSION;
+			imageFormat = ImagePNGFileFilter.IMAGE_FORMAT_NAME;
+		}
+
+		if (!filePath.endsWith(fileExtension)) {
+			filePath += fileExtension;
+		}
+
+		MapFileUtilities.saveRenderedMap(map, imageFormat, filePath);
+	}
+
+	public static void saveRenderedMap(MapVisulaisation map,
+			String imageFormat, String filePath) {
+		Image mapImage = map.getMapImage();
+		if (mapImage != null) {
+			try {
+				ImageIO.write((RenderedImage) mapImage, imageFormat, new File(
+						filePath));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

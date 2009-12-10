@@ -24,23 +24,21 @@ public abstract class MapSimplePosition extends MapProcessorMain implements
 		return MapProcessorType.SimpleData;
 	}
 
-	public void processPositionData(RobotData data, float scale, int centerX,
-			int centerY, Graphics g) {
+	public void processPositionData(RobotData data, Graphics g) {
 		if (data != null) {
 			MapUtilities.paintOval(data.getPosY(), data.getPosX(), this
-					.getColor(), this.getSize(), scale, centerX, centerY, g);
+					.getColor(), this.getSize(), g);
 		}
 	}
 
 	public void processPositionData(ArrayList<RobotData> data,
-			int positionTypeFilter, float scale, int centerX, int centerY,
+			int positionTypeFilter,
 			Graphics g) {
 		if (data != null) {
 			for (RobotData robotData : data) {
 				if (robotData != null) {
 					if (robotData.getType() == positionTypeFilter) {
-						this.processPositionData(robotData, scale, centerX,
-								centerY, g);
+						this.processPositionData(robotData, g);
 					}
 				}
 			}
@@ -48,7 +46,6 @@ public abstract class MapSimplePosition extends MapProcessorMain implements
 	}
 
 	@Override
-	public void processData(ArrayList<RobotData> data, float scale,
-			int centerX, int centerY, Graphics g) {
+	public void processData(ArrayList<RobotData> data, Graphics g) {
 	}
 }
