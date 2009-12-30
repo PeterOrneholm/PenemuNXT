@@ -46,9 +46,9 @@ public class PNXTExplorer implements Runnable {
 		TachoPilot tacho = new TachoPilot(49, 125, Motor.C, Motor.B);
 		SimpleNavigator simnav = new SimpleNavigator(tacho);
 
-		DataShare DSL = new DataShare();
+		DataShare DS = new DataShare();
 
-		ExplorerNavigator lenav = new ExplorerNavigator(simnav, NXTC, ODS, DSL);
+		ExplorerNavigator lenav = new ExplorerNavigator(simnav, NXTC, DS);
 		lenav.start();
 
 		LCD.clear();
@@ -83,7 +83,7 @@ public class PNXTExplorer implements Runnable {
 							.getHeading(), ODS.getDistance(), Motor.A
 							.getTachoCount());
 
-			DSL.addRobotData(RDL);
+			DS.addRobotData(RDL);
 
 			try {
 				Thread.sleep(100);

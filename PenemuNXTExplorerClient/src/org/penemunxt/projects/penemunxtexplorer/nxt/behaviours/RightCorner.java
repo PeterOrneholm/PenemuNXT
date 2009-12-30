@@ -9,7 +9,7 @@ import lejos.robotics.subsumption.Behavior;
 
 public class RightCorner implements Behavior {
 	SimpleNavigator simnav;
-	DataShare DSL;
+	DataShare DS;
 	NXTCommunication NXTC;
 	
 	final int MIN_NUMBER_OF_VALUES = 15;
@@ -23,22 +23,22 @@ public class RightCorner implements Behavior {
 	final int OLD_WALL_STARTING_VALUE = 8;
 	final int OLD_WALL_ENDING_VALUE = 12;
 
-	public RightCorner(SimpleNavigator simnav, DataShare dsl,
+	public RightCorner(SimpleNavigator simnav, DataShare ds,
 			NXTCommunication nxtc) {
 		this.simnav = simnav;
-		this.DSL = dsl;
+		this.DS = ds;
 		this.NXTC = nxtc;
 	}
 
 	public void action() {
-		DSL.lockBehaviour = true;
+		DS.lockBehaviour = true;
 		NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_RIGHT_CORNER,
 				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 						.getHeading(), 0, 0));
 
 		simnav.rotate(-90);
-		DSL.leftturnUsed();
-		DSL.lockBehaviour = false;
+		DS.leftturnUsed();
+		DS.lockBehaviour = false;
 	}
 
 	public void suppress() {
@@ -46,11 +46,11 @@ public class RightCorner implements Behavior {
 	}
 
 	public boolean takeControl() {
-		if (!DSL.lockBehaviour) {
-			if (DSL.LatestRobotData.size() > MIN_NUMBER_OF_VALUES && DSL.sincelastturn > SINCELASTALIGN_THRESHOLD) {
-				if ((DSL.LatestRobotData.get(CORNER_STARTING_VALUE).getHeadDistance() - DSL.LatestRobotData
+		if (!DS.lockBehaviour) {
+			if (DS.LatestRobotData.size() > MIN_NUMBER_OF_VALUES && DS.sincelastturn > SINCELASTALIGN_THRESHOLD) {
+				if ((DS.LatestRobotData.get(CORNER_STARTING_VALUE).getHeadDistance() - DS.LatestRobotData
 						.get(CORNER_ENDING_VALUE).getHeadDistance()) > SCAN_DIF_MIN
-						&& DSL.isLinear(DSL, OLD_WALL_STARTING_VALUE, OLD_WALL_ENDING_VALUE) != 0) {
+						&& DS.isLinear(DS, OLD_WALL_STARTING_VALUE, OLD_WALL_ENDING_VALUE) != 0) {
 					return true;
 				} else
 					return false;

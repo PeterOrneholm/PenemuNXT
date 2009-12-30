@@ -10,6 +10,7 @@ public class DataShare {
 	public ArrayList<RobotData> LatestRobotData;
 	
 	final double ISLINEAR_THRESHOLD = 0.1;
+	final int ROBOTDATA_MAX_SIZE = 30;
 
 	public DataShare() {
 		super();
@@ -18,7 +19,7 @@ public class DataShare {
 
 	public void addRobotData(RobotData RD) {
 		LatestRobotData.add(0, RD);
-		if (LatestRobotData.size() > 10) {
+		if (LatestRobotData.size() > ROBOTDATA_MAX_SIZE) {
 			LatestRobotData.remove(LatestRobotData.size() - 1);
 		}
 

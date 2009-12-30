@@ -9,22 +9,22 @@ import lejos.robotics.subsumption.Behavior;
 public class TurnRight implements Behavior {
 
 	SimpleNavigator simnav;
-	DataShare DSL;
+	DataShare DS;
 	NXTCommunication NXTC;
 
-	public TurnRight(SimpleNavigator simnav, DataShare dsl,
+	public TurnRight(SimpleNavigator simnav, DataShare ds,
 			NXTCommunication nxtc) {
 		this.simnav = simnav;
-		this.DSL = dsl;
+		this.DS = ds;
 		this.NXTC = nxtc;
 	}
 
 	@Override
 	public void action() {
-		DSL.lockBehaviour = true;
+		DS.lockBehaviour = true;
 		simnav.rotate(-90);
-		DSL.leftturnUsed();
-		DSL.lockBehaviour = false;
+		DS.leftturnUsed();
+		DS.lockBehaviour = false;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class TurnRight implements Behavior {
 
 	@Override
 	public boolean takeControl() {
-		return (DSL.LatestRobotData.get(0).getHeadDistance() > 600 && DSL.sincelastturn > 20) && !DSL.lockBehaviour;
+		return (DS.LatestRobotData.get(0).getHeadDistance() > 600 && DS.sincelastturn > 20) && !DS.lockBehaviour;
 	}
 
 }

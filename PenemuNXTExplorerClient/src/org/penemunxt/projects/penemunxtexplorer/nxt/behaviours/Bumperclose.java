@@ -12,13 +12,13 @@ public class Bumperclose implements Behavior {
 	SimpleNavigator simnav;
 	TouchSensor TS;
 	NXTCommunication NXTC;
-	DataShare DSL;
+	DataShare DS;
 
-	public Bumperclose(SimpleNavigator simnav, TouchSensor TS, NXTCommunication NXTC, DataShare dsl) {
+	public Bumperclose(SimpleNavigator simnav, TouchSensor TS, NXTCommunication NXTC, DataShare ds) {
 		this.simnav = simnav;
 		this.TS = TS;
 		this.NXTC = NXTC;
-		this.DSL = dsl;
+		this.DS = ds;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class Bumperclose implements Behavior {
 		}
 		simnav.stop();
 		simnav.rotate(20);
-		DSL.alignUsed();
+		DS.alignUsed();
 
 	}
 
