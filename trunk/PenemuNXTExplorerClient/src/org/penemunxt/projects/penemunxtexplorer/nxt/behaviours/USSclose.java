@@ -17,18 +17,18 @@ public class USSclose implements Behavior {
 	SimpleNavigator simnav;
 	UltrasonicSensor USS;
 	NXTCommunication NXTC;
-	DataShare DSL;
+	DataShare DS;
 	
 	final int DISTANCE_THRESHOLD = 30;
 	
-	final int NUMBER_OF_VALUES = 10;
+	final int NUMBER_OF_VALUES = 25;
 
 	public USSclose(SimpleNavigator simnav, UltrasonicSensor USS,
-			NXTCommunication NXTC, DataShare dsl) {
+			NXTCommunication NXTC, DataShare ds) {
 		this.simnav = simnav;
 		this.USS = USS;
 		this.NXTC = NXTC;
-		this.DSL = dsl;
+		this.DS = ds;
 	}
 
 	@Override
@@ -37,34 +37,35 @@ public class USSclose implements Behavior {
 				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 						.getHeading(), 0, 0));
 		
-		//set slow rotate
-		Motor.A.rotate(-90);
+		simnav.stop();
+		Motor.A.setSpeed(30);
+		Motor.A.rotate(-90, false);
 		
 		boolean isgrowing = false;
 		int shortestdist = 1000;
 		int shortestdistangle = 0;
 		
 		for (int x = NUMBER_OF_VALUES; x > 0; x--) {
-			if (DSL.LatestRobotData.get(x).getHeadDistance()
-					- DSL.LatestRobotData.get(x - 1).getHeadDistance() > 0) {
+			if (DS.LatestRobotData.get(x).getHeadDistance()
+					- DS.LatestRobotData.get(x - 1).getHeadDistance() > 0) {
 				isgrowing = true;
 			}
 			
 			if (isgrowing) {
-				if ( DSL.LatestRobotData.get(x).getHeadDistance() < shortestdist){
-					shortestdist = DSL.LatestRobotData.get(x).getHeadDistance();
-					shortestdistangle = DSL.LatestRobotData.get(x).getHeadHeading();
+				if ( DS.LatestRobotData.get(x).getHeadDistance() < shortestdist){
+					shortestdist = DS.LatestRobotData.get(x).getHeadDistance();
+					shortestdistangle = DS.LatestRobotData.get(x).getHeadHeading();
 				}	
 			}
 		}
 		
-		//set fast rotate
+		Motor.A.setSpeed(200);
 		Motor.A.rotate(90);
 		simnav.rotate(90-shortestdistangle);
 		
 		
-		DSL.leftturnUsed();
-		DSL.alignUsed();
+		DS.leftturnUsed();
+		DS.alignUsed();
 	}
 
 	@Override

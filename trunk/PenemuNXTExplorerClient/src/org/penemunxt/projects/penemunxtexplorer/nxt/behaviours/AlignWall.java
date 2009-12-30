@@ -9,7 +9,7 @@ import lejos.robotics.subsumption.Behavior;
 
 public class AlignWall implements Behavior {
 	SimpleNavigator simnav;
-	DataShare DSL;
+	DataShare DS;
 	NXTCommunication NXTC;
 	
 	final int MIN_NUMBER_OF_VALUES = 9;
@@ -24,35 +24,35 @@ public class AlignWall implements Behavior {
 	final int SCAN_DISTANCE_MIN = 100;
 	final int SCAN_DISTANCE_MAX = 300;
 	
-	public AlignWall(SimpleNavigator simnav, DataShare dsl,
+	public AlignWall(SimpleNavigator simnav, DataShare ds,
 			NXTCommunication NXTC) {
 		this.simnav = simnav;
-		this.DSL = dsl;
+		this.DS = ds;
 		this.NXTC = NXTC;
 	}
 
 	@Override
 	public void action() {
-		DSL.lockBehaviour = true;
+		DS.lockBehaviour = true;
 		int angle = 0;
 
-		if (DSL.LatestRobotData.size() > MIN_NUMBER_OF_VALUES) {
+		if (DS.LatestRobotData.size() > MIN_NUMBER_OF_VALUES) {
 			NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_ALIGNED,
 					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 							.getHeading(), 0, 0));
 
-			if (DSL.isLinear(DSL, STARTING_VALUE, ENDING_VALUE) > 0) {
-				angle = (int) ((180 / Math.PI) * (Math.atan(DSL.isLinear(DSL,
+			if (DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE) > 0) {
+				angle = (int) ((180 / Math.PI) * (Math.atan(DS.isLinear(DS,
 						0, ENDING_VALUE))));
-			} else if (DSL.isLinear(DSL, STARTING_VALUE, ENDING_VALUE) < 0) {
-				angle = (int) -((180 / Math.PI) * (Math.atan(-DSL.isLinear(DSL,
+			} else if (DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE) < 0) {
+				angle = (int) -((180 / Math.PI) * (Math.atan(-DS.isLinear(DS,
 						0, ENDING_VALUE))));
 			}
 
 			simnav.rotate(-angle);
-			DSL.alignUsed();
+			DS.alignUsed();
 		}
-		DSL.lockBehaviour = false;
+		DS.lockBehaviour = false;
 	}
 
 	@Override
@@ -63,20 +63,20 @@ public class AlignWall implements Behavior {
 
 	@Override
 	public boolean takeControl() {
-		if (!DSL.lockBehaviour) {
-			if (DSL.sincelastalign >= SINCELASTALIGN_THRESHOLD
-					&& DSL.LatestRobotData.size() > MIN_NUMBER_OF_VALUES
-					&& DSL.distancetraveled(DSL.LatestRobotData.get(STARTING_VALUE)
-							.getPosX(), DSL.LatestRobotData.get(ENDING_VALUE).getPosX(),
-							DSL.LatestRobotData.get(STARTING_VALUE).getPosY(),
-							DSL.LatestRobotData.get(ENDING_VALUE).getPosY()) > TRAVELDIST_THRESHOLD
-					&& DSL.sincelastturn >= SINCELASTALIGN_THRESHOLD) {
-				if (DSL.LatestRobotData.get(ENDING_VALUE) != null) {
-					if (Math.abs(DSL.LatestRobotData.get(STARTING_VALUE).getHeadDistance()
-							- DSL.LatestRobotData.get(ENDING_VALUE).getHeadDistance()) > SCAN_DIF_MIN
-							&& DSL.LatestRobotData.get(STARTING_VALUE).getHeadDistance() > SCAN_DISTANCE_MIN
-							&& DSL.LatestRobotData.get(STARTING_VALUE).getHeadDistance() < SCAN_DISTANCE_MAX
-							&& DSL.isLinear(DSL, STARTING_VALUE, ENDING_VALUE) != 0) {
+		if (!DS.lockBehaviour) {
+			if (DS.sincelastalign >= SINCELASTALIGN_THRESHOLD
+					&& DS.LatestRobotData.size() > MIN_NUMBER_OF_VALUES
+					&& DS.distancetraveled(DS.LatestRobotData.get(STARTING_VALUE)
+							.getPosX(), DS.LatestRobotData.get(ENDING_VALUE).getPosX(),
+							DS.LatestRobotData.get(STARTING_VALUE).getPosY(),
+							DS.LatestRobotData.get(ENDING_VALUE).getPosY()) > TRAVELDIST_THRESHOLD
+					&& DS.sincelastturn >= SINCELASTALIGN_THRESHOLD) {
+				if (DS.LatestRobotData.get(ENDING_VALUE) != null) {
+					if (Math.abs(DS.LatestRobotData.get(STARTING_VALUE).getHeadDistance()
+							- DS.LatestRobotData.get(ENDING_VALUE).getHeadDistance()) > SCAN_DIF_MIN
+							&& DS.LatestRobotData.get(STARTING_VALUE).getHeadDistance() > SCAN_DISTANCE_MIN
+							&& DS.LatestRobotData.get(STARTING_VALUE).getHeadDistance() < SCAN_DISTANCE_MAX
+							&& DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE) != 0) {
 						return true;
 					} else
 						return false;
