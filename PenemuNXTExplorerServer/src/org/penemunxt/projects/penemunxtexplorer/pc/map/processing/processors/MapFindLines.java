@@ -15,8 +15,8 @@ public class MapFindLines extends MapObjectPositions implements IMapProcessor {
 		super();
 	}
 
-	public MapFindLines(boolean enabled) {
-		super(null, 0, enabled);
+	public MapFindLines(int size, boolean enabled) {
+		super(null, size, enabled);
 	}
 
 	@Override
@@ -52,17 +52,12 @@ public class MapFindLines extends MapObjectPositions implements IMapProcessor {
 			MapPositionPoints PositionWithMostPoints = ScanPoint
 					.GetPositionWithMostPoints();
 
-			Point mapPosFrom = MapUtilities.getMapPos(ScanPoint.getY(),
-					ScanPoint.getX());
-			Point mapPosTo = MapUtilities.getMapPos(PositionWithMostPoints
-					.getY(), PositionWithMostPoints.getX());
-
 			if (ScanPoint.getNeighborsLinesToThis() != null
 					&& ScanPoint.getNeighborsLinesToThis().size() > 0) {
 
-				g.setColor(c);
-				g.drawLine((int) mapPosFrom.getX(), (int) mapPosFrom.getY(),
-						(int) mapPosTo.getX(), (int) mapPosTo.getY());
+				MapUtilities.paintLine(ScanPoint.getY(),
+					ScanPoint.getX(), PositionWithMostPoints
+					.getY(), PositionWithMostPoints.getX(), c, this.getSize(), g);
 			}
 		}
 	}

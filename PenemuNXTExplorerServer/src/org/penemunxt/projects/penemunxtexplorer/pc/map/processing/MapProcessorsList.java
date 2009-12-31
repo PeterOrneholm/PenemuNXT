@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.MapVisulaisation;
@@ -18,7 +19,7 @@ public class MapProcessorsList extends DataTableWindow implements
 		ListSelectionListener {
 
 	final static Color DEFAULT_PANEL_BACKGROUND_COLOR = new Color(197, 209, 215);
-	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
+	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.GRAY;
 	final static Color MAIN_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
 
 	final static Color MAP_PANEL_BORDER_COLOR = Color.BLACK;
@@ -99,7 +100,7 @@ public class MapProcessorsList extends DataTableWindow implements
 		getDataTable().setAutoCreateRowSorter(true);
 
 		TableColumn colSize = getDataTable().getColumnModel().getColumn(6);
-		colSize.setCellEditor(new SliderEditor(1, 40));
+		colSize.setCellEditor(new SliderEditor(1, 80));
 
 		getDataTable().setDefaultRenderer(Color.class, new ColorRenderer());
 		getDataTable().setDefaultEditor(Color.class, new ColorEditor());
@@ -130,7 +131,10 @@ public class MapProcessorsList extends DataTableWindow implements
 		for (int i = 0; i < getDataTable().getSelectedRows().length; i++) {
 			IMapProcessor mp = mapProcessors.list.get(getDataTable()
 					.getSelectedRows()[i]);
-			previewProcessors.add(mp);
+			IMapProcessor enabledMP = (IMapProcessor) mp.clone();
+			enabledMP.setEnabled(true);
+
+			previewProcessors.add(enabledMP);
 		}
 
 		if (mapPreviewProcessors == null) {

@@ -3,10 +3,7 @@ package org.penemunxt.projects.penemunxtexplorer.pc.map;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.VolatileImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -183,6 +180,13 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 	}
 
 	public void resetMapCenter() {
+		Point mapDataCenter;
+		if (this.DS != null) {
+			mapDataCenter = MapUtilities.getCenterPos(this.DS.NXTRobotData);
+		} else {
+			mapDataCenter = new Point(0, 0);
+		}
+
 		this.setMapCenter(new Point((this.getWidth() / 2),
 				(this.getHeight() / 2)));
 	}
@@ -201,8 +205,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 			GraphicsConfiguration gc = ge.getDefaultScreenDevice()
 					.getDefaultConfiguration();
 
-			OSI = gc.createCompatibleVolatileImage(this.getWidth(), this
-					.getHeight());
+			OSI = createVolatileImage(this.getWidth(), this.getHeight());
 		}
 
 		Graphics OSIG = OSI.getGraphics();

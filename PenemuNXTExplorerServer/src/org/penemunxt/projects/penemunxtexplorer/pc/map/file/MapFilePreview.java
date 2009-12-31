@@ -12,7 +12,7 @@ import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessors;
 import org.penemunxt.windows.pc.ComponentSpacer;
 
 public class MapFilePreview extends JPanel implements PropertyChangeListener {
-	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
+	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.GRAY;
 	final static Color MAP_PANEL_BORDER_COLOR = Color.BLACK;
 	final static int MAP_PANEL_BORDER_WIDTH = 1;
 	final static int MAP_PANEL_MARGIN = 0;
