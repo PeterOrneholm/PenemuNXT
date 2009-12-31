@@ -56,15 +56,19 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	final static boolean HEAD_MAP_SHOW_DEFAULT = true;
 	final static boolean HOT_SPOTS_SHOW_DEFAULT = false;
 	final static boolean FIND_WALLS_SHOW_DEFAULT = true;
+	final static boolean CLEAR_AREA_SHOW_DEFAULT = true;
+	final static boolean BACKGROUND_GRID_SHOW_DEFAULT = true;
 
 	// //// Drawings
 	final static Color DEFAULT_CIRCLE_COLOR = Color.BLACK;
 	final static Color LATEST_POS_CIRCLE_COLOR = Color.GREEN;
-	final static Color DRIVING_PATH_CIRCLE_COLOR = Color.BLACK;
+	final static Color DRIVING_PATH_CIRCLE_COLOR = Color.LIGHT_GRAY;
 	final static Color BUMPING_BUMPER_CIRCLE_COLOR = Color.RED;
 	final static Color BUMPING_DISTANCE_CIRCLE_COLOR = Color.BLUE;
 	final static Color ALIGNED_TO_WALL_CIRCLE_COLOR = Color.CYAN;
-	final static Color HEAD_MAP_CIRCLE_COLOR = Color.ORANGE;
+	final static Color HEAD_MAP_CIRCLE_COLOR = Color.BLACK;
+	final static Color CLEAR_AREA_LINE_COLOR = Color.WHITE;
+	final static Color BACKGROUND_GRID_LINE_COLOR = Color.WHITE;
 
 	final static int DEFAULT_CIRCLE_SIZE = 10;
 	final static int LATEST_POS_CIRCLE_SIZE = 75;
@@ -74,17 +78,25 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	final static int ALIGNED_TO_WALL_CIRCLE_SIZE = 50;
 	final static int HEAD_MAP_CIRCLE_SIZE = 25;
 	final static int HOT_SPOTS_MAX_CIRCLE_SIZE = 100;
+	final static int CLEAR_AREA_LINE_SIZE = 25;
+	final static int BACKGROUND_GRID_LINE_SIZE = 2;
+	final static int FIND_WALLS_LINE_SIZE = 5;
+	
+	//Map grid
+	final static int GRID_LINE_SPACE_DEFAULT = 100;
+	final static Color GRID_MIDDLE_CROSS_LINE_COLOR_DEFAULT = Color.RED;
+	final static int GRID_MIDDLE_CROSS_LINE_WIDTH_DEFAULT = 10;
 
 	// //// Scale
-	final static int MAP_INIT_SCALE = 35;
+	final static int MAP_INIT_SCALE = 50;
 
 	// // UI
 	final static Color DEFAULT_PANEL_BACKGROUND_COLOR = new Color(197, 209, 215);
-	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.WHITE;
 	final static Color VIEW_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
 	final static Color LEFT_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
 	final static Color BOTTOM_PANEL_BACKGROUND_COLOR = DEFAULT_PANEL_BACKGROUND_COLOR;
 
+	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.GRAY;
 	final static Color MAP_PANEL_BORDER_COLOR = Color.BLACK;
 	final static int MAP_PANEL_BORDER_WIDTH = 2;
 
@@ -167,6 +179,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	MapFindLines mapProcessorFindLines;
 	MapHeadObjects mapProcessorHeadObjects;
 	MapHotspots mapProcessorHotspots;
+	MapClearArea mapProcessorClearArea;
+	MapBackgroundGrid mapProcessorBackgroundGrid;
 
 	// // Timeline
 	int timelineMin = 0;
@@ -592,9 +606,13 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		mapProcessorHeadObjects = new MapHeadObjects(HEAD_MAP_CIRCLE_COLOR,
 				HEAD_MAP_CIRCLE_SIZE, HEAD_MAP_SHOW_DEFAULT);
 
-		mapProcessorHotspots = new MapHotspots(HOT_SPOTS_MAX_CIRCLE_SIZE, false);
-		mapProcessorFindLines = new MapFindLines(true);
-
+		mapProcessorHotspots = new MapHotspots(HOT_SPOTS_MAX_CIRCLE_SIZE, HOT_SPOTS_SHOW_DEFAULT);
+		mapProcessorFindLines = new MapFindLines(FIND_WALLS_LINE_SIZE, FIND_WALLS_SHOW_DEFAULT);
+		mapProcessorClearArea = new MapClearArea(CLEAR_AREA_LINE_COLOR , CLEAR_AREA_LINE_SIZE, CLEAR_AREA_SHOW_DEFAULT);
+		mapProcessorBackgroundGrid = new MapBackgroundGrid(BACKGROUND_GRID_LINE_COLOR , BACKGROUND_GRID_LINE_SIZE, BACKGROUND_GRID_SHOW_DEFAULT);	
+		
+		defaultProcessors.add(mapProcessorBackgroundGrid);
+		defaultProcessors.add(mapProcessorClearArea);
 		defaultProcessors.add(mapProcessorCurrentPos);
 		defaultProcessors.add(mapProcessorDrivingPath);
 		defaultProcessors.add(mapProcessorHeadObjects);

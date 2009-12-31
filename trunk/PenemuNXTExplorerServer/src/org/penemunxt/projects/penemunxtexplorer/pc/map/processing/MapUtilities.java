@@ -1,11 +1,10 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.processing;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.util.ArrayList;
+import java.awt.*;
+import java.util.*;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
+import org.penemunxt.sensors.SensorRanges;
 
 public class MapUtilities {
 	public static RobotData getLatestData(ArrayList<RobotData> data) {
@@ -39,6 +38,21 @@ public class MapUtilities {
 		return new Point(nx, ny);
 	}
 
+	public static Point getObjectPos(RobotData robotData) {
+		Point newPoint = null;
+
+		Point ObjectPos = MapUtilities.getHeadingPos(robotData.getPosX(),
+				robotData.getPosY(), (-robotData.getHeadHeading() + robotData
+						.getRobotHeading()), robotData.getHeadDistance());
+
+		if (robotData.getHeadDistance() > SensorRanges.OPTICAL_DISTANCE_MIN_LENGTH_MM
+				&& robotData.getHeadDistance() < SensorRanges.OPTICAL_DISTANCE_MAX_LENGTH_MM) {
+			newPoint = ObjectPos;
+		}
+
+		return newPoint;
+	}
+
 	public static void paintArrow(Graphics g, int x0, int y0, int x1, int y1) {
 		int deltaX = x1 - x0;
 		int deltaY = y1 - y0;
@@ -56,5 +70,51 @@ public class MapUtilities {
 		g.setColor(c);
 		Point pos = getMapPos(x, y);
 		g.fillOval(pos.x - (size / 2), pos.y - (size / 2), size, size);
+	}
+
+	public static void paintSquare(int x, int y, Color c, int size, Graphics g) {
+		g.setColor(c);
+		Point pos = getMapPos(x, y);
+		g.fillRect(pos.x - (size / 2), pos.y - (size / 2), size, size);
+	}
+
+	public static void paintLine(int x1, int y1, int x2, int y2, Color c,
+			float size, Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+
+		Stroke oldStroke = g2.getStroke();
+		BasicStroke newStroke = new BasicStroke(size);
+
+		Point pos1 = MapUtilities.getMapPos(x1, y1);
+		Point pos2 = MapUtilities.getMapPos(x2, y2);
+
+		g2.setStroke(newStroke);
+		g2.setColor(c);
+		g2.drawLine(pos1.x, pos1.y, pos2.x, pos2.y);
+		g2.setStroke(oldStroke);
+	}
+
+	public static Point getCenterPos(ArrayList<RobotData> data) {
+		return MapUtilities.getCenterPos(data, -1);
+	}
+
+	public static Point getCenterPos(ArrayList<RobotData> data, int maxIndex) {
+		int x = 0;
+		int y = 0;
+		int index = data.size() - 1;
+
+		if (maxIndex >= 0) {
+			index = maxIndex;
+		}
+
+		for (int i = 0; i <= index; i++) {
+			x += data.get(i).getPosX();
+			y += data.get(i).getPosY();
+		}
+
+		x /= (index + 1);
+		y /= (index + 1);
+
+		return new Point(x, y);
 	}
 }

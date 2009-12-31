@@ -73,4 +73,18 @@ public abstract class MapProcessorMain implements IMapProcessor, Cloneable {
 	@Override
 	public void reset() {
 	}
+	
+	public boolean isAffectedByRotation(){
+		return true;
+	}
+	
+    public Object clone() {
+        try {
+            return super.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            // This should never happen
+            throw new InternalError(e.toString());
+        }
+    }
 }

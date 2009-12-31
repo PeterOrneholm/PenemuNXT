@@ -78,16 +78,10 @@ public abstract class MapObjectPositions extends MapSimplePosition implements
 			if (data != null) {
 				for (RobotData robotData : data) {
 					if (robotData != null) {
-						Point ObjectPos = MapUtilities.getHeadingPos(robotData
-								.getPosX(), robotData.getPosY(),
-								(-robotData.getHeadHeading() + robotData
-										.getRobotHeading()), robotData
-										.getHeadDistance());
+						Point ObjectPos = MapUtilities.getObjectPos(robotData);
 
-						if (robotData.getHeadDistance() > SensorRanges.OPTICAL_DISTANCE_MIN_LENGTH_MM
-								&& robotData.getHeadDistance() < SensorRanges.OPTICAL_DISTANCE_MAX_LENGTH_MM) {
-							objectPositions.add(new Point(ObjectPos.x,
-									ObjectPos.y));
+						if (ObjectPos != null) {
+							objectPositions.add(ObjectPos);
 						}
 					}
 				}

@@ -1,13 +1,6 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.processing;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Transparency;
-import java.awt.image.VolatileImage;
+import java.awt.*;
 import java.util.ArrayList;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
@@ -54,7 +47,6 @@ public class MapProcessors {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.translate(centerX, centerY);
 		g2.scale(scale, scale);
-		g2.rotate(rotate);
 
 		if (list != null && list.size() > 0) {
 			for (IMapProcessor mapProcessor : this.getList()) {
@@ -62,7 +54,13 @@ public class MapProcessors {
 			}
 			for (IMapProcessor mapProcessor : this.getList()) {
 				if (mapProcessor.isEnabled()) {
+					if(mapProcessor.isAffectedByRotation()){
+						g2.rotate(rotate);
+					}
 					mapProcessor.processData(data, g);
+					if(mapProcessor.isAffectedByRotation()){
+						g2.rotate(-rotate);
+					}
 				}
 			}
 		}
