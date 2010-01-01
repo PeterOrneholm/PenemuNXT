@@ -106,6 +106,10 @@ public class MapUtilities {
 		if (maxIndex >= 0) {
 			index = maxIndex;
 		}
+		
+		if(!(index>=0)){
+			index = 0;
+		}
 
 		for (int i = 0; i <= index; i++) {
 			x += data.get(i).getPosX();
