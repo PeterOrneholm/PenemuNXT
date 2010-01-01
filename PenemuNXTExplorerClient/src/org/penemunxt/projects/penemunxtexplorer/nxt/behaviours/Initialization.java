@@ -30,6 +30,7 @@ public class Initialization implements Behavior {
 		
 		simnav.setTurnSpeed(30);
 		simnav.setMoveSpeed(100);
+		DS.stopSendData();
 		
 		Motor.A.setSpeed(30);
 		Motor.A.rotate(360, false);
@@ -44,14 +45,14 @@ public class Initialization implements Behavior {
 				}	
 		}
 		
-		simnav.rotate(shortestdistangle);
-		
-		
 		
 		Motor.A.setSpeed(200);
 		Motor.A.rotate(-270);
 		Motor.A.setSpeed(50);
 		
+		simnav.rotate(shortestdistangle);
+		
+		DS.startSendData();
 		takeControl = false;
 
 	}

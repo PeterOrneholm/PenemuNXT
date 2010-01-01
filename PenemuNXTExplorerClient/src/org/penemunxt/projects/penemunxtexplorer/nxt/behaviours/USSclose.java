@@ -21,7 +21,9 @@ public class USSclose implements Behavior {
 	
 	final int DISTANCE_THRESHOLD = 30;
 	
-	final int NUMBER_OF_VALUES = 25;
+	final int NUMBER_OF_VALUES = 50;
+	
+	final int GROWING_THRESHOLD = 4;
 
 	public USSclose(SimpleNavigator simnav, UltrasonicSensor USS,
 			NXTCommunication NXTC, DataShare ds) {
@@ -39,19 +41,19 @@ public class USSclose implements Behavior {
 		
 		simnav.stop();
 		Motor.A.setSpeed(30);
-		Motor.A.rotate(-90, false);
+		Motor.A.rotate(-180, false);
 		
-		boolean isgrowing = false;
+		int isgrowing = 0;
 		int shortestdist = 1000;
-		int shortestdistangle = 0;
+		int shortestdistangle = 85;
 		
 		for (int x = NUMBER_OF_VALUES; x > 0; x--) {
 			if (DS.LatestRobotData.get(x).getHeadDistance()
 					- DS.LatestRobotData.get(x - 1).getHeadDistance() > 0) {
-				isgrowing = true;
+				isgrowing++;
 			}
 			
-			if (isgrowing) {
+			if (isgrowing > GROWING_THRESHOLD) {
 				if ( DS.LatestRobotData.get(x).getHeadDistance() < shortestdist){
 					shortestdist = DS.LatestRobotData.get(x).getHeadDistance();
 					shortestdistangle = DS.LatestRobotData.get(x).getHeadHeading();
@@ -60,8 +62,8 @@ public class USSclose implements Behavior {
 		}
 		
 		Motor.A.setSpeed(200);
-		Motor.A.rotate(90);
-		simnav.rotate(90-shortestdistangle);
+		Motor.A.rotate(180);
+		simnav.rotate(90-shortestdistangle, false);
 		
 		
 		DS.leftturnUsed();

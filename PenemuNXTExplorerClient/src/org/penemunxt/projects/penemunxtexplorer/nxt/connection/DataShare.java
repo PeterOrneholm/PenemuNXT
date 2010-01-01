@@ -8,9 +8,10 @@ public class DataShare {
 	public int sincelastturn = 0;
 	public boolean lockBehaviour;
 	public ArrayList<RobotData> LatestRobotData;
+	public boolean SendData = true;
 	
 	final double ISLINEAR_THRESHOLD = 0.1;
-	final int ROBOTDATA_MAX_SIZE = 30;
+	final int ROBOTDATA_MAX_SIZE = 100;
 
 	public DataShare() {
 		super();
@@ -32,12 +33,12 @@ public class DataShare {
 		double coef = linCoef ( dsl, startpos, endpos);
 
 		for (int n = startpos; n < endpos; n++) {
-			if (!((linCoef ( dsl, n, (n+1)) / coef) > (1+ISLINEAR_THRESHOLD) 
-					||  ((linCoef ( dsl, n, (n+1)) / coef) < (1 - ISLINEAR_THRESHOLD)))) return coef;
+			if ((linCoef ( dsl, n, endpos) / coef) > (1+ISLINEAR_THRESHOLD) 
+					||  ((linCoef ( dsl, n, endpos) / coef) < (1 - ISLINEAR_THRESHOLD))) return 0;
 				
 		}
 
-		return 0;
+		return coef;
 	}
 	
 	public double linCoef ( DataShare dsl, int startpos, int endpos){
@@ -59,5 +60,13 @@ public class DataShare {
 	
 	public void alignUsed() {
 		sincelastalign = 0;
+	}
+	
+	public void stopSendData() {
+		SendData = false;
+	}
+	
+	public void startSendData() {
+		SendData = true;
 	}
 }

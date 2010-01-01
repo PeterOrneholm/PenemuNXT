@@ -17,12 +17,12 @@ public class AlignWall implements Behavior {
 	final int TRAVELDIST_THRESHOLD = 5;
 	
 	final int STARTING_VALUE = 0;
-	final int ENDING_VALUE = 3;
+	final int ENDING_VALUE = 2;
 
 	final int SCAN_DIF_MIN = 10;
 	
 	final int SCAN_DISTANCE_MIN = 100;
-	final int SCAN_DISTANCE_MAX = 300;
+	final int SCAN_DISTANCE_MAX = 400;
 	
 	public AlignWall(SimpleNavigator simnav, DataShare ds,
 			NXTCommunication NXTC) {
