@@ -10,6 +10,10 @@ import org.penemunxt.communication.NXTCommunicationData;
 
 public class RobotData extends NXTCommunicationData implements
 		INXTCommunicationData, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2710524532782779030L;
 
 	/* Read / Write */
 	@Override
