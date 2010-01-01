@@ -182,7 +182,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 	public void resetMapCenter() {
 		Point mapDataCenter;
 		if (this.DS != null) {
-			mapDataCenter = MapUtilities.getCenterPos(this.DS.NXTRobotData);
+			//mapDataCenter = MapUtilities.getCenterPos(this.DS.NXTRobotData);
 		} else {
 			mapDataCenter = new Point(0, 0);
 		}
