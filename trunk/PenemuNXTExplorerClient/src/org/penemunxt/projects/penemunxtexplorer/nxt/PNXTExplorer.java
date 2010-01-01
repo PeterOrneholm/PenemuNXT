@@ -9,6 +9,17 @@ import org.penemunxt.communication.nxt.NXTDataStreamConnection;
 import org.penemunxt.projects.penemunxtexplorer.*;
 import org.penemunxt.projects.penemunxtexplorer.nxt.connection.DataShare;
 import org.penemunxt.projects.penemunxtexplorer.nxt.connection.ServerDataProcessor;
+import org.penemunxt.sensors.SensorRanges;
+
+/* To do:
+ * Let AI determine which info is to be sent. ServerProcessors
+ * Let server control AI.
+ * Fix AlignWall again. Check, pretty good.
+ * Fix RightCorner in the beginning. Check, untested
+ * Improve RightCorner
+ * USSclose - 90 or 180 degree scan?
+ * DataShare methods should be shared with server?
+ * */
 
 public class PNXTExplorer implements Runnable {
 	boolean Active;
@@ -71,11 +82,18 @@ public class PNXTExplorer implements Runnable {
 			}
 
 			simnav.updatePosition();
-			RobotData RD = new RobotData(RobotData.POSITION_TYPE_DRIVE,
-					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-							.getHeading(), ODS.getDistance(), Motor.A
-							.getTachoCount());
-
+			RobotData RD;
+			if (DS.SendData && ODS.getDistance() > SensorRanges.OPTICAL_DISTANCE_MIN_LENGTH_MM && ODS.getDistance() < SensorRanges.OPTICAL_DISTANCE_MAX_LENGTH_MM) {
+				RD = new RobotData(RobotData.POSITION_TYPE_DRIVE, (int) simnav
+						.getX(), (int) simnav.getY(),
+						(int) simnav.getHeading(), ODS.getDistance(), Motor.A
+								.getTachoCount());
+			} else {
+				RD = new RobotData(RobotData.POSITION_TYPE_NOT_ACTIVE,
+						(int) simnav.getX(), (int) simnav.getY(), (int) simnav
+								.getHeading(), ODS.getDistance(), Motor.A.getTachoCount());
+			}
+			
 			NXTC.sendData(RD);
 
 			RobotData RDL = new RobotData(RobotData.POSITION_TYPE_DRIVE,

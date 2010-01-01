@@ -46,7 +46,7 @@ public class RightCorner implements Behavior {
 	}
 
 	public boolean takeControl() {
-		if (!DS.lockBehaviour) {
+		if (!DS.lockBehaviour && DS.SendData) {
 			if (DS.LatestRobotData.size() > MIN_NUMBER_OF_VALUES && DS.sincelastturn > SINCELASTALIGN_THRESHOLD) {
 				if ((DS.LatestRobotData.get(CORNER_STARTING_VALUE).getHeadDistance() - DS.LatestRobotData
 						.get(CORNER_ENDING_VALUE).getHeadDistance()) > SCAN_DIF_MIN
