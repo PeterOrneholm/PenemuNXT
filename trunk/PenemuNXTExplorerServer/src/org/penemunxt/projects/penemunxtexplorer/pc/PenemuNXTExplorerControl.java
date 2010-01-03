@@ -32,7 +32,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	final static Boolean APPLICATION_START_FULLSCREEN = false;
 	final static Boolean APPLICATION_SHOW_ABOUT_DIALOG = true;
 	final static String APPLICATION_ABOUT_DIALOG_TITLE = "About PenemuNXT";
-	final static String APPLICATION_ABOUT_DIALOG_TEXT = "This is a preview of the PC app for the project PenemuNXT.\nPlease report any bugs you may to:\nhttp://code.google.com/p/penemunxt/\n\nRead more about the project:\nhttp://penemunxt.blogspot.com/";
+	final static String APPLICATION_ABOUT_DIALOG_TEXT = "This is a preview of the PC app for the project PenemuNXT.\nPlease report any bugs to:\nhttp://code.google.com/p/penemunxt/\n\nRead more about the project:\nhttp://penemunxt.blogspot.com/";
 
 	final static String APPLICATION_START_DIALOG_TITLE = "PenemuNXT";
 	final static String APPLICATION_START_DIALOG_TEXT = "Start by opening one of the sample maps included in the preview download.";
