@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>CommunicationTestServer</name>
+	<name>PenemuNXTExplorerServer</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>PenemuNXTExplorer</name>
+			<type>2</type>
+			<location>C:/Users/Peter/Documents/Projects/Projects/PenemuNXT/Programs/Source/PenemuNXTExplorer/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

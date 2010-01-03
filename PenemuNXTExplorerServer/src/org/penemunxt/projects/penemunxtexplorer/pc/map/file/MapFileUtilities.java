@@ -10,15 +10,10 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 
-import org.penemunxt.graphics.pc.Images;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.MapVisulaisation;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.ImageJPEGFileFilter;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.ImagePNGFileFilter;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.PenemuNXTMapFileFilter;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.PenemuNXTMapStreamFileFilter;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.PenemuNXTMapXMLFileFilter;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.file.filters.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessors;
 
 public class MapFileUtilities {

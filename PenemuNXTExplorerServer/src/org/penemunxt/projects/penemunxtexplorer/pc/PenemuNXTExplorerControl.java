@@ -10,12 +10,11 @@ import javax.swing.event.*;
 
 import org.penemunxt.communication.*;
 import org.penemunxt.graphics.pc.Icons;
-import org.penemunxt.projects.penemunxtexplorer.RobotData;
+import org.penemunxt.projects.penemunxtexplorer.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.file.MapFileUtilities;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.*;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.timeline.MapTimeline;
 import org.penemunxt.windows.pc.ComponentSpacer;
 import org.penemunxt.windows.pc.DataTableWindow;
@@ -36,12 +35,12 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// // Maps
 
 	// None
-	// final static String DEFAULT_FOLDER_PATH = "";
-	// final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
+	final static String DEFAULT_FOLDER_PATH = "";
+	 final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
 
 	// PeterF-01
-	final static String DEFAULT_FOLDER_PATH = "C:\\Users\\Peter\\Desktop\\Maps\\";
-	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Users\\Peter\\Desktop\\Maps\\Sample_4.penemunxtmap";
+	//final static String DEFAULT_FOLDER_PATH = "C:\\Users\\Peter\\Desktop\\Maps\\";
+	//final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Users\\Peter\\Desktop\\Maps\\Sample_3.penemunxtmap";
 
 	// PeterF-04
 	// final static String DEFAULT_FOLDER_PATH =
@@ -49,9 +48,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// final static String PRELOAD_PENEMUNXT_MAP_PATH =
 	// "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
 
-	// //Events and Algorithms basics
 
-	// //// Scale
+	// // Scale
 	final static int MAP_INIT_SCALE = 50;
 
 	// // UI
@@ -121,11 +119,10 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	// // Map
 	MapVisulaisation mapVisulaisation;
-	
-
-	// // Processors
 	MapProcessors mapProcessors;
-
+	MapProcessorsList MapProcessorsListView;
+	MapTimeline mapTimeline;
+	
 	// // Misc
 	boolean AppActive;
 	NXTCommunication NXTC;
@@ -133,8 +130,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	RobotConnection RC;
 	VolatileImage OSI;
 	PenemuNXTExplorerDataViewer DataView;
-	MapProcessorsList MapProcessorsListView;
-	MapTimeline mapTimeline;
 
 	// Functions
 
@@ -151,8 +146,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 		//Timeline
 		mapTimeline = new MapTimeline();
-		mapTimeline.addFrameChangeListeners(this);
-		mapTimeline.setBgColor(BOTTOM_PANEL_BACKGROUND_COLOR);
 
 		this.setLayout(new BorderLayout());
 		this.add(getContentPanel(), BorderLayout.CENTER);
@@ -175,8 +168,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		mainFrame.setSize((int) (ScreenSize.width * 0.85),
 				(int) (ScreenSize.height * 0.85));
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+		
 		if (APPLICATION_START_FULLSCREEN) {
+			
 			mainFrame.setUndecorated(true);
 			mainFrame.pack();
 			mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -432,6 +426,10 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		controlPanel.add(lblCurrentDataHeader);
 		controlPanel.add(pnlCurrentData);
 
+		//Timeline
+		mapTimeline.addFrameChangeListeners(this);
+		mapTimeline.setBgColor(BOTTOM_PANEL_BACKGROUND_COLOR);
+		
 		// Bottom panel
 		bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, PANEL_MARGIN,
 				PANEL_MARGIN, PANEL_MARGIN));

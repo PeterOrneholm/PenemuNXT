@@ -1,40 +1,22 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.timeline;
 
-import java.awt.Button;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.MapThumbnail;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.MapVisulaisation;
-import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapProcessors;
-import org.penemunxt.windows.pc.DataTableWindow;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.*;
 
 public class MapTimeline extends JPanel implements ChangeListener,
 		MouseListener, MouseMotionListener, ActionListener {
 	// Constants
 	final static int TIMELINE_PLAY_FPS_MIN = 1;
-	final static int TIMELINE_PLAY_FPS_MAX = 50;
-	final static int TIMELINE_PLAY_FPS_DEFAULT = 15;
+	final static int TIMELINE_PLAY_FPS_MAX = 100;
+	final static int TIMELINE_PLAY_FPS_DEFAULT = 25;
 
 	// Controls
 	Panel timelineControlPanel = new Panel();
@@ -173,7 +155,7 @@ public class MapTimeline extends JPanel implements ChangeListener,
 	private void enableTimeline() {
 		timelineEnabled = true;
 		stopAutoPlay();
-		btnTimelineEnableDisable.setLabel("Disable");
+		btnTimelineEnableDisable.setText("Disable");
 		btnTimelinePlayPause.setEnabled(true);
 		btnTimelineRewind.setEnabled(true);
 
@@ -187,7 +169,7 @@ public class MapTimeline extends JPanel implements ChangeListener,
 	private void disableTimeline() {
 		timelineEnabled = false;
 		stopAutoPlay();
-		btnTimelineEnableDisable.setLabel("Enable");
+		btnTimelineEnableDisable.setText("Enable");
 		btnTimelinePlayPause.setEnabled(false);
 		btnTimelineRewind.setEnabled(false);
 
@@ -222,7 +204,7 @@ public class MapTimeline extends JPanel implements ChangeListener,
 		TimelinePlayer.addDataEndListeners(this);
 		TimelinePlayer.start();
 
-		btnTimelinePlayPause.setLabel("Pause");
+		btnTimelinePlayPause.setText("Pause");
 	}
 
 	public void stopAutoPlay() {
@@ -232,7 +214,7 @@ public class MapTimeline extends JPanel implements ChangeListener,
 			TimelinePlayer = null;
 		}
 
-		btnTimelinePlayPause.setLabel("Play");
+		btnTimelinePlayPause.setText("Play");
 	}
 
 	public MapTimeline() {
