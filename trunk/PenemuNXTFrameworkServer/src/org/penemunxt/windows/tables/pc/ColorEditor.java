@@ -20,7 +20,20 @@ public class ColorEditor extends AbstractCellEditor implements TableCellEditor,
 		button.addActionListener(this);
 		button.setBorderPainted(false);
 
-		colorChooser = new JColorChooser();
+		Color initColor = null;
+		try{
+			initColor = (Color) this.getCellEditorValue();
+		}catch(Exception e){
+			initColor = null;
+		}
+		
+		if(initColor!=null){
+			colorChooser = new JColorChooser(initColor);
+		}else{
+			colorChooser = new JColorChooser();
+		}
+		
+		colorChooser.setPreviewPanel(new JPanel());
 		dialog = JColorChooser.createDialog(button, "Pick a Color", true,
 				colorChooser, this, null);
 	}
