@@ -16,14 +16,16 @@ import org.penemunxt.projects.penemunxtexplorer.pc.map.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.file.MapFileUtilities;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.*;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors.*;
+import org.penemunxt.projects.penemunxtexplorer.pc.map.timeline.MapTimeline;
 import org.penemunxt.windows.pc.ComponentSpacer;
 import org.penemunxt.windows.pc.DataTableWindow;
 
 public class PenemuNXTExplorerControl extends JPanel implements Runnable,
-		ActionListener, WindowListener, ComponentListener, ChangeListener,
-		MouseListener, MouseMotionListener {
+		ActionListener, WindowListener, ComponentListener, ChangeListener
+		{
 
 	// Constants
+	private static final long serialVersionUID = 1L;
 
 	// // Application
 	final static String APPLICATION_NAME = "PenemuNXT - Explorer control";
@@ -40,7 +42,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// PeterF-01
 	final static String DEFAULT_FOLDER_PATH = "C:\\Users\\Peter\\Desktop\\Maps\\";
 	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Users\\Peter\\Desktop\\Maps\\Sample_4.penemunxtmap";
-	//final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
 
 	// PeterF-04
 	// final static String DEFAULT_FOLDER_PATH =
@@ -49,44 +50,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
 
 	// //Events and Algorithms basics
-	final static boolean LATEST_POS_SHOW_DEFAULT = true;
-	final static boolean DRIVING_PATH_SHOW_DEFAULT = true;
-	final static boolean BUMPING_BUMPER_SHOW_DEFAULT = true;
-	final static boolean BUMPING_DISTANCE_SHOW_DEFAULT = true;
-	final static boolean ALIGNED_TO_WALL_SHOW_DEFAULT = true;
-	final static boolean HEAD_MAP_SHOW_DEFAULT = true;
-	final static boolean HOT_SPOTS_SHOW_DEFAULT = false;
-	final static boolean FIND_WALLS_SHOW_DEFAULT = true;
-	final static boolean CLEAR_AREA_SHOW_DEFAULT = true;
-	final static boolean BACKGROUND_GRID_SHOW_DEFAULT = true;
-
-	// //// Drawings
-	final static Color DEFAULT_CIRCLE_COLOR = Color.BLACK;
-	final static Color LATEST_POS_CIRCLE_COLOR = Color.GREEN;
-	final static Color DRIVING_PATH_CIRCLE_COLOR = Color.LIGHT_GRAY;
-	final static Color BUMPING_BUMPER_CIRCLE_COLOR = Color.RED;
-	final static Color BUMPING_DISTANCE_CIRCLE_COLOR = Color.BLUE;
-	final static Color ALIGNED_TO_WALL_CIRCLE_COLOR = Color.CYAN;
-	final static Color HEAD_MAP_CIRCLE_COLOR = Color.BLACK;
-	final static Color CLEAR_AREA_LINE_COLOR = Color.WHITE;
-	final static Color BACKGROUND_GRID_LINE_COLOR = Color.WHITE;
-
-	final static int DEFAULT_CIRCLE_SIZE = 10;
-	final static int LATEST_POS_CIRCLE_SIZE = 75;
-	final static int DRIVING_PATH_CIRCLE_SIZE = 10;
-	final static int BUMPING_BUMPER_CIRCLE_SIZE = 50;
-	final static int BUMPING_DISTANCE_CIRCLE_SIZE = 50;
-	final static int ALIGNED_TO_WALL_CIRCLE_SIZE = 50;
-	final static int HEAD_MAP_CIRCLE_SIZE = 25;
-	final static int HOT_SPOTS_MAX_CIRCLE_SIZE = 100;
-	final static int CLEAR_AREA_LINE_SIZE = 25;
-	final static int BACKGROUND_GRID_LINE_SIZE = 2;
-	final static int FIND_WALLS_LINE_SIZE = 5;
-	
-	//Map grid
-	final static int GRID_LINE_SPACE_DEFAULT = 100;
-	final static Color GRID_MIDDLE_CROSS_LINE_COLOR_DEFAULT = Color.RED;
-	final static int GRID_MIDDLE_CROSS_LINE_WIDTH_DEFAULT = 10;
 
 	// //// Scale
 	final static int MAP_INIT_SCALE = 50;
@@ -113,12 +76,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	final static String CONNECT_TO_NAME_DEFAULT = "NXT";
 	final static String CONNECT_TO_ADDRESS_DEFAULT = "0016530A9000";
 
-	// // Timeline
-	final static int TIMELINE_PLAY_SPEED_MIN = 1;
-	final static int TIMELINE_PLAY_SPEED_MAX = 15;
-	final static int TIMELINE_PLAY_SPEED_DEFAULT = 5;
-	final static int TIMELINE_PLAY_SPEED_MULTIPLIER = 10;
-
 	// Variables
 
 	// // Menu
@@ -136,11 +93,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	JMenu mnuMapProcessors;
 
 	// // Buttons
-	Button btnConnectAndStart;
-	Button btnDisconnectAndStop;
-	Button btnTimelineEnableDisable;
-	Button btnTimelinePlayPause;
-	Button btnTimelineRewind;
+	JButton btnConnectAndStart;
+	JButton btnDisconnectAndStop;
 
 	// // Panels
 	Panel controlPanel;
@@ -160,46 +114,17 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	JSlider sldMapScale;
 	JSlider sldMapRotate;
 	JSlider sldAlgorithmsSensitivityFilter;
-	JSlider sldTimeline;
-	JSlider sldTimelineSpeed;
 
 	// // Textboxes
-	TextField txtConnectToName;
-	TextField txtConnectToAddress;
+	JTextField txtConnectToName;
+	JTextField txtConnectToAddress;
 
 	// // Map
 	MapVisulaisation mapVisulaisation;
-	MapVisulaisation mapVisulaisationThumbnail;
-	MapThumbnail mapThumbnail;
+	
 
 	// // Processors
 	MapProcessors mapProcessors;
-	MapAligned mapProcessorAligned;
-	MapBumpBumper mapProcessorBumpBumper;
-	MapCurrentPos mapProcessorCurrentPos;
-	MapBumpDistance mapProcessorBumpDistance;
-	MapDrivingPath mapProcessorDrivingPath;
-	MapFindLines mapProcessorFindLines;
-	MapHeadObjects mapProcessorHeadObjects;
-	MapHotspots mapProcessorHotspots;
-	MapClearArea mapProcessorClearArea;
-	MapBackgroundGrid mapProcessorBackgroundGrid;
-
-	// // Timeline
-	int timelineMin = 0;
-	int timelineMax = 1;
-
-	int timelinePrevMin = 0;
-	int timelinePrevMax = 1;
-
-	int timelineDefault = 0;
-	int timelinePlaySpeed = TIMELINE_PLAY_SPEED_DEFAULT;
-
-	boolean timelinePlay = false;
-	boolean timelineEnabled = false;
-
-	Hashtable<Integer, JLabel> TimelineLabelTable;
-	MapTimelinePlayer TimelinePlayer;
 
 	// // Misc
 	boolean AppActive;
@@ -209,6 +134,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	VolatileImage OSI;
 	PenemuNXTExplorerDataViewer DataView;
 	MapProcessorsList MapProcessorsListView;
+	MapTimeline mapTimeline;
 
 	// Functions
 
@@ -222,11 +148,15 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	public PenemuNXTExplorerControl() {
 		AppActive = true;
+
+		//Timeline
+		mapTimeline = new MapTimeline();
+		mapTimeline.addFrameChangeListeners(this);
+		mapTimeline.setBgColor(BOTTOM_PANEL_BACKGROUND_COLOR);
+
 		this.setLayout(new BorderLayout());
 		this.add(getContentPanel(), BorderLayout.CENTER);
-
-		mapThumbnail = new MapThumbnail();
-
+		
 		Thread t = new Thread(this);
 		t.start();
 	}
@@ -319,8 +249,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		JPanel viewPanel = new JPanel();
 
 		controlPanel = new Panel();
-		Panel timelinePanel = new Panel();
-		Panel timelineControlPanel = new Panel();
 
 		// Fonts
 		Font fntSectionHeader = new Font("Arial", Font.BOLD, 14);
@@ -332,9 +260,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 				true);
 		mapVisulaisation.mapCenterChanged = this;
 		mapVisulaisation.mapScaleChanged = this;
-
-		mapVisulaisationThumbnail = new MapVisulaisation(MAP_INIT_SCALE,
-				mapProcessors, false);
 
 		// Image logo
 		JPanel logoPanel = new JPanel(new BorderLayout());
@@ -361,14 +286,14 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		cboConnectionTypes = new JComboBox(CONNECTION_MODES_NAMES);
 		cboConnectionTypes.setSelectedIndex(CONNECTION_MODES_INIT_SELECTED);
 
-		txtConnectToName = new TextField(CONNECT_TO_NAME_DEFAULT, 15);
-		txtConnectToAddress = new TextField(CONNECT_TO_ADDRESS_DEFAULT, 15);
+		txtConnectToName = new JTextField(CONNECT_TO_NAME_DEFAULT, 15);
+		txtConnectToAddress = new JTextField(CONNECT_TO_ADDRESS_DEFAULT, 15);
 
-		btnConnectAndStart = new Button("Connect and Start");
+		btnConnectAndStart = new JButton("Connect and Start");
 		btnConnectAndStart.addActionListener(this);
 		btnConnectAndStart.setEnabled(true);
 
-		btnDisconnectAndStop = new Button("Disconnect and Stop");
+		btnDisconnectAndStop = new JButton("Disconnect and Stop");
 		btnDisconnectAndStop.addActionListener(this);
 		btnDisconnectAndStop.setEnabled(false);
 
@@ -491,42 +416,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		pnlCurrentData.add(lblTimelineCurrentFrameHeader);
 		pnlCurrentData.add(lblTimelineCurrentFrame);
 
-		// Timeline
-		Label lblTimelineHeader = new Label("Timeline");
-		lblTimelineHeader.setFont(fntSectionHeader);
-
-		sldTimeline = new JSlider(SwingConstants.HORIZONTAL, timelineMin,
-				timelineMax, timelineDefault);
-		sldTimeline.setPaintTicks(true);
-		sldTimeline.setPaintLabels(true);
-		sldTimeline.addChangeListener(this);
-		sldTimeline.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
-
-		sldTimeline.addMouseListener(this);
-		sldTimeline.addMouseMotionListener(this);
-
-		// Timeline speed
-		Label lblTimelineSpeedHeader = new Label("Speed");
-		lblTimelineSpeedHeader.setFont(fntLabelHeader);
-
-		sldTimelineSpeed = new JSlider(SwingConstants.HORIZONTAL,
-				TIMELINE_PLAY_SPEED_MIN, TIMELINE_PLAY_SPEED_MAX,
-				TIMELINE_PLAY_SPEED_DEFAULT);
-		sldTimelineSpeed.setPaintTicks(false);
-		sldTimelineSpeed.setPaintLabels(false);
-		sldTimelineSpeed.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
-		sldTimelineSpeed.addChangeListener(this);
-
-		// Timeline buttons
-		btnTimelineEnableDisable = new Button("Enable");
-		btnTimelineEnableDisable.addActionListener(this);
-
-		btnTimelinePlayPause = new Button("Play/Pause");
-		btnTimelinePlayPause.addActionListener(this);
-
-		btnTimelineRewind = new Button("Rewind");
-		btnTimelineRewind.addActionListener(this);
-
 		// Control panel
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		controlPanel.add(logoPanel);
@@ -543,26 +432,12 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		controlPanel.add(lblCurrentDataHeader);
 		controlPanel.add(pnlCurrentData);
 
-		// Timeline controlpanel
-		timelineControlPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-		timelineControlPanel.add(btnTimelineEnableDisable);
-		timelineControlPanel.add(btnTimelineRewind);
-		timelineControlPanel.add(btnTimelinePlayPause);
-		timelineControlPanel.add(lblTimelineSpeedHeader);
-		timelineControlPanel.add(sldTimelineSpeed);
-
-		// Timeline panel
-		timelinePanel.setLayout(new BoxLayout(timelinePanel, BoxLayout.Y_AXIS));
-		timelinePanel.add(lblTimelineHeader);
-		timelinePanel.add(timelineControlPanel);
-		timelinePanel.add(sldTimeline);
-
 		// Bottom panel
 		bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, PANEL_MARGIN,
 				PANEL_MARGIN, PANEL_MARGIN));
 		bottomPanel.setBackground(BOTTOM_PANEL_BACKGROUND_COLOR);
 		bottomPanel.setLayout(new BorderLayout());
-		bottomPanel.add(timelinePanel, BorderLayout.CENTER);
+		bottomPanel.add(mapTimeline, BorderLayout.CENTER);
 
 		// Left panel
 		leftPanel.setBorder(BorderFactory.createEmptyBorder(PANEL_MARGIN,
@@ -596,41 +471,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	}
 
 	private void setupMapProcessors() {
-		ArrayList<IMapProcessor> defaultProcessors = new ArrayList<IMapProcessor>();
-
-		mapProcessorAligned = new MapAligned(ALIGNED_TO_WALL_CIRCLE_COLOR,
-				ALIGNED_TO_WALL_CIRCLE_SIZE, ALIGNED_TO_WALL_SHOW_DEFAULT);
-		mapProcessorBumpBumper = new MapBumpBumper(BUMPING_BUMPER_CIRCLE_COLOR,
-				BUMPING_BUMPER_CIRCLE_SIZE, BUMPING_BUMPER_SHOW_DEFAULT);
-		mapProcessorBumpDistance = new MapBumpDistance(
-				BUMPING_DISTANCE_CIRCLE_COLOR, BUMPING_DISTANCE_CIRCLE_SIZE,
-				BUMPING_DISTANCE_SHOW_DEFAULT);
-		mapProcessorCurrentPos = new MapCurrentPos(LATEST_POS_CIRCLE_COLOR,
-				LATEST_POS_CIRCLE_SIZE, LATEST_POS_SHOW_DEFAULT);
-		mapProcessorDrivingPath = new MapDrivingPath(DRIVING_PATH_CIRCLE_COLOR,
-				DRIVING_PATH_CIRCLE_SIZE, DRIVING_PATH_SHOW_DEFAULT);
-		mapProcessorHeadObjects = new MapHeadObjects(HEAD_MAP_CIRCLE_COLOR,
-				HEAD_MAP_CIRCLE_SIZE, HEAD_MAP_SHOW_DEFAULT);
-
-		mapProcessorHotspots = new MapHotspots(HOT_SPOTS_MAX_CIRCLE_SIZE, HOT_SPOTS_SHOW_DEFAULT);
-		mapProcessorFindLines = new MapFindLines(FIND_WALLS_LINE_SIZE, FIND_WALLS_SHOW_DEFAULT);
-		mapProcessorClearArea = new MapClearArea(CLEAR_AREA_LINE_COLOR , CLEAR_AREA_LINE_SIZE, CLEAR_AREA_SHOW_DEFAULT);
-		mapProcessorBackgroundGrid = new MapBackgroundGrid(BACKGROUND_GRID_LINE_COLOR , BACKGROUND_GRID_LINE_SIZE, BACKGROUND_GRID_SHOW_DEFAULT);	
-		
-		defaultProcessors.add(mapProcessorBackgroundGrid);
-		defaultProcessors.add(mapProcessorClearArea);
-		defaultProcessors.add(mapProcessorCurrentPos);
-		defaultProcessors.add(mapProcessorDrivingPath);
-		defaultProcessors.add(mapProcessorHeadObjects);
-
-		defaultProcessors.add(mapProcessorBumpBumper);
-		defaultProcessors.add(mapProcessorBumpDistance);
-		defaultProcessors.add(mapProcessorAligned);
-
-		defaultProcessors.add(mapProcessorHotspots);
-		defaultProcessors.add(mapProcessorFindLines);
-
-		mapProcessors = new MapProcessors(defaultProcessors);
+		mapProcessors = new MapProcessors(PenemuNXTDefaultMapProcessors.getDefaultProcessors());
 	}
 
 	private void setupMapProcessorsMenu() {
@@ -665,7 +506,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		RobotData LatestData = null;
 		if (DS != null && DS.NXTRobotData != null) {
 			LatestData = MapUtilities.getLatestData(DS.NXTRobotData,
-					sldTimeline.getValue() - 1);
+					mapTimeline.getCurrentFrame() - 1);
 		}
 
 		if (DS != null && DS.NXTRobotData != null && LatestData != null) {
@@ -677,8 +518,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 					.getHeadDistance()));
 			lblRDHeadHeading.setText(String
 					.valueOf(LatestData.getHeadHeading()));
-			lblTimelineCurrentFrame.setText(String.valueOf(sldTimeline
-					.getValue()));
+			lblTimelineCurrentFrame.setText(String.valueOf(mapTimeline
+					.getCurrentFrame()));
 		} else {
 			lblRDHeadDistance.setText("");
 			lblRDHeadHeading.setText("");
@@ -691,8 +532,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	public void refreshMap() {
 		if (mapVisulaisation != null) {
+			mapVisulaisation.setMapCurrentFrame(mapTimeline.getCurrentFrame());
 			mapVisulaisation.refresh();
-			mapVisulaisationThumbnail.refresh();
 		}
 	}
 
@@ -702,9 +543,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		DS = new DataShare();
 
 		mapVisulaisation.setDS(DS);
-		mapVisulaisationThumbnail.setDS(DS);
-
-		disableTimeline();
+		mapTimeline.setDS(DS);
+		mapTimeline.setEnabled(false);
+		mapTimeline.setMapThumbnail(MAP_INIT_SCALE, mapProcessors, DS);
 
 		// Auto open
 		if (PRELOAD_PENEMUNXT_MAP_PATH.length() > 0) {
@@ -715,68 +556,13 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 			if (mapVisulaisation != null) {
 				sldMapScale.setValue(mapVisulaisation.getMapScale());
 			}
-
-			if (DS != null && DS.NXTRobotData != null
-					&& DS.NXTRobotData.size() > 0) {
-				btnTimelineEnableDisable.setEnabled(true);
-
-				timelineMin = 0;
-				timelineMax = DS.NXTRobotData.size();
-
-				sldTimeline.setMinimum(timelineMin);
-				sldTimeline.setMaximum(timelineMax);
-				if (!timelineEnabled) {
-					sldTimeline.setValue(timelineMax);
-				}
-
-				if (sldTimeline.getValue() == sldTimeline.getMaximum()) {
-					stopTimelineAutoPlay();
-				}
-
-				if (mapVisulaisation != null) {
-					mapVisulaisation.setMapCurrentFrame(sldTimeline.getValue());
-				}
-
-				sldTimeline
-						.setMajorTickSpacing((int) ((timelineMax - timelineMin) / 5.0));
-				sldTimeline
-						.setMinorTickSpacing((int) ((timelineMax - timelineMin) / 10.0));
-
-				if (timelineMin != timelinePrevMin
-						|| timelineMax != timelinePrevMin) {
-					if (TimelineLabelTable == null) {
-						TimelineLabelTable = new Hashtable<Integer, JLabel>();
-					}
-
-					TimelineLabelTable.clear();
-					TimelineLabelTable.put(new Integer(timelineMin),
-							new JLabel(String.valueOf(timelineMin)));
-
-					TimelineLabelTable.put(new Integer(
-							(timelineMax - timelineMin) / 2), new JLabel(String
-							.valueOf((timelineMax - timelineMin) / 2)));
-
-					TimelineLabelTable.put(new Integer(timelineMax),
-							new JLabel(String.valueOf(timelineMax)));
-					sldTimeline.setLabelTable(TimelineLabelTable);
-				}
-			} else {
-				btnTimelineEnableDisable.setEnabled(false);
-				disableTimeline();
-
-				sldTimeline.setMinimum(0);
-				sldTimeline.setMaximum(1);
-				sldTimeline.setMajorTickSpacing(2);
-				sldTimeline.setMinorTickSpacing(1);
-			}
+			
+			mapTimeline.refresh();
 
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 			}
-
-			timelinePrevMin = timelineMin;
-			timelinePrevMax = timelineMax;
 		}
 
 		System.exit(0);
@@ -812,12 +598,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 			openDataView();
 		} else if (ae.getSource() == mnuFileOpenMapProcessorsButton) {
 			openMapProcessorsListView();
-		} else if (ae.getSource() == btnTimelinePlayPause) {
-			switchTimelineAutoPlay();
-		} else if (ae.getSource() == btnTimelineEnableDisable) {
-			switchTimelineEnabled();
-		} else if (ae.getSource() == btnTimelineRewind) {
-			rewindTimeline();
 		} else if (ae.getSource() == mnuMapClearButton) {
 			clearMap();
 		}
@@ -836,31 +616,36 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 						.toRadians((double) sldMapRotate.getValue()));
 			}
 			refreshMap();
-		} else if (ce.getSource() == sldTimelineSpeed) {
-			timelinePlaySpeed = sldTimelineSpeed.getValue();
-			if (TimelinePlayer != null) {
-				TimelinePlayer
-						.setDelay(getTimelineDelayFromSpeed(timelinePlaySpeed));
-			}
-		} else if (ce.getSource() == sldTimeline) {
-			timelineChanged();
-		} else if (ce.getSource() == DataView) {
-			if (DataView != null && timelineEnabled
-					&& DataView.getSelectedFrame() >= 0) {
-				sldTimeline.setValue(DataView.getSelectedFrame());
-			}
 		} else if (ce.getSource() == MapProcessorsListView) {
 			refreshMap();
 			setupMapProcessorsMenu();
 		} else if (ce.getSource() == mapVisulaisation) {
 			refreshMap();
+		} else if (ce.getSource() == DataView) {
+			if (DataView != null && mapTimeline.isEnabled()
+					&& DataView.getSelectedFrame() >= 0) {
+				mapTimeline.setCurrentFrame(DataView.getSelectedFrame());
+			}
+		} else if (ce.getSource() == mapTimeline) {
+			timelineChanged();
 		}
 	}
 
+	private void timelineChanged() {
+		refreshMap();
+		refreshLatestData();
+
+		if (DataView != null
+				&& DataView.getWindowState() == DataTableWindow.WINDOW_STATE_OPEN) {
+			DataView.selectFrame(mapTimeline.getCurrentFrame());
+			DataView.focus();
+		}
+	}
+	
 	private void openDataView() {
 		if (DataView != null
 				&& DataView.getWindowState() == DataTableWindow.WINDOW_STATE_OPEN) {
-			DataView.refresh(sldTimeline.getValue(), true);
+			DataView.refresh(mapTimeline.getCurrentFrame(), true);
 		} else {
 			DataView = new PenemuNXTExplorerDataViewer(DS.NXTRobotData,
 					APPLICATION_NAME + " - Data view", APPLICATION_ICON
@@ -918,89 +703,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		connectRobot();
 	}
 
-	private void switchTimelineEnabled() {
-		if (timelineEnabled) {
-			disableTimeline();
-		} else {
-			enableTimeline();
-		}
-	}
-
-	private void enableTimeline() {
-		timelineEnabled = true;
-		stopTimelineAutoPlay();
-		btnTimelineEnableDisable.setLabel("Disable");
-		btnTimelinePlayPause.setEnabled(true);
-		btnTimelineRewind.setEnabled(true);
-
-		sldTimelineSpeed.setEnabled(true);
-		sldTimeline.setEnabled(true);
-		sldTimeline.setVisible(true);
-	}
-
-	private void disableTimeline() {
-		timelineEnabled = false;
-		btnTimelineEnableDisable.setLabel("Enable");
-		btnTimelinePlayPause.setEnabled(false);
-		btnTimelineRewind.setEnabled(false);
-
-		sldTimelineSpeed.setEnabled(false);
-		sldTimeline.setEnabled(false);
-		sldTimeline.setVisible(false);
-	}
-
-	private void rewindTimeline() {
-		sldTimeline.setValue(sldTimeline.getMinimum());
-	}
-
-	private void switchTimelineAutoPlay() {
-		if (timelinePlay) {
-			stopTimelineAutoPlay();
-		} else {
-			startTimelineAutoPlay();
-		}
-	}
-
-	private void startTimelineAutoPlay() {
-		stopTimelineAutoPlay();
-		
-		if (sldTimeline.getValue() == sldTimeline.getMaximum()) {
-			sldTimeline.setValue(sldTimeline.getMinimum());
-		}
-
-		timelinePlay = true;
-		TimelinePlayer = new MapTimelinePlayer(sldTimeline,
-				getTimelineDelayFromSpeed(timelinePlaySpeed));
-		TimelinePlayer.start();
-		
-		btnTimelinePlayPause.setLabel("Pause");
-	}
-
-	private void stopTimelineAutoPlay() {
-		timelinePlay = false;
-		if (TimelinePlayer != null) {
-			TimelinePlayer.deactivate();
-			TimelinePlayer = null;
-		}
-		
-		btnTimelinePlayPause.setLabel("Play");
-	}
-
-	private void timelineChanged() {
-		refreshMap();
-		refreshLatestData();
-
-		if (DataView != null
-				&& DataView.getWindowState() == DataTableWindow.WINDOW_STATE_OPEN) {
-			DataView.selectFrame(sldTimeline.getValue());
-			DataView.focus();
-		}
-	}
-
-	private int getTimelineDelayFromSpeed(int speed) {
-		return ((TIMELINE_PLAY_SPEED_MAX - speed + TIMELINE_PLAY_SPEED_MIN) * TIMELINE_PLAY_SPEED_MULTIPLIER);
-	}
-
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		if (RC != null && RC.isConnectionActive()) {
@@ -1022,41 +724,6 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	public void windowOpened(WindowEvent arg0) {
 		refreshMap();
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		mapThumbnail.hide();
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		refreshMap();
-		if (!mapThumbnail.isOpen()) {
-			mapThumbnail.open(mapVisulaisationThumbnail, 250, 250);
-			mapThumbnail.setScale(25);
-		}
-
-		int x = e.getXOnScreen();
-		int y = e.getYOnScreen();
-
-		float percentage = (e.getX() / (float) sldTimeline.getWidth());
-		int frame = (int) (percentage * sldTimeline.getMaximum());
-
-		x -= (mapThumbnail.getWidth() / 2);
-
-		int finalX;
-		finalX = Math.min(x,
-				((int) sldTimeline.getLocationOnScreen().getX()
-						+ sldTimeline.getWidth() - mapVisulaisationThumbnail
-						.getWidth()));
-		finalX = Math.max(finalX, (int) sldTimeline.getLocationOnScreen()
-				.getX());
-		int finalY = (int) sldTimeline.getLocationOnScreen().getY()
-				- mapThumbnail.mainWindow.getHeight() - 100;
-
-		mapThumbnail.setFrame(frame);
-		mapThumbnail.move(finalX, finalY);
 	}
 
 	public void windowClosed(WindowEvent arg0) {
@@ -1083,23 +750,4 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	public void componentShown(ComponentEvent arg0) {
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-	}
 }
