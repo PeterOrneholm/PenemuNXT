@@ -80,7 +80,6 @@ public class PenemuNXTDefaultMapProcessors {
 
 		defaultProcessors.add(mapProcessorBackgroundGrid);
 		defaultProcessors.add(mapProcessorClearArea);
-		defaultProcessors.add(mapProcessorCurrentPos);
 		defaultProcessors.add(mapProcessorDrivingPath);
 		defaultProcessors.add(mapProcessorHeadObjects);
 
@@ -90,6 +89,8 @@ public class PenemuNXTDefaultMapProcessors {
 
 		defaultProcessors.add(mapProcessorHotspots);
 		defaultProcessors.add(mapProcessorFindLines);
+		
+		defaultProcessors.add(mapProcessorCurrentPos);
 
 		return defaultProcessors;
 	}

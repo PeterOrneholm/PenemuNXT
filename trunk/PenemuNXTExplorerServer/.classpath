@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="PenemuNXTExplorer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files (x86)/leJOS NXJ/bin"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/leJOS NXJ/lib/pccomm.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PenemuNXTFrameworkServer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
