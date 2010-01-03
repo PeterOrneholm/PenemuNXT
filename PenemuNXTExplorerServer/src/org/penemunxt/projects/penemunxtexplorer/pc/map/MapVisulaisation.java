@@ -95,7 +95,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 			this.mapCurrentFrame = mapCurrentFrame;
 		}
 
-		this.refresh();
+		//this.refresh();
 	}
 
 	public MapProcessors getMapProcessors() {

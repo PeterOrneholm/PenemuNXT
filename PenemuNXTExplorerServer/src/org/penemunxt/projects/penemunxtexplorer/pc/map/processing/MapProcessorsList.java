@@ -13,10 +13,11 @@ import org.penemunxt.projects.penemunxtexplorer.pc.map.MapVisulaisation;
 import org.penemunxt.windows.pc.*;
 import org.penemunxt.windows.tables.pc.ColorEditor;
 import org.penemunxt.windows.tables.pc.ColorRenderer;
+import org.penemunxt.windows.tables.pc.SliderChangeListener;
 import org.penemunxt.windows.tables.pc.SliderEditor;
 
 public class MapProcessorsList extends DataTableWindow implements
-		ListSelectionListener {
+		ListSelectionListener, SliderChangeListener {
 
 	final static Color DEFAULT_PANEL_BACKGROUND_COLOR = new Color(197, 209, 215);
 	final static Color MAP_PANEL_BACKGROUND_COLOR = Color.GRAY;
@@ -67,9 +68,10 @@ public class MapProcessorsList extends DataTableWindow implements
 		JScrollPane scrollTable = new JScrollPane(getDataTable());
 
 		pnlLeft.add(lblMapProcessorsHeader, BorderLayout.NORTH);
-		pnlLeft.add(new ComponentSpacer(scrollTable, PANEL_MARGIN, MAIN_PANEL_BACKGROUND_COLOR,
-				MAP_PANEL_BORDER_WIDTH, MAP_PANEL_BORDER_COLOR,
-				MAP_PANEL_BACKGROUND_COLOR), BorderLayout.CENTER);
+		pnlLeft.add(new ComponentSpacer(scrollTable, PANEL_MARGIN,
+				MAIN_PANEL_BACKGROUND_COLOR, MAP_PANEL_BORDER_WIDTH,
+				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BACKGROUND_COLOR),
+				BorderLayout.CENTER);
 
 		// Right
 		mapPreview = new MapVisulaisation(null);
@@ -80,9 +82,10 @@ public class MapProcessorsList extends DataTableWindow implements
 		pnlRight.setBackground(MAIN_PANEL_BACKGROUND_COLOR);
 
 		pnlRight.setPreferredSize(new Dimension(500, 200));
-		pnlRight.add(new ComponentSpacer(mapPreview, PANEL_MARGIN, MAIN_PANEL_BACKGROUND_COLOR,
-				MAP_PANEL_BORDER_WIDTH, MAP_PANEL_BORDER_COLOR,
-				MAP_PANEL_BACKGROUND_COLOR), BorderLayout.CENTER);
+		pnlRight.add(new ComponentSpacer(mapPreview, PANEL_MARGIN,
+				MAIN_PANEL_BACKGROUND_COLOR, MAP_PANEL_BORDER_WIDTH,
+				MAP_PANEL_BORDER_COLOR, MAP_PANEL_BACKGROUND_COLOR),
+				BorderLayout.CENTER);
 		pnlRight.add(lblPreviewHeader, BorderLayout.NORTH);
 
 		// Main
@@ -100,7 +103,7 @@ public class MapProcessorsList extends DataTableWindow implements
 		getDataTable().setAutoCreateRowSorter(true);
 
 		TableColumn colSize = getDataTable().getColumnModel().getColumn(6);
-		colSize.setCellEditor(new SliderEditor(1, 80));
+		colSize.setCellEditor(new SliderEditor(1, 150, this));
 
 		getDataTable().setDefaultRenderer(Color.class, new ColorRenderer());
 		getDataTable().setDefaultEditor(Color.class, new ColorEditor());
@@ -115,6 +118,22 @@ public class MapProcessorsList extends DataTableWindow implements
 		getDataTable().getSelectionModel().addListSelectionListener(this);
 	}
 
+	@Override
+	public void stateChanged(ChangeEvent e) {
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e, int value) {
+		if (getDataTable().getEditingRow() >= 0) {
+			mapProcessors.getList().get(getDataTable().getEditingRow())
+					.setSize(value);
+			
+			getDataChanged().stateChanged(
+					new ChangeEvent(this));
+			refreshMapPreview();
+		}
+	}
+
 	public void refresh() {
 		refresh(false);
 	}
@@ -125,8 +144,7 @@ public class MapProcessorsList extends DataTableWindow implements
 		setupTable();
 	}
 
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
+	private void refreshMapPreview(){
 		ArrayList<IMapProcessor> previewProcessors = new ArrayList<IMapProcessor>();
 		for (int i = 0; i < getDataTable().getSelectedRows().length; i++) {
 			IMapProcessor mp = mapProcessors.list.get(getDataTable()
@@ -147,6 +165,11 @@ public class MapProcessorsList extends DataTableWindow implements
 		mapPreview.setDS(DS);
 		mapPreview.setMapProcessors(mapPreviewProcessors);
 		mapPreview.refresh();
+	}
+	
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		refreshMapPreview();
 	}
 
 	private class MapProcessorsTableModel extends AbstractTableModel {
@@ -224,6 +247,7 @@ public class MapProcessorsList extends DataTableWindow implements
 			}
 
 			if (getDataChanged() != null) {
+				refreshMapPreview();
 				getDataChanged().stateChanged(
 						new ChangeEvent(dataChangedSource));
 			}
