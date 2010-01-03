@@ -38,8 +38,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
 
 	// PeterF-01
-	final static String DEFAULT_FOLDER_PATH = "C:\\Users\\Peter\\Desktop\\PMaps\\";
-	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Users\\Peter\\Desktop\\PMaps\\Berzan\\8.penemunxtmap";
+	final static String DEFAULT_FOLDER_PATH = "C:\\Users\\Peter\\Desktop\\Maps\\";
+	final static String PRELOAD_PENEMUNXT_MAP_PATH = "C:\\Users\\Peter\\Desktop\\Maps\\Sample_4.penemunxtmap";
+	//final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
 
 	// PeterF-04
 	// final static String DEFAULT_FOLDER_PATH =
@@ -121,6 +122,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// Variables
 
 	// // Menu
+	JMenuBar mnuMainBar;
+	
 	JMenuItem mnuFileOpenDataViewButton;
 	JMenuItem mnuFileOpenMapProcessorsButton;
 	JMenuItem mnuFileOpenButton;
@@ -280,9 +283,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		mnuFileOpenDataViewButton.addActionListener(this);
 		mnuFileOpenMapProcessorsButton = new JMenuItem("Show map processors...");
 		mnuFileOpenMapProcessorsButton.addActionListener(this);
-		mnuFileOpenButton = new JMenuItem("Open File...");
+		mnuFileOpenButton = new JMenuItem("Open Map...");
 		mnuFileOpenButton.addActionListener(this);
-		mnuFileSaveButton = new JMenuItem("Save As...");
+		mnuFileSaveButton = new JMenuItem("Save map As...");
 		mnuFileSaveButton.addActionListener(this);
 		mnuFileExportMapAsImageButton = new JMenuItem("Export rendered map...");
 		mnuFileExportMapAsImageButton.addActionListener(this);		
@@ -518,7 +521,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		btnTimelineEnableDisable = new Button("Enable");
 		btnTimelineEnableDisable.addActionListener(this);
 
-		btnTimelinePlayPause = new Button("Play");
+		btnTimelinePlayPause = new Button("Play/Pause");
 		btnTimelinePlayPause.addActionListener(this);
 
 		btnTimelineRewind = new Button("Rewind");
@@ -573,9 +576,12 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		rightPanel.add(viewPanel, BorderLayout.CENTER);
 		rightPanel.add(bottomPanel, BorderLayout.SOUTH);
 
+		//Menu
+		mnuMainBar = getMenuBar();
+		
 		// Main panel
 		mainPanel.setLayout(new BorderLayout());
-		mainPanel.add(getMenuBar(), BorderLayout.NORTH);
+		mainPanel.add(mnuMainBar, BorderLayout.NORTH);
 		mainPanel.add(leftPanel, BorderLayout.WEST);
 		mainPanel.add(rightPanel, BorderLayout.CENTER);
 
@@ -957,25 +963,27 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	private void startTimelineAutoPlay() {
 		stopTimelineAutoPlay();
-
+		
 		if (sldTimeline.getValue() == sldTimeline.getMaximum()) {
 			sldTimeline.setValue(sldTimeline.getMinimum());
 		}
 
 		timelinePlay = true;
-		btnTimelinePlayPause.setLabel("Pause");
 		TimelinePlayer = new MapTimelinePlayer(sldTimeline,
 				getTimelineDelayFromSpeed(timelinePlaySpeed));
 		TimelinePlayer.start();
+		
+		btnTimelinePlayPause.setLabel("Pause");
 	}
 
 	private void stopTimelineAutoPlay() {
 		timelinePlay = false;
-		btnTimelinePlayPause.setLabel("Play");
 		if (TimelinePlayer != null) {
 			TimelinePlayer.deactivate();
 			TimelinePlayer = null;
 		}
+		
+		btnTimelinePlayPause.setLabel("Play");
 	}
 
 	private void timelineChanged() {
