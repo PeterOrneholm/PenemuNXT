@@ -1,14 +1,14 @@
-#summary Describes the sensors used on the explorer robot.
+#summary Describes the parts and function of the explorer robot.
 #labels Type-Robot
 
 = Introduction =
 
-We use some sensors from third party manufacturers to collect data with the robot.
-They are listed below.
-
 http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04503.JPG
 
 = Sensors =
+
+We use some sensors to collect data with the robot.
+They are listed below.
 
 == Distance ==
 
