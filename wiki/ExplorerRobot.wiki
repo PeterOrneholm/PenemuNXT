@@ -3,6 +3,12 @@
 
 = Introduction =
 
+This is the robot that uses [PenemuNXTExplorerClient http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTExplorerClient] to collect data and send it to the server.
+
+<wiki:toc max_depth="2" />
+
+= Images =
+
 http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04503.JPG
 
 = Sensors =
