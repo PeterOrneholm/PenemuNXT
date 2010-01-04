@@ -1,0 +1,25 @@
+#summary Describes the parts and function of the explorer robot.
+#labels Type-Robot
+
+= Introduction =
+
+http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04503.JPG
+
+= Sensors =
+
+We use some sensors to collect data with the robot.
+They are listed below.
+
+== Distance ==
+
+|| *Image:* || http://www.mindsensors.com/images/pagemaster/DISTNxlong.png ||
+|| *Name:* || High Precision Long Range Infrared distance sensor for NXT (DIST-Nx-Long-v2) ||
+|| *Manufacturer:* || Mindsensors ||
+|| *Link:* || http://www.mindsensors.com/index.php?module=pagemaster&PAGE_user_op=view_page&PAGE_id=73 ||
+
+== Compass ==
+
+|| *Image:* || http://www.hitechnic.com/PDGImages/Mindstorms%20Compass.jpg ||
+|| *Name:* || NXT Compass Sensor (NMC1034) ||
+|| *Manufacturer:* || HiTechnic ||
+|| *Link:* || http://www.hitechnic.com/cgi-bin/commerce.cgi?preadd=action&key=NMC1034 ||
