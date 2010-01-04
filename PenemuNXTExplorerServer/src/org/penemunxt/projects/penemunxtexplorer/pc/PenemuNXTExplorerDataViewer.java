@@ -22,6 +22,7 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 	public final static String POSITION_TYPE_BUMP_DISTANCE_NAME = "Bumper (Distance)";
 	public final static String POSITION_TYPE_ALIGNED_NAME = "Aligned to wall";
 	public final static String POSITION_TYPE_RIGHT_CORNER_NAME = "Turn in right corner";
+	public final static String POSITION_TYPE_NOT_VALID_NAME = "Distance data uncertain";
 
 	public static String getPositionTypeName(int PositionType) {
 		switch (PositionType) {
@@ -35,6 +36,9 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 			return POSITION_TYPE_ALIGNED_NAME;
 		case RobotData.POSITION_TYPE_RIGHT_CORNER:
 			return POSITION_TYPE_RIGHT_CORNER_NAME;
+		case RobotData.POSITION_TYPE_NOT_VALID:
+			return POSITION_TYPE_NOT_VALID_NAME;
+		
 		default:
 			return "Unknown type";
 		}

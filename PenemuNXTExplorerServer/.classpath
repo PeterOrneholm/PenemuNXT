@@ -7,7 +7,8 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files (x86)/leJOS NXJ/bin"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Program Files (x86)/leJOS NXJ/lib/pccomm.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/leJOS NXJ/lib/pccomm.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PenemuNXTFrameworkServer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PenemuNXTExplorer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
