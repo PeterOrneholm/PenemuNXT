@@ -1,5 +1,5 @@
 #summary Describes the parts and function of the explorer robot.
-#labels Type-Robot
+#labels Type-Robot,Featured
 
 = Introduction =
 
