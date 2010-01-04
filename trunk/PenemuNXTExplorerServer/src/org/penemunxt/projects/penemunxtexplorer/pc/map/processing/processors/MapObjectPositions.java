@@ -78,7 +78,7 @@ public abstract class MapObjectPositions extends MapSimplePosition implements
 			if (data != null) {
 				for (RobotData robotData : data) {
 					if (robotData != null) {
-						if (robotData.getType() != RobotData.POSITION_TYPE_NOT_ACTIVE) {
+						if (robotData.getType() != RobotData.POSITION_TYPE_NOT_VALID) {
 							Point ObjectPos = MapUtilities
 									.getObjectPos(robotData);
 

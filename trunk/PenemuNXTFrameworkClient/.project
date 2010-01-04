@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>PenemuNXTClientFramework</name>
+	<name>PenemuNXTFrameworkClient</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -20,4 +20,11 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.lejos.nxt.ldt.leJOSNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>PenemuNXTFramework</name>
+			<type>2</type>
+			<location>C:/Program Files/eclipse/workspace/PenemuNXTFramework/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

@@ -23,11 +23,14 @@ public class MapClearArea extends MapObjectPositions implements IMapProcessor {
 		if (data != null) {
 			for (RobotData robotData : data) {
 				if (robotData != null) {
-					Point ObjectPos = MapUtilities.getObjectPos(robotData);
-					if (ObjectPos != null) {
-						MapUtilities.paintLine(robotData.getPosY(), robotData
-								.getPosX(), ObjectPos.y, ObjectPos.x, this
-								.getColor(), this.getSize(), g);
+					if (robotData.getType() != RobotData.POSITION_TYPE_NOT_VALID) {
+						Point ObjectPos = MapUtilities.getObjectPos(robotData);
+						if (ObjectPos != null) {
+							MapUtilities.paintLine(robotData.getPosY(),
+									robotData.getPosX(), ObjectPos.y,
+									ObjectPos.x, this.getColor(), this
+											.getSize(), g);
+						}
 					}
 				}
 			}

@@ -89,7 +89,7 @@ public class PNXTExplorer implements Runnable {
 						(int) simnav.getHeading(), ODS.getDistance(), Motor.A
 								.getTachoCount());
 			} else {
-				RD = new RobotData(RobotData.POSITION_TYPE_NOT_ACTIVE,
+				RD = new RobotData(RobotData.POSITION_TYPE_NOT_VALID,
 						(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 								.getHeading(), ODS.getDistance(), Motor.A.getTachoCount());
 			}

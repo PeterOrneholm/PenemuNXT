@@ -22,6 +22,13 @@ import org.penemunxt.windows.pc.DataTableWindow;
 public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		ActionListener, WindowListener, ComponentListener, ChangeListener {
 
+	/*To do list:
+	- Send commands to Robot
+	- Clear Area: Use Hotspots instead of all values. Possible fix: Instead of public MapPositionPoints(int points, int x, int y),
+	make it public MapPositionPoints(int points, int index), where index is the frame with corresponding coordinates.
+	This means all data we have will be available everywhere.
+	- Should DataShare be merged for server and client. They are similar and DSclient has several methods which could be useful both for the client and the server.*/
+	
 	// Constants
 	private static final long serialVersionUID = 1L;
 

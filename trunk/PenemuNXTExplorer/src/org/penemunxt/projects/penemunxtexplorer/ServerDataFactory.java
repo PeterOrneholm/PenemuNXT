@@ -4,6 +4,7 @@ import org.penemunxt.communication.INXTCommunicationData;
 import org.penemunxt.communication.INXTCommunicationDataFactory;
 import org.penemunxt.communication.NXTCommunicationData;
 
+
 public class ServerDataFactory implements INXTCommunicationDataFactory {
 	@Override
 	public ServerData getEmptyInstance() {
