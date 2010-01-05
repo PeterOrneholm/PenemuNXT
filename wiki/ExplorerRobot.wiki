@@ -25,7 +25,7 @@ As for now we are using [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics
 
 == Communication ==
 
-Uses the [[http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTFramework PenemuNXTFramework] to communicate with the PC.
+Uses the [http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTFramework PenemuNXTFramework] to communicate with the PC.
 
 = Hardware =
 
