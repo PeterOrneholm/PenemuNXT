@@ -1,7 +1,7 @@
 #summary Sidebar navigation.
 #labels Type-Project
 
-* Project parts *
+== PenemuNXT ==
   * [PenemuNXTFramework]
   * [PenemuNXTExplorerClient]
   * [PenemuNXTExplorerServer]
