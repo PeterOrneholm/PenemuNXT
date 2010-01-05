@@ -35,7 +35,7 @@ A SLAM (Simultaneous Localization and Mapping) implementation using LEGO Mindsto
 
 || *Language* || *Filename* ||
 || English || [http://resources.peterf.se/data/penemunxt/documents/PenemuNXT_English.pdf PenemuNXT_English.pdf] ||
-|| Swedish || http://resources.peterf.se/data/penemunxt/documents/PenemuNXT_Swedish.pdf PenemuNXT_Swedish.pdf ||
+|| Swedish || [http://resources.peterf.se/data/penemunxt/documents/PenemuNXT_Swedish.pdf PenemuNXT_Swedish.pdf] ||
 
 = Graphics =
 
