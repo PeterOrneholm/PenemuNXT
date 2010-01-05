@@ -14,13 +14,16 @@ This is the robot that uses [http://code.google.com/p/penemunxt/source/browse/#s
 || http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s128/DSC04503.JPG || http://lh6.ggpht.com/_QXahOUsz5iM/StdzPhiQDzI/AAAAAAAAAWI/gPSo1k0jfzc/s128/DSC04502.JPG || http://lh6.ggpht.com/_QXahOUsz5iM/StdzQexF4OI/AAAAAAAAAWQ/iRS8gBqRLOg/s128/DSC04504.JPG || http://lh5.ggpht.com/_QXahOUsz5iM/StnN-BjD0aI/AAAAAAAAAYA/MyCncH5rTdI/s128/DSC04513.JPG ||
 || [http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04503.JPG Original size] || [http://lh6.ggpht.com/_QXahOUsz5iM/StdzPhiQDzI/AAAAAAAAAWI/gPSo1k0jfzc/s640/DSC04502.JPG Original size] || [http://lh6.ggpht.com/_QXahOUsz5iM/StdzQexF4OI/AAAAAAAAAWQ/iRS8gBqRLOg/DSC04504.JPG Original size] || [http://lh5.ggpht.com/_QXahOUsz5iM/StnN-BjD0aI/AAAAAAAAAYA/MyCncH5rTdI/DSC04513.JPG Original size] ||
 
+= Software =
 
-= Navigation =
+Runs the app [http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTExplorerClient PenemuNXTExplorerClient].
+
+== Navigation ==
 
 The robot uses leJOS and the classes in [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/package-summary.html lejos.robotics.navigation] to navigate and to determine the current (relative) position.
 As for now we are using [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/TachoPilot.html TachoPilot], but we plan to use the [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/CompassPilot.html CompassPilot].
 
-= Construction =
+= Hardware =
 
 == Design ==
 
