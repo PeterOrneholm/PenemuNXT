@@ -1,0 +1,10 @@
+#summary Info about the framework.
+#labels Phase-Implementation,Type-PC,Type-NXT
+
+= Introduction =
+
+The framework (mostly communication) will be described here.
+
+== TOC ==
+
+<wiki:toc max_depth="3" />
