@@ -2,6 +2,6 @@
 #labels Type-Project
 
 * Project parts *
-PenemuNXTFramework
-PenemuNXTExplorerClient
-PenemuNXTExplorerServer
+  * [PenemuNXTFramework]
+  * [PenemuNXTExplorerClient]
+  * [PenemuNXTExplorerServer]
