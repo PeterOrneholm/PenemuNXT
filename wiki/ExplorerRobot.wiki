@@ -9,10 +9,17 @@ This is the robot that uses [http://code.google.com/p/penemunxt/source/browse/#s
 
 <wiki:toc max_depth="3" />
 
-= Images =
+= Media =
+
+== Images ==
 
 || http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s128/DSC04503.JPG || http://lh6.ggpht.com/_QXahOUsz5iM/StdzPhiQDzI/AAAAAAAAAWI/gPSo1k0jfzc/s128/DSC04502.JPG || http://lh6.ggpht.com/_QXahOUsz5iM/StdzQexF4OI/AAAAAAAAAWQ/iRS8gBqRLOg/s128/DSC04504.JPG || http://lh5.ggpht.com/_QXahOUsz5iM/StnN-BjD0aI/AAAAAAAAAYA/MyCncH5rTdI/s128/DSC04513.JPG ||
 || [http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04503.JPG Original size] || [http://lh6.ggpht.com/_QXahOUsz5iM/StdzPhiQDzI/AAAAAAAAAWI/gPSo1k0jfzc/s640/DSC04502.JPG Original size] || [http://lh6.ggpht.com/_QXahOUsz5iM/StdzQexF4OI/AAAAAAAAAWQ/iRS8gBqRLOg/DSC04504.JPG Original size] || [http://lh5.ggpht.com/_QXahOUsz5iM/StnN-BjD0aI/AAAAAAAAAYA/MyCncH5rTdI/DSC04513.JPG Original size] ||
+
+== Videos ==
+
+===First working map robot===
+<wiki:video url="http://www.youtube.com/watch?v=yf8brdukyRM"/>
 
 = Software =
 
