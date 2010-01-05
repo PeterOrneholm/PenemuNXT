@@ -13,13 +13,13 @@ Color codes, logos etc. for the project.
 
 == Labels ==
 
-* Lego
-* Mindstorms
-* NXT
-* Java
-* leJOS
-* Map
-* [http://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping
+  * Lego
+  * Mindstorms
+  * NXT
+  * Java
+  * leJOS
+  * Map
+  * [http://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping
   Simultaneous Localization and Mapping (SLAM)]
 
 == Short ==
