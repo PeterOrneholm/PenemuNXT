@@ -1,0 +1,27 @@
+#summary Style guide, like colors and logos.
+
+= Introduction =
+
+Color codes, logos etc. for the project.
+
+== TOC ==
+
+<wiki:toc max_depth="3" />
+
+= Graphics =
+
+== Logo ==
+
+=== Landscape ===
+
+|| *Preview:* || http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Landscape_Google_Code.png ||
+|| *PNG:* ||  [http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Landscape.png PNG] ||
+|| *EPS:* ||  [http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Landscape.eps EPS] ||
+|| *SVG:* ||  [http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Landscape.svg SVG] ||
+
+=== Portrait ===
+
+|| *Preview:* || http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Portrait_Google_Code.png ||
+|| *PNG:* ||  [http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Portrait.png PNG] ||
+|| *EPS:* ||  [http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Portrait.eps EPS] ||
+|| *SVG:* ||  [http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Portrait.svg SVG] ||
