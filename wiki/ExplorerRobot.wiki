@@ -22,6 +22,21 @@ They are listed below.
 || *Name:* || High Precision Long Range Infrared distance sensor for NXT (DIST-Nx-Long-v2) ||
 || *Manufacturer:* || Mindsensors ||
 || *Link:* || http://www.mindsensors.com/index.php?module=pagemaster&PAGE_user_op=view_page&PAGE_id=73 ||
+|| *Usage:* || Measures the distance to the walls around it. The map is based on this data. ||
+
+|| *Image:* || http://cache.lego.com/images/shop/prod/9846-0000-XX-12-1.jpg ||
+|| *Name:* || Ultrasonic Sensor (#9846) ||
+|| *Manufacturer:* || Lego ||
+|| *Link:* || http://shop.lego.com/ByCategory/Product.aspx?p=9846&cn=389&d=292 ||
+|| *Usage:* || Measures the distance to the wall ahead, so that we don't drive itnto it. ||
+
+== Touch ==
+
+|| *Image:* || http://cache.lego.com/images/shop/prod/9843-0000-XX-12-1.jpg ||
+|| *Name:* || Touch Sensor (#9843) ||
+|| *Manufacturer:* || Lego ||
+|| *Link:* || http://shop.lego.com/ByCategory/Product.aspx?p=9843&cn=389&d=292 ||
+|| *Usage:* || Used to see if the robot drives into a wall, connected to a bumper. ||
 
 == Compass ==
 
@@ -29,3 +44,4 @@ They are listed below.
 || *Name:* || NXT Compass Sensor (NMC1034) ||
 || *Manufacturer:* || HiTechnic ||
 || *Link:* || http://www.hitechnic.com/cgi-bin/commerce.cgi?preadd=action&key=NMC1034 ||
+|| *Usage:* || Used to make correct turns. Currently not in use though. ||
