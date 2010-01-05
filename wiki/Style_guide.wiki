@@ -62,7 +62,7 @@ A SLAM (Simultaneous Localization and Mapping) implementation using LEGO Mindsto
 || *EPS:* ||  [http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Portrait.eps EPS] ||
 || *SVG:* ||  [http://resources.peterf.se/data/penemunxt/graphics/logos/PenemuNXT_Logo_Portrait.svg SVG] ||
 
-== Other resource ==
+== Other resources ==
 
 || *What?* || *How?* || *URL* ||
 || Code Hosting || Google Code Hosting || http://code.google.com/p/penemunxt/ ||
