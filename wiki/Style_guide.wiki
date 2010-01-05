@@ -23,7 +23,7 @@ Color codes, logos etc. for the project.
 
 == Short ==
 
-=== Rev. 1 ===
+=== ~~Rev. 1~~ ===
 
 ~~A leJOS (Java) based application to control a LEGO Mindstorms NXT robot calculating a map of an area.~~
 
