@@ -16,7 +16,13 @@ http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04
 The robot uses leJOS and the classes in [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/package-summary.html lejos.robotics.navigation] to navigate and to determine the current (relative) position.
 As for now we are using [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/TachoPilot.html TachoPilot], but we plan to use the [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/CompassPilot.html CompassPilot].
 
-= Sensors =
+= Construction =
+
+== Design ==
+
+The robot is based on the design of the [Explorer http://www.nxtprograms.com/explorer/index.html] from [NXTPrograms.com http://www.nxtprograms.com/]. We've modified it to be more stable and to support more sensors etc.
+
+== Sensors ==
 
 We use some sensors to collect data with the robot.
 They are listed below.
