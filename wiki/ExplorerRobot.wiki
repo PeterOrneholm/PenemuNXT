@@ -23,6 +23,10 @@ Runs the app [http://code.google.com/p/penemunxt/source/browse/#svn/trunk/Penemu
 The robot uses leJOS and the classes in [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/package-summary.html lejos.robotics.navigation] to navigate and to determine the current (relative) position.
 As for now we are using [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/TachoPilot.html TachoPilot], but we plan to use the [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/CompassPilot.html CompassPilot].
 
+== Communication ==
+
+Uses the [[http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTFramework PenemuNXTFramework] to communicate with the PC.
+
 = Hardware =
 
 == Design ==
