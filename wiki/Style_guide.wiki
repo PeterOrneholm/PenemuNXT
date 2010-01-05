@@ -1,5 +1,5 @@
 #summary Style guide, like colors and logos.
-#labels Featured
+#labels Featured,Type-Project
 
 = Introduction =
 
