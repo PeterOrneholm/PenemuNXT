@@ -1,4 +1,4 @@
-#summary Style guide, like colors and logos.
+#summary Style guide, like colors, logos but also descriptions.
 #labels Featured,Type-Project
 
 = Introduction =
@@ -9,7 +9,43 @@ Color codes, logos etc. for the project.
 
 <wiki:toc max_depth="3" />
 
+= Description =
+
+== Labels ==
+
+* Lego
+* Mindstorms
+* NXT
+* Java
+* leJOS
+* Map
+* [http://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping
+  Simultaneous Localization and Mapping (SLAM)]
+
+== Short ==
+
+=== Rev. 1 ===
+
+A leJOS (Java) based application to control a LEGO Mindstorms NXT robot calculating a map of an area.
+
+=== Rev. 2 ===
+
+A SLAM (Simultaneous Localization and Mapping) implementation using LEGO Mindstorms NXT and leJOS (Java).
+
+== Long ==
+
+|| *Language* || *Filename* ||
+|| English || [http://resources.peterf.se/data/penemunxt/documents/PenemuNXT_English.pdf PenemuNXT_English.pdf] ||
+|| Swedish || http://resources.peterf.se/data/penemunxt/documents/PenemuNXT_Swedish.pdf PenemuNXT_Swedish.pdf ||
+
 = Graphics =
+
+== Colors ==
+
+|| *Name* || *Color* ||
+|| Logo blue || #1e4e7b ||
+|| Logo orange || #ff6600 ||
+|| Background || #c6d3d7 ||
 
 == Logo ==
 
