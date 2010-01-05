@@ -1,4 +1,5 @@
 #summary Describes the app PenemuNXT Explorer Server
+#labels Featured,Type-PC
 
 = Introduction =
 
