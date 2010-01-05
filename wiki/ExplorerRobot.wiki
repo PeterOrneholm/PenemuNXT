@@ -5,7 +5,7 @@
 
 This is the robot that uses [http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTExplorerClient PenemuNXTExplorerClient] to collect data and send it to the server.
 
-<wiki:toc max_depth="2" />
+<wiki:toc max_depth="3" />
 
 = Images =
 
