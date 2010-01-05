@@ -11,7 +11,9 @@ This is the robot that uses [http://code.google.com/p/penemunxt/source/browse/#s
 
 = Images =
 
-http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04503.JPG
+|| http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s128/DSC04503.JPG || http://lh6.ggpht.com/_QXahOUsz5iM/StdzPhiQDzI/AAAAAAAAAWI/gPSo1k0jfzc/s128/DSC04502.JPG || http://lh6.ggpht.com/_QXahOUsz5iM/StdzQexF4OI/AAAAAAAAAWQ/iRS8gBqRLOg/s128/DSC04504.JPG ||
+|| [http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04503.JPG Full size] || [http://lh6.ggpht.com/_QXahOUsz5iM/StdzPhiQDzI/AAAAAAAAAWI/gPSo1k0jfzc/s640/DSC04502.JPG Full size] || [http://lh6.ggpht.com/_QXahOUsz5iM/StdzQexF4OI/AAAAAAAAAWQ/iRS8gBqRLOg/DSC04504.JPG Full size]||
+
 
 = Navigation =
 
