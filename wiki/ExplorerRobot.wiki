@@ -11,6 +11,11 @@ This is the robot that uses [http://code.google.com/p/penemunxt/source/browse/#s
 
 http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04503.JPG
 
+= Navigation =
+
+The robot uses leJOS and the classes in [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/package-summary.html lejos.robotics.navigation] to navigate.
+As for now we are using [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/TachoPilot.html TachoPilot], but we plan to use the [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/CompassPilot.html CompassPilot].
+
 = Sensors =
 
 We use some sensors to collect data with the robot.
