@@ -13,7 +13,7 @@ http://lh3.ggpht.com/_QXahOUsz5iM/StdzQFsvucI/AAAAAAAAAWM/1RTp3DQ8BcE/s640/DSC04
 
 = Navigation =
 
-The robot uses leJOS and the classes in [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/package-summary.html lejos.robotics.navigation] to navigate.
+The robot uses leJOS and the classes in [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/package-summary.html lejos.robotics.navigation] to navigate and to determine the current (relative) position.
 As for now we are using [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/TachoPilot.html TachoPilot], but we plan to use the [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics/navigation/CompassPilot.html CompassPilot].
 
 = Sensors =
