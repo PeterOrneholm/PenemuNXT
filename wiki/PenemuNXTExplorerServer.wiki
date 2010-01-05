@@ -1,0 +1,20 @@
+#summary Describes the app PenemuNXT Explorer Server
+
+= Introduction =
+
+The serverapp [http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTExplorerClient PenemuNXTExplorerClient] that communicates with the [ExplorerRobot], retrieves data and visualizes a map.
+
+== TOC ==
+
+<wiki:toc max_depth="3" />
+
+= Images =
+
+|| || ||
+|| || ||
+
+|| Software ||
+
+== Communication ==
+
+Uses the [http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTFramework PenemuNXTFramework] to communicate with the robot.
