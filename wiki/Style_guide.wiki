@@ -1,4 +1,5 @@
 #summary Style guide, like colors and logos.
+#labels Featured
 
 = Introduction =
 
