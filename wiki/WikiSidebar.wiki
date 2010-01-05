@@ -1,0 +1,7 @@
+#summary Sidebar navigation.
+#labels Type-Project
+
+* Project parts *
+PenemuNXTFramework
+PenemuNXTExplorerClient
+PenemuNXTExplorerServer
