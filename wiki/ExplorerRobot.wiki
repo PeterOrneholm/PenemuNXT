@@ -22,7 +22,7 @@ As for now we are using [http://lejos.sourceforge.net/nxt/nxj/api/lejos/robotics
 
 == Design ==
 
-The robot is based on the design of the [Explorer http://www.nxtprograms.com/explorer/index.html] from [NXTPrograms.com http://www.nxtprograms.com/]. We've modified it to be more stable and to support more sensors etc.
+The robot is based on the design of the [http://www.nxtprograms.com/explorer/index.html Explore] from [http://www.nxtprograms.com/ nxtpograms.com]. We've modified it to be more stable and to support more sensors etc.
 
 == Sensors ==
 
