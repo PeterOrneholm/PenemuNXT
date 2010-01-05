@@ -19,8 +19,7 @@ Color codes, logos etc. for the project.
   * Java
   * leJOS
   * Map
-  * [http://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping
-  Simultaneous Localization and Mapping (SLAM)]
+  * [http://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping Simultaneous Localization and Mapping (SLAM)]
 
 == Short ==
 
