@@ -3,3 +3,4 @@
   * [PenemuNXTFramework]
   * [PenemuNXTExplorerClient]
   * [PenemuNXTExplorerServer]
+  * [Style_guide]
