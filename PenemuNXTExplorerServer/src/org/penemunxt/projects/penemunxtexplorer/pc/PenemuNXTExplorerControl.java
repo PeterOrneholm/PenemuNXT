@@ -662,11 +662,16 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		} else if (ae.getSource() == mnuMapClearButton) {
 			clearMap();
 		} else if (ae.getSource() == btnSendTargetData) {
-			if (NXTC != null) {
+			System.out.println("--");
+			if (RC!=null && RC.NXTC != null) {
+				System.out.println("**");
 				try {
 					int x = Integer.parseInt(txtTargetPosX.getText());
+					System.out.println(x);
 					int y = Integer.parseInt(txtTargetPosY.getText());
-					NXTC.sendData(new ServerData(x, y, 0));
+					System.out.println(y);
+					RC.NXTC.sendData(new ServerData(x, y, 0));
+					System.out.println(x + ", " + y);
 				} catch (NumberFormatException e) {
 				}
 			}
