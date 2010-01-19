@@ -43,8 +43,10 @@ public class PNXTExplorer implements Runnable {
 				new NXTDataStreamConnection());
 		NXTC.ConnectAndStartAll(NXTConnectionModes.Bluetooth);
 
+		DataShare DS = new DataShare();
+
 		// Setup a data processor
-		ServerDataProcessor SMDP = new ServerDataProcessor(NXTC,
+		ServerDataProcessor SMDP = new ServerDataProcessor(DS, NXTC,
 				DataFactories);
 		SMDP.start();
 		// Sensors
@@ -54,12 +56,9 @@ public class PNXTExplorer implements Runnable {
 		UltrasonicSensor USS = new UltrasonicSensor(SensorPort.S3);
 
 		// Navigation
-		CompassPilot compil = new CompassPilot(
-				CS, 49, 125, Motor.C, Motor.B);
+		CompassPilot compil = new CompassPilot(CS, 49, 125, Motor.C, Motor.B);
 		TachoPilot tacho = new TachoPilot(49, 125, Motor.C, Motor.B);
 		SimpleNavigator simnav = new SimpleNavigator(tacho);
-
-		DataShare DS = new DataShare();
 
 		ExplorerNavigator lenav = new ExplorerNavigator(simnav, NXTC, DS);
 		lenav.start();
@@ -76,7 +75,9 @@ public class PNXTExplorer implements Runnable {
 					3);
 			LCD.drawString(
 					"In: " + NXTC.getDataRetrievedQueue().getQueueSize(), 1, 4);
-
+			if (DS.movestowardstargetPoint()) {
+				LCD.drawString(DS.TargetPos.x + " , " + DS.TargetPos.y, 1, 5);
+			}
 			LCD.refresh();
 
 			if (Button.ESCAPE.isPressed()) {
@@ -85,23 +86,41 @@ public class PNXTExplorer implements Runnable {
 
 			simnav.updatePosition();
 			RobotData RD;
-			if (DS.SendData && ODS.getDistance() > SensorRanges.OPTICAL_DISTANCE_MIN_LENGTH_MM && ODS.getDistance() < SensorRanges.OPTICAL_DISTANCE_MAX_LENGTH_MM) {
+
+			int TempTargetX = 0;
+			int TempTargetY = 0;
+			if (DS.movestowardstargetPoint()) {
+				TempTargetX = (int) DS.TargetPos.x;
+				TempTargetY = (int) DS.TargetPos.y;
+			}
+
+			if (DS.SendData
+					&& ODS.getDistance() > SensorRanges.OPTICAL_DISTANCE_MIN_LENGTH_MM
+					&& ODS.getDistance() < SensorRanges.OPTICAL_DISTANCE_MAX_LENGTH_MM) {
 				RD = new RobotData(RobotData.POSITION_TYPE_DRIVE, (int) simnav
 						.getX(), (int) simnav.getY(),
 						(int) simnav.getHeading(), ODS.getDistance(), Motor.A
-								.getTachoCount(), Battery.getVoltageMilliVolt(), (int) CS.getDegrees(), (int) DS.TargetPos.x, (int) DS.TargetPos.y, USS.getDistance());
+								.getTachoCount(),
+						Battery.getVoltageMilliVolt(), (int) CS.getDegrees(),
+						TempTargetX, TempTargetY, USS.getDistance());
 			} else {
 				RD = new RobotData(RobotData.POSITION_TYPE_NOT_VALID,
 						(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-								.getHeading(), ODS.getDistance(), Motor.A.getTachoCount(), Battery.getVoltageMilliVolt(), (int) CS.getDegrees(), (int) DS.TargetPos.x, (int) DS.TargetPos.y, USS.getDistance());
+								.getHeading(), ODS.getDistance(), Motor.A
+								.getTachoCount(),
+						Battery.getVoltageMilliVolt(), (int) CS.getDegrees(),
+						(int) DS.TargetPos.x, (int) DS.TargetPos.y, USS
+								.getDistance());
 			}
-			
+
 			NXTC.sendData(RD);
 
 			RobotData RDL = new RobotData(RobotData.POSITION_TYPE_DRIVE,
 					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 							.getHeading(), ODS.getDistance(), Motor.A
-							.getTachoCount(), Battery.getVoltageMilliVolt(), (int) CS.getDegrees(), (int) DS.TargetPos.x, (int) DS.TargetPos.y, USS.getDistance());
+							.getTachoCount(), Battery.getVoltageMilliVolt(),
+					(int) CS.getDegrees(), TempTargetX, TempTargetY, USS
+							.getDistance());
 
 			DS.addRobotData(RDL);
 

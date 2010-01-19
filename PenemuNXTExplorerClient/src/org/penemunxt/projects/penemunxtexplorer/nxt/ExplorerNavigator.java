@@ -5,6 +5,7 @@ import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.Bumperclose;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.Forward;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.Initialization;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.RightCorner;
+import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.TowardTarget;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.TurnRight;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.USSclose;
 import org.penemunxt.projects.penemunxtexplorer.nxt.connection.DataShare;
@@ -39,6 +40,7 @@ public class ExplorerNavigator extends Thread {
 		Behavior b1_5 = new TurnRight ( simnav, DS, NXTC);
 		Behavior b3 = new AlignWall(simnav, DS, NXTC);
 		Behavior b4 = new RightCorner(simnav, DS, NXTC);
+		Behavior b4_5 = new TowardTarget (simnav, DS, NXTC);
 	    Behavior b5 = new USSclose(simnav, USS, NXTC, DS);
 	    Behavior b6 = new Bumperclose (simnav, TS, NXTC, DS);
 	    //Behavior b4 = (Behavior) new FollowWall (simnav, ODS);

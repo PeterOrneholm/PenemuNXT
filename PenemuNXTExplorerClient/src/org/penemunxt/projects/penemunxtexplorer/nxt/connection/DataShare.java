@@ -3,16 +3,18 @@ package org.penemunxt.projects.penemunxtexplorer.nxt.connection;
 import java.util.ArrayList;
 
 import lejos.geom.Point;
+import lejos.nxt.Sound;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 
 public class DataShare {
 	public int sincelastalign = 0;
 	public int sincelastturn = 0;
-	public Point TargetPos = new Point (1,1);
+	public Point TargetPos = new Point(0,0);
 	public boolean lockBehaviour;
 	public ArrayList<RobotData> LatestRobotData;
 	public boolean SendData = true;
+
 	
 	final double ISLINEAR_THRESHOLD = 0.1;
 	final int ROBOTDATA_MAX_SIZE = 100;
@@ -58,6 +60,10 @@ public class DataShare {
 		return Math.sqrt(((x1 - x2) * (x1 - x2) + ((y1 - y2) * (y1 - y2))));
 	}
 	
+	public boolean movestowardstargetPoint (){
+		return TargetPos != null;
+	}
+	
 	public void leftturnUsed() {
 		sincelastturn = 0;
 	}
@@ -74,7 +80,11 @@ public class DataShare {
 		SendData = true;
 	}
 	public void setTargetPos( int x, int y){
+		Sound.buzz();
 		TargetPos = new Point (x, y);
+	}
+	public void clearTargetPos(){
+		TargetPos = new Point(0,0);
 	}
 	
 }
