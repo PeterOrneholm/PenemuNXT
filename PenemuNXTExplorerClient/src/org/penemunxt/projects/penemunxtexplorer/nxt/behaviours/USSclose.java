@@ -3,6 +3,7 @@ package org.penemunxt.projects.penemunxtexplorer.nxt.behaviours;
 import org.penemunxt.communication.NXTCommunication;
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.nxt.connection.DataShare;
+import org.penemunxt.sensors.SensorRanges;
 
 import lejos.nxt.Motor;
 import lejos.nxt.UltrasonicSensor;
@@ -77,7 +78,8 @@ public class USSclose implements Behavior {
 
 	@Override
 	public boolean takeControl() {
-		return (USS.getDistance() < DISTANCE_THRESHOLD);
+		int distance = USS.getDistance();
+		return (SensorRanges.checkUltrasonicDistanceRange(distance) && distance < DISTANCE_THRESHOLD);
 	}
 
 }
