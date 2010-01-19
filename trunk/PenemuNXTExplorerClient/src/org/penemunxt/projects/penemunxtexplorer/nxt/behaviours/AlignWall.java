@@ -39,7 +39,7 @@ public class AlignWall implements Behavior {
 		if (DS.LatestRobotData.size() > MIN_NUMBER_OF_VALUES) {
 			NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_ALIGNED,
 					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-							.getHeading(), 0, 0));
+							.getHeading(), 0, 0, 0, 0, 0, 0, 0));
 
 			if (DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE) > 0) {
 				angle = (int) ((180 / Math.PI) * (Math.atan(DS.isLinear(DS,

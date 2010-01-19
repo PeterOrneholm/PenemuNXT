@@ -24,7 +24,7 @@ public class Bumperclose implements Behavior {
 	@Override
 	public void action() {
 		NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_BUMP_BUMPER, (int) simnav.getX(), (int) simnav
-				.getY(), (int) simnav.getHeading(), 0 , 0));
+				.getY(), (int) simnav.getHeading(), 0 , 0, 0, 0, 0, 0, 0));
 		
 		simnav.backward();
 		try {

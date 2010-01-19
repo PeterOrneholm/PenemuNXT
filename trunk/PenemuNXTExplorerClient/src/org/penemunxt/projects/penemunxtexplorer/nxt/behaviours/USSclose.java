@@ -37,7 +37,7 @@ public class USSclose implements Behavior {
 	public void action() {
 		NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_BUMP_DISTANCE,
 				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-						.getHeading(), 0, 0));
+						.getHeading(), 0, 0, 0, 0, 0, 0, 0));
 		
 		simnav.stop();
 		Motor.A.setSpeed(30);

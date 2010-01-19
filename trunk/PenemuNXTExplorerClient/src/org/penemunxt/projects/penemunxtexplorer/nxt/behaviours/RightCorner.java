@@ -34,7 +34,7 @@ public class RightCorner implements Behavior {
 		DS.lockBehaviour = true;
 		NXTC.sendData(new RobotData(RobotData.POSITION_TYPE_RIGHT_CORNER,
 				(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-						.getHeading(), 0, 0));
+						.getHeading(), 0, 0, 0, 0, 0, 0, 0));
 
 		simnav.rotate(-90);
 		DS.leftturnUsed();
