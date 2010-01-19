@@ -1,11 +1,15 @@
 package org.penemunxt.projects.penemunxtexplorer.nxt.connection;
 
 import java.util.ArrayList;
+
+import lejos.geom.Point;
+
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
 
 public class DataShare {
 	public int sincelastalign = 0;
 	public int sincelastturn = 0;
+	public Point TargetPos = new Point (1,1);
 	public boolean lockBehaviour;
 	public ArrayList<RobotData> LatestRobotData;
 	public boolean SendData = true;
@@ -69,4 +73,8 @@ public class DataShare {
 	public void startSendData() {
 		SendData = true;
 	}
+	public void setTargetPos( int x, int y){
+		TargetPos = new Point (x, y);
+	}
+	
 }

@@ -50,10 +50,12 @@ public class PNXTExplorer implements Runnable {
 		// Sensors
 
 		OpticalDistanceSensor ODS = new OpticalDistanceSensor(SensorPort.S1);
+		CompassSensor CS = new CompassSensor(SensorPort.S2);
+		UltrasonicSensor USS = new UltrasonicSensor(SensorPort.S3);
 
 		// Navigation
 		CompassPilot compil = new CompassPilot(
-				new CompassSensor(SensorPort.S2), 49, 125, Motor.C, Motor.B);
+				CS, 49, 125, Motor.C, Motor.B);
 		TachoPilot tacho = new TachoPilot(49, 125, Motor.C, Motor.B);
 		SimpleNavigator simnav = new SimpleNavigator(tacho);
 
@@ -87,11 +89,11 @@ public class PNXTExplorer implements Runnable {
 				RD = new RobotData(RobotData.POSITION_TYPE_DRIVE, (int) simnav
 						.getX(), (int) simnav.getY(),
 						(int) simnav.getHeading(), ODS.getDistance(), Motor.A
-								.getTachoCount());
+								.getTachoCount(), Battery.getVoltageMilliVolt(), (int) CS.getDegrees(), (int) DS.TargetPos.x, (int) DS.TargetPos.y, USS.getDistance());
 			} else {
 				RD = new RobotData(RobotData.POSITION_TYPE_NOT_VALID,
 						(int) simnav.getX(), (int) simnav.getY(), (int) simnav
-								.getHeading(), ODS.getDistance(), Motor.A.getTachoCount());
+								.getHeading(), ODS.getDistance(), Motor.A.getTachoCount(), Battery.getVoltageMilliVolt(), (int) CS.getDegrees(), (int) DS.TargetPos.x, (int) DS.TargetPos.y, USS.getDistance());
 			}
 			
 			NXTC.sendData(RD);
@@ -99,7 +101,7 @@ public class PNXTExplorer implements Runnable {
 			RobotData RDL = new RobotData(RobotData.POSITION_TYPE_DRIVE,
 					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 							.getHeading(), ODS.getDistance(), Motor.A
-							.getTachoCount());
+							.getTachoCount(), Battery.getVoltageMilliVolt(), (int) CS.getDegrees(), (int) DS.TargetPos.x, (int) DS.TargetPos.y, USS.getDistance());
 
 			DS.addRobotData(RDL);
 
