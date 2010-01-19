@@ -17,6 +17,7 @@ public class PenemuNXTDefaultMapProcessors {
 	final static boolean FIND_WALLS_SHOW_DEFAULT = true;
 	final static boolean CLEAR_AREA_SHOW_DEFAULT = true;
 	final static boolean BACKGROUND_GRID_SHOW_DEFAULT = true;
+	final static boolean TARGET_POS_SHOW_DEFAULT = true;
 
 	final static Color DEFAULT_CIRCLE_COLOR = Color.BLACK;
 	final static Color LATEST_POS_CIRCLE_COLOR = Color.GREEN;
@@ -27,6 +28,7 @@ public class PenemuNXTDefaultMapProcessors {
 	final static Color HEAD_MAP_CIRCLE_COLOR = Color.BLACK;
 	final static Color CLEAR_AREA_LINE_COLOR = Color.WHITE;
 	final static Color BACKGROUND_GRID_LINE_COLOR = Color.WHITE;
+	final static Color TARGET_POS_CIRCLE_COLOR = Color.WHITE;
 
 	final static int DEFAULT_CIRCLE_SIZE = 10;
 	final static int LATEST_POS_CIRCLE_SIZE = 75;
@@ -39,6 +41,7 @@ public class PenemuNXTDefaultMapProcessors {
 	final static int CLEAR_AREA_LINE_SIZE = 25;
 	final static int BACKGROUND_GRID_LINE_SIZE = 2;
 	final static int FIND_WALLS_LINE_SIZE = 5;
+	final static int TARGET_POS_CIRCLE_SIZE = 5;
 
 	public static ArrayList<IMapProcessor> getDefaultProcessors() {
 		ArrayList<IMapProcessor> defaultProcessors = new ArrayList<IMapProcessor>();
@@ -46,6 +49,7 @@ public class PenemuNXTDefaultMapProcessors {
 		MapAligned mapProcessorAligned;
 		MapBumpBumper mapProcessorBumpBumper;
 		MapCurrentPos mapProcessorCurrentPos;
+		MapTargetPos mapProcessorsTargetPos;
 		MapBumpDistance mapProcessorBumpDistance;
 		MapDrivingPath mapProcessorDrivingPath;
 		MapFindLines mapProcessorFindLines;
@@ -63,6 +67,8 @@ public class PenemuNXTDefaultMapProcessors {
 				BUMPING_DISTANCE_SHOW_DEFAULT);
 		mapProcessorCurrentPos = new MapCurrentPos(LATEST_POS_CIRCLE_COLOR,
 				LATEST_POS_CIRCLE_SIZE, LATEST_POS_SHOW_DEFAULT);
+		mapProcessorsTargetPos = new MapTargetPos(TARGET_POS_CIRCLE_COLOR,
+				TARGET_POS_CIRCLE_SIZE, TARGET_POS_SHOW_DEFAULT);
 		mapProcessorDrivingPath = new MapDrivingPath(DRIVING_PATH_CIRCLE_COLOR,
 				DRIVING_PATH_CIRCLE_SIZE, DRIVING_PATH_SHOW_DEFAULT);
 		mapProcessorHeadObjects = new MapHeadObjects(HEAD_MAP_CIRCLE_COLOR,
@@ -89,8 +95,9 @@ public class PenemuNXTDefaultMapProcessors {
 
 		defaultProcessors.add(mapProcessorHotspots);
 		defaultProcessors.add(mapProcessorFindLines);
-		
+
 		defaultProcessors.add(mapProcessorCurrentPos);
+		defaultProcessors.add(mapProcessorsTargetPos);
 
 		return defaultProcessors;
 	}
