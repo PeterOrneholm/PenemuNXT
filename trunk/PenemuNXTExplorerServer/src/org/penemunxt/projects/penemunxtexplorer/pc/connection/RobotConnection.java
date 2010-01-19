@@ -9,7 +9,7 @@ import org.penemunxt.projects.penemunxtexplorer.ServerDataFactory;
 
 public class RobotConnection extends Thread implements Runnable {
 	private boolean connectionActive;
-	private NXTCommunication NXTC;
+	public NXTCommunication NXTC;
 	private DataShare DS;
 	private NXTConnectionModes ConnMode;
 	private String Name;
