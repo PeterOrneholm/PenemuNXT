@@ -15,7 +15,8 @@ public class ServerData extends NXTCommunicationData implements
 	public void ReadData(DataInputStream DataIn) throws IOException {
 		super.ReadData(DataIn);
 		if (this.getDataStatus() == DATA_STATUS_NORMAL) {
-			DataIn.readInt();
+			this.setTargetPosX(DataIn.readInt());
+			this.setTargetPosY(DataIn.readInt());
 		}
 	}
 
@@ -23,14 +24,17 @@ public class ServerData extends NXTCommunicationData implements
 	public void WriteData(DataOutputStream DataOut) throws IOException {
 		super.WriteData(DataOut);
 		if (this.getDataStatus() == DATA_STATUS_NORMAL) {
-			DataOut.writeInt(100);
+			DataOut.writeInt(this.getTargetPosX());
+			DataOut.writeInt(this.getTargetPosY());
 		}
 	}
 
 	/* Constructors */
 
-	public ServerData(int message) {
+	public ServerData(int targetPosX, int targetPosY, int command) {
 		this();
+		TargetPosX = targetPosX;
+		TargetPosY = targetPosY;
 	}
 
 	public ServerData(int MainStatus, int DataStatus,
@@ -44,5 +48,26 @@ public class ServerData extends NXTCommunicationData implements
 
 	public ServerData() {
 		super();
+	}
+	
+	/* Params */
+	
+	int TargetPosX;
+	int TargetPosY;
+	
+	public int getTargetPosX() {
+		return TargetPosX;
+	}
+
+	public void setTargetPosX(int targetPosX) {
+		TargetPosX = targetPosX;
+	}
+
+	public int getTargetPosY() {
+		return TargetPosY;
+	}
+
+	public void setTargetPosY(int targetPosY) {
+		TargetPosY = targetPosY;
 	}
 }
