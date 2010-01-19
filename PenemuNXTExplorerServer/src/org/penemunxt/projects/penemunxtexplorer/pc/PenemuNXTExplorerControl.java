@@ -22,13 +22,16 @@ import org.penemunxt.windows.pc.DataTableWindow;
 public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		ActionListener, WindowListener, ComponentListener, ChangeListener {
 
-	/*To do list:
-	- Send commands to Robot
-	- Clear Area: Use Hotspots instead of all values. Possible fix: Instead of public MapPositionPoints(int points, int x, int y),
-	make it public MapPositionPoints(int points, int index), where index is the frame with corresponding coordinates.
-	This means all data we have will be available everywhere.
-	- Should DataShare be merged for server and client. They are similar and DSclient has several methods which could be useful both for the client and the server.*/
-	
+	/*
+	 * To do list: - Send commands to Robot - Clear Area: Use Hotspots instead
+	 * of all values. Possible fix: Instead of public MapPositionPoints(int
+	 * points, int x, int y), make it public MapPositionPoints(int points, int
+	 * index), where index is the frame with corresponding coordinates. This
+	 * means all data we have will be available everywhere. - Should DataShare
+	 * be merged for server and client. They are similar and DSclient has
+	 * several methods which could be useful both for the client and the server.
+	 */
+
 	// Constants
 	private static final long serialVersionUID = 1L;
 
@@ -37,13 +40,13 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	final static ImageIcon APPLICATION_ICON = Icons.PENEMUNXT_CIRCLE_LOGO_ICON_16_X_16_ICON;
 	final static ImageIcon APPLICATION_LOGO = Icons.PENEMUNXT_LOGO_LANDSCAPE_ICON;
 	final static Boolean APPLICATION_START_FULLSCREEN = false;
-	final static Boolean APPLICATION_SHOW_ABOUT_DIALOG = true;
+	final static Boolean APPLICATION_SHOW_ABOUT_DIALOG = false;
 	final static String APPLICATION_ABOUT_DIALOG_TITLE = "About PenemuNXT";
 	final static String APPLICATION_ABOUT_DIALOG_TEXT = "This is a preview of the PC app for the project PenemuNXT.\nPlease report any bugs to:\nhttp://code.google.com/p/penemunxt/\n\nRead more about the project:\nhttp://penemunxt.blogspot.com/";
 
 	final static String APPLICATION_START_DIALOG_TITLE = "PenemuNXT";
 	final static String APPLICATION_START_DIALOG_TEXT = "Start by opening one of the sample maps included in the preview download.";
-	
+
 	// // Maps
 
 	// None
@@ -106,6 +109,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// // Buttons
 	JButton btnConnectAndStart;
 	JButton btnDisconnectAndStop;
+	JButton btnSendTargetData;
 
 	// // Panels
 	Panel controlPanel;
@@ -129,6 +133,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// // Textboxes
 	JTextField txtConnectToName;
 	JTextField txtConnectToAddress;
+	JTextField txtTargetPosX;
+	JTextField txtTargetPosY;
 
 	// // Map
 	MapVisulaisation mapVisulaisation;
@@ -195,11 +201,10 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 					APPLICATION_ABOUT_DIALOG_TEXT,
 					APPLICATION_ABOUT_DIALOG_TITLE,
 					JOptionPane.INFORMATION_MESSAGE);
-			JOptionPane
-					.showMessageDialog(
-							mainFrame,
-							APPLICATION_START_DIALOG_TEXT,
-							APPLICATION_START_DIALOG_TITLE, JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(mainFrame,
+					APPLICATION_START_DIALOG_TEXT,
+					APPLICATION_START_DIALOG_TITLE,
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
@@ -438,6 +443,31 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		pnlCurrentData.add(lblTimelineCurrentFrameHeader);
 		pnlCurrentData.add(lblTimelineCurrentFrame);
 
+		// Send data
+		Label lblSendDataHeader = new Label("Send data");
+		lblSendDataHeader.setFont(fntSectionHeader);
+		JPanel pnlSendData = new JPanel(new FlowLayout());
+		pnlSendData.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
+		btnSendTargetData = new JButton("Send data");
+		btnSendTargetData.addActionListener(this);
+
+		// //Target pos
+		JPanel pnlTargetPos = new JPanel(new FlowLayout());
+		pnlTargetPos.setBackground(LEFT_PANEL_BACKGROUND_COLOR);
+
+		txtTargetPosX = new JTextField("0", 5);
+		txtTargetPosY = new JTextField("0", 5);
+
+		pnlTargetPos.add(new JLabel("X: "));
+		pnlTargetPos.add(txtTargetPosX);
+		pnlTargetPos.add(new JLabel("Y: "));
+		pnlTargetPos.add(txtTargetPosY);
+
+		// Send data
+
+		pnlSendData.add(pnlTargetPos);
+		pnlSendData.add(btnSendTargetData);
+
 		// Control panel
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 		controlPanel.add(logoPanel);
@@ -453,6 +483,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 		controlPanel.add(lblCurrentDataHeader);
 		controlPanel.add(pnlCurrentData);
+
+		controlPanel.add(lblSendDataHeader);
+		controlPanel.add(pnlSendData);
 
 		// Timeline
 		mapTimeline.addFrameChangeListeners(this);
@@ -628,6 +661,15 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 			openMapProcessorsListView();
 		} else if (ae.getSource() == mnuMapClearButton) {
 			clearMap();
+		} else if (ae.getSource() == btnSendTargetData) {
+			if (NXTC != null) {
+				try {
+					int x = Integer.parseInt(txtTargetPosX.getText());
+					int y = Integer.parseInt(txtTargetPosY.getText());
+					NXTC.sendData(new ServerData(x, y, 0));
+				} catch (NumberFormatException e) {
+				}
+			}
 		}
 	}
 
