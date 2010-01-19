@@ -26,6 +26,11 @@ public class RobotData extends NXTCommunicationData implements
 			this.setRobotHeading(DataIn.readInt());
 			this.setHeadDistance(DataIn.readInt());
 			this.setHeadHeading(DataIn.readInt());
+			this.setBatteryLevel(DataIn.readInt());
+			this.setCompassValues(DataIn.readInt());
+			this.setTargetPosX(DataIn.readInt());
+			this.setTargetPosY(DataIn.readInt());
+			this.setUssDistance(DataIn.readInt());
 		}
 	}
 
@@ -39,6 +44,11 @@ public class RobotData extends NXTCommunicationData implements
 			DataOut.writeInt(this.getRobotHeading());
 			DataOut.writeInt(this.getHeadDistance());
 			DataOut.writeInt(this.getHeadHeading());
+			DataOut.writeInt(this.getBatteryLevel());
+			DataOut.writeInt(this.getCompassValues());
+			DataOut.writeInt(this.getTargetPosX());
+			DataOut.writeInt(this.getTargetPosY());
+			DataOut.writeInt(this.getUssDistance());
 		}
 	}
 
@@ -49,14 +59,19 @@ public class RobotData extends NXTCommunicationData implements
 	}
 
 	public RobotData(int type, int posX, int posY, int robotHeading,
-			int headDistance, int headHeading) {
+			int headDistance, int headHeading, int batteryLevel, int compassValues, int targetPosX, int targetPosY, int ussDistance) {
 		super();
-		Type = type;
+		PositionType = type;
 		PosX = posX;
 		PosY = posY;
 		RobotHeading = robotHeading;
 		HeadDistance = headDistance;
 		HeadHeading = headHeading;
+		BatteryLevel = batteryLevel;
+		CompassValues = compassValues;
+		TargetPosX = targetPosX;
+		TargetPosY = targetPosY;
+		UssDistance = ussDistance;
 	}
 
 	public RobotData(int MainStatus, int DataStatus) {
@@ -76,19 +91,72 @@ public class RobotData extends NXTCommunicationData implements
 	public final static int POSITION_TYPE_RIGHT_CORNER = 500;
 	public final static int POSITION_TYPE_NOT_VALID = 600;
 
-	int Type;
+	int PositionType;
 	int PosX;
 	int PosY;
 	int RobotHeading;
 	int HeadDistance;
 	int HeadHeading;
+	int TargetPosX;
+	int TargetPosY;
+	int UssDistance;
+	int BatteryLevel;
+	int CompassValues;
+
+	public int getPositionType() {
+		return PositionType;
+	}
+
+	public void setPositionType(int positionType) {
+		PositionType = positionType;
+	}
+
+	public int getTargetPosX() {
+		return TargetPosX;
+	}
+
+	public void setTargetPosX(int targetPosX) {
+		TargetPosX = targetPosX;
+	}
+
+	public int getTargetPosY() {
+		return TargetPosY;
+	}
+
+	public void setTargetPosY(int targetPosY) {
+		TargetPosY = targetPosY;
+	}
+
+	public int getUssDistance() {
+		return UssDistance;
+	}
+
+	public void setUssDistance(int ussDistance) {
+		UssDistance = ussDistance;
+	}
+
+	public int getBatteryLevel() {
+		return BatteryLevel;
+	}
+
+	public void setBatteryLevel(int batteryLevel) {
+		BatteryLevel = batteryLevel;
+	}
+
+	public int getCompassValues() {
+		return CompassValues;
+	}
+
+	public void setCompassValues(int compassValues) {
+		CompassValues = compassValues;
+	}
 
 	public int getType() {
-		return Type;
+		return PositionType;
 	}
 
 	public void setType(int type) {
-		Type = type;
+		PositionType = type;
 	}
 
 	public int getPosX() {
