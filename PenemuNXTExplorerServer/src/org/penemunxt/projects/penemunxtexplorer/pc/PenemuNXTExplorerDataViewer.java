@@ -74,7 +74,7 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 
 	private Object[][] getDataArray(ArrayList<RobotData> rawData) {
 		if (rawData.size() > 0) {
-			Object[][] tableData = new Object[rawData.size()][8];
+			Object[][] tableData = new Object[rawData.size()][12];
 
 			for (int i = 0; i < rawData.size(); i++) {
 				RobotData robotData = rawData.get(i);
@@ -83,9 +83,14 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 				tableData[i][2] = String.valueOf(robotData.getType());
 				tableData[i][3] = String.valueOf(robotData.getPosX());
 				tableData[i][4] = String.valueOf(robotData.getPosY());
-				tableData[i][5] = String.valueOf(robotData.getRobotHeading());
-				tableData[i][6] = String.valueOf(robotData.getHeadDistance());
-				tableData[i][7] = String.valueOf(robotData.getHeadHeading());
+				tableData[i][5] = String.valueOf(robotData.getUssDistance());
+				tableData[i][6] = String.valueOf(robotData.getRobotHeading());
+				tableData[i][7] = String.valueOf(robotData.getHeadDistance());
+				tableData[i][8] = String.valueOf(robotData.getHeadHeading());
+				tableData[i][9] = String.valueOf(robotData.getCompassValues());
+				tableData[i][10] = String.valueOf(robotData.getTargetPosX());
+				tableData[i][11] = String.valueOf(robotData.getTargetPosY());
+				tableData[i][12] = String.valueOf(robotData.getBatteryLevel());
 			}
 			return tableData;
 		} else {
@@ -94,11 +99,11 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 	}
 
 	private void setupTable(Object[][] tableData) {
-		String[] columnNames = { "Frame", "Type", "Type code", "PosX", "PosY",
-				"RobotHeading", "HeadDistance", "HeadHeading" };
+		String[] columnNames = { "Frame", "Type", "Type code", "PosX", "PosY", "Dist. ahead",
+				"RobotHeading", "HeadDistance", "HeadHeading", "Compass", "TargetX", "TargetY", "Battery" };
 
 		if (tableData == null) {
-			tableData = new Object[0][5];
+			tableData = new Object[0][12];
 		}
 
 		setDataTable(new JTable(tableData, columnNames));

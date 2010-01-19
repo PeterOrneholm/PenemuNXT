@@ -120,6 +120,12 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	Label lblRDRobotHeading;
 	Label lblRDHeadDistance;
 	Label lblRDHeadHeading;
+	Label lblRDUssDistance;
+	Label lblCompassValues;
+	Label lblTargetPosX;
+	Label lblTargetPosY;
+	Label lblBatteryLevel;
+
 	Label lblTimelineCurrentFrame;
 
 	// // Comboboxes
@@ -414,8 +420,14 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		lblRDRobotHeading = new Label();
 		lblRDHeadDistance = new Label();
 		lblRDHeadHeading = new Label();
+		lblRDUssDistance = new Label();
+		lblCompassValues = new Label();
+		lblTargetPosX = new Label();
+		lblTargetPosY = new Label();
+		lblBatteryLevel = new Label();
 		lblTimelineCurrentFrame = new Label();
 
+		
 		Label lblRDXHeader = new Label("X:");
 		Label lblRDYHeader = new Label("Y:");
 		Label lblRDRobotHeadingHeader = new Label("Robot heading:");
@@ -423,13 +435,25 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		Label lblRDHeadHeadingHeader = new Label("Head heading:");
 		Label lblTimelineCurrentFrameHeader = new Label("Frame:");
 
+		Label lblRDUssDistanceHeader = new Label("Distance ahead:");
+		Label lblCompassValuesHeader = new Label("Compass:");
+		Label lblTargetPosXHeader = new Label("Target X:");
+		Label lblTargetPosYHeader = new Label("Target Y:");
+		Label lblBatteryLevelHeader = new Label("Battery voltage:");
+
 		lblRDXHeader.setFont(fntLabelHeader);
 		lblRDYHeader.setFont(fntLabelHeader);
 		lblRDRobotHeadingHeader.setFont(fntLabelHeader);
 		lblRDHeadDistanceHeader.setFont(fntLabelHeader);
 		lblRDHeadHeadingHeader.setFont(fntLabelHeader);
 		lblTimelineCurrentFrameHeader.setFont(fntLabelHeader);
-
+		lblRDUssDistanceHeader.setFont(fntLabelHeader);
+		lblCompassValuesHeader.setFont(fntLabelHeader);
+		lblTargetPosXHeader.setFont(fntLabelHeader);
+		lblTargetPosYHeader.setFont(fntLabelHeader);
+		lblBatteryLevelHeader.setFont(fntLabelHeader);
+		
+		
 		pnlCurrentData.add(lblRDXHeader);
 		pnlCurrentData.add(lblRDX);
 		pnlCurrentData.add(lblRDYHeader);
@@ -440,6 +464,16 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		pnlCurrentData.add(lblRDHeadDistance);
 		pnlCurrentData.add(lblRDHeadHeadingHeader);
 		pnlCurrentData.add(lblRDHeadHeading);
+		pnlCurrentData.add(lblRDUssDistanceHeader);
+		pnlCurrentData.add(lblRDUssDistance);
+		pnlCurrentData.add(lblCompassValuesHeader);
+		pnlCurrentData.add(lblCompassValues);
+		pnlCurrentData.add(lblTargetPosXHeader);
+		pnlCurrentData.add(lblTargetPosX);
+		pnlCurrentData.add(lblTargetPosYHeader);
+		pnlCurrentData.add(lblTargetPosY);
+		pnlCurrentData.add(lblBatteryLevelHeader);
+		pnlCurrentData.add(lblBatteryLevel);
 		pnlCurrentData.add(lblTimelineCurrentFrameHeader);
 		pnlCurrentData.add(lblTimelineCurrentFrame);
 
@@ -580,6 +614,17 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 					.valueOf(LatestData.getHeadHeading()));
 			lblTimelineCurrentFrame.setText(String.valueOf(mapTimeline
 					.getCurrentFrame()));
+			
+			lblRDUssDistance.setText(String
+					.valueOf(LatestData.getUssDistance()));
+			lblCompassValues.setText(String
+					.valueOf(LatestData.getCompassValues()));
+			lblTargetPosX.setText(String
+					.valueOf(LatestData.getTargetPosX()));
+			lblTargetPosY.setText(String
+					.valueOf(LatestData.getTargetPosY()));
+			lblBatteryLevel.setText(String
+					.valueOf(LatestData.getBatteryLevel()/1000f));
 		} else {
 			lblRDHeadDistance.setText("");
 			lblRDHeadHeading.setText("");
@@ -587,6 +632,12 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 			lblRDX.setText("");
 			lblRDY.setText("");
 			lblTimelineCurrentFrame.setText("");
+			
+			lblRDUssDistance.setText("");
+			lblCompassValues.setText("");
+			lblTargetPosX.setText("");
+			lblTargetPosY.setText("");
+			lblBatteryLevel.setText("");
 		}
 	}
 
