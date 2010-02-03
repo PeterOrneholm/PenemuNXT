@@ -5,6 +5,7 @@ import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.Bumperclose;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.Forward;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.Initialization;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.RightCorner;
+import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.TargetReached;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.TowardTarget;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.TurnRight;
 import org.penemunxt.projects.penemunxtexplorer.nxt.behaviours.USSclose;
@@ -43,9 +44,10 @@ public class ExplorerNavigator extends Thread {
 		Behavior b4_5 = new TowardTarget (simnav, DS, NXTC);
 	    Behavior b5 = new USSclose(simnav, USS, NXTC, DS);
 	    Behavior b6 = new Bumperclose (simnav, TS, NXTC, DS);
+	    Behavior b7 = new TargetReached (simnav, DS, NXTC);
 	    //Behavior b4 = (Behavior) new FollowWall (simnav, ODS);
 	    //Behavior [] bArray = {b1, b2, b3, b4, b5};
-	    Behavior [] bArray = {b1, b2, b3, b4, b4_5, b5, b6};
+	    Behavior [] bArray = {b1, b2, b3, b4, b4_5, b5, b6, b7};
 	    Arbitrator arby = new Arbitrator(bArray);
 	    arby.start();
 	}

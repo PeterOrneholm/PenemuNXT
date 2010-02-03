@@ -75,8 +75,7 @@ public class USSclose implements Behavior {
 	}
 
 	@Override
-	public void suppress() {
-		
+	public void suppress() {	
 		simnav.stop();
 	}
 

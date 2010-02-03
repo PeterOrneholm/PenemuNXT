@@ -18,7 +18,7 @@ public class Forward implements Behavior {
 
 	@Override
 	public void action() {
-		comnav.forward();
+		//comnav.forward();
 		active = true;
 	}
 
