@@ -109,7 +109,7 @@ public class PNXTExplorer implements Runnable {
 								.getHeading(), ODS.getDistance(), Motor.A
 								.getTachoCount(),
 						Battery.getVoltageMilliVolt(), (int) CS.getDegrees(),
-						(int) DS.TargetPos.x, (int) DS.TargetPos.y, USS
+						TempTargetX, TempTargetY, USS
 								.getDistance());
 			}
 

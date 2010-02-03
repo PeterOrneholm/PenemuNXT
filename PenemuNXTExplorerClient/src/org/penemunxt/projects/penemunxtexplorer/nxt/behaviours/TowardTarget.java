@@ -8,6 +8,8 @@ import lejos.robotics.subsumption.Behavior;
 
 public class TowardTarget implements Behavior {
 	
+	static final int TARGET_DISTANCE_THRESHOLD = 10;
+	
 	SimpleNavigator simnav;
 	DataShare DS;
 	NXTCommunication NXTC;
@@ -28,12 +30,14 @@ public class TowardTarget implements Behavior {
 	@Override
 	public void suppress() {
 		simnav.stop();
+		DS.clearTargetPos();
 
 	}
 
 	@Override
 	public boolean takeControl() {
-		return DS.movestowardstargetPoint();
+		return (DS.movestowardstargetPoint() && DS.distancetraveled((int)simnav.getX(),(int) DS.TargetPos.x,(int) simnav.getY(),(int)DS.TargetPos.y) < TARGET_DISTANCE_THRESHOLD);
+		
 	}
 
 }

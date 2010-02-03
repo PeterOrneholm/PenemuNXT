@@ -10,7 +10,7 @@ import org.penemunxt.projects.penemunxtexplorer.RobotData;
 public class DataShare {
 	public int sincelastalign = 0;
 	public int sincelastturn = 0;
-	public Point TargetPos = new Point(0,0);
+	public Point TargetPos = null;
 	public boolean lockBehaviour;
 	public ArrayList<RobotData> LatestRobotData;
 	public boolean SendData = true;
@@ -60,6 +60,17 @@ public class DataShare {
 		return Math.sqrt(((x1 - x2) * (x1 - x2) + ((y1 - y2) * (y1 - y2))));
 	}
 	
+	public float closestangle ( int heading1, int heading2, DataShare dsl){
+		float targetAngle = (float)(180 / Math.PI * Math.atan((dsl.TargetPos.x - dsl.LatestRobotData.get(0).getPosX())/(dsl.TargetPos.y - dsl.LatestRobotData.get(0).getPosY())));
+		 float angledif1 = targetAngle - heading1;
+		 float angledif2 = targetAngle - heading2;
+		 if (angledif1 < 0) angledif1 = - angledif1;
+		 if (angledif2 < 0) angledif2 = - angledif2;
+		 if ( angledif2 < angledif1 ) return heading2;
+		 else return heading1;
+	}
+	
+	
 	public boolean movestowardstargetPoint (){
 		return TargetPos != null;
 	}
@@ -84,7 +95,7 @@ public class DataShare {
 		TargetPos = new Point (x, y);
 	}
 	public void clearTargetPos(){
-		TargetPos = new Point(0,0);
+		TargetPos = null;
 	}
 	
 }
