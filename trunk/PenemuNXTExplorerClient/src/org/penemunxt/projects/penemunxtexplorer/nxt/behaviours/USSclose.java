@@ -41,8 +41,9 @@ public class USSclose implements Behavior {
 						.getHeading(), 0, 0, 0, 0, 0, 0, 0));
 		
 		simnav.stop();
+		Motor.A.rotateTo(90);
 		Motor.A.setSpeed(30);
-		Motor.A.rotate(-180, false);
+		Motor.A.rotateTo(-90, false);
 		
 		int isgrowing = 0;
 		int shortestdist = 1000;
@@ -63,8 +64,10 @@ public class USSclose implements Behavior {
 		}
 		
 		Motor.A.setSpeed(200);
-		Motor.A.rotate(180);
-		simnav.rotate(90-shortestdistangle, false);
+		Motor.A.rotateTo(90);
+		if (DS.movestowardstargetPoint()){
+			simnav.rotate(DS.closestangle(90 - shortestdistangle, -90 - shortestdistangle, DS));
+		} else simnav.rotate(90-shortestdistangle, false);
 		
 		
 		DS.leftturnUsed();
@@ -73,6 +76,7 @@ public class USSclose implements Behavior {
 
 	@Override
 	public void suppress() {
+		
 		simnav.stop();
 	}
 
