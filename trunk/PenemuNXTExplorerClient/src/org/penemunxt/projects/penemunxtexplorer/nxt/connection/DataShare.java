@@ -91,7 +91,6 @@ public class DataShare {
 		SendData = true;
 	}
 	public void setTargetPos( int x, int y){
-		Sound.buzz();
 		TargetPos = new Point (x, y);
 	}
 	public void clearTargetPos(){
