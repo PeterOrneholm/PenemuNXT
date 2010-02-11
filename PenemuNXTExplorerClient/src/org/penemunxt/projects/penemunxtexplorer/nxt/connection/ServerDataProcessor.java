@@ -14,7 +14,6 @@ public class ServerDataProcessor extends NXTDataProcessor {
 	public void ProcessItem(INXTCommunicationData dataItem,
 			NXTCommunication NXTComm) {
 		ServerData ServerDataItem = (ServerData) dataItem;
-		Sound.beep();
 		DS.setTargetPos( ServerDataItem.getTargetPosX(), ServerDataItem.getTargetPosY());
 	}
 

@@ -7,24 +7,24 @@ import lejos.robotics.subsumption.Behavior;
 
 public class Forward implements Behavior {
 
-	SimpleNavigator comnav;
+	SimpleNavigator simnav;
 	boolean active;
 	DataShare DS;
 
 	public Forward(SimpleNavigator comnav, DataShare DS) {
-		this.comnav = comnav;
+		this.simnav = comnav;
 		this.DS = DS;
 	}
 
 	@Override
 	public void action() {
-		//comnav.forward();
+		simnav.forward();
 		active = true;
 	}
 
 	@Override
 	public void suppress() {
-		comnav.stop();
+		simnav.stop();
 		active = false;
 
 	}
