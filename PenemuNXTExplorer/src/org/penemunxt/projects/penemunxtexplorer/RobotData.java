@@ -90,6 +90,8 @@ public class RobotData extends NXTCommunicationData implements
 	public final static int POSITION_TYPE_ALIGNED = 400;
 	public final static int POSITION_TYPE_RIGHT_CORNER = 500;
 	public final static int POSITION_TYPE_NOT_VALID = 600;
+	public final static int POSITION_TYPE_MOVING_TOWARDS_TARGET = 700;
+	public final static int POSITION_TYPE_TARGET_REACHED = 800;
 
 	int PositionType;
 	int PosX;
