@@ -78,7 +78,8 @@ public abstract class MapProcessorMain implements IMapProcessor, Cloneable {
 		return true;
 	}
 	
-    public Object clone() {
+    @Override
+	public Object clone() {
         try {
             return super.clone();
         }

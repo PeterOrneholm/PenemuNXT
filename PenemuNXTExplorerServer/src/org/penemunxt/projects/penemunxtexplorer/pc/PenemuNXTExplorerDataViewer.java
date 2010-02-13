@@ -74,7 +74,7 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 
 	private Object[][] getDataArray(ArrayList<RobotData> rawData) {
 		if (rawData.size() > 0) {
-			Object[][] tableData = new Object[rawData.size()][12];
+			Object[][] tableData = new Object[rawData.size()][13];
 
 			for (int i = 0; i < rawData.size(); i++) {
 				RobotData robotData = rawData.get(i);
@@ -103,7 +103,7 @@ public class PenemuNXTExplorerDataViewer extends DataTableWindow implements
 				"RobotHeading", "HeadDistance", "HeadHeading", "Compass", "TargetX", "TargetY", "Battery" };
 
 		if (tableData == null) {
-			tableData = new Object[0][12];
+			tableData = new Object[0][13];
 		}
 
 		setDataTable(new JTable(tableData, columnNames));

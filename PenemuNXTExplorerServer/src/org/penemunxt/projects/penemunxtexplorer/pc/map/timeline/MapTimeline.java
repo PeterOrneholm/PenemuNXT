@@ -132,6 +132,7 @@ public class MapTimeline extends JPanel implements ChangeListener,
 		refreshSlider();
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		if (!enabled) {
 			disableTimeline();
@@ -140,6 +141,7 @@ public class MapTimeline extends JPanel implements ChangeListener,
 		}
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return timelineEnabled;
 	}

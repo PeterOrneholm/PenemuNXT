@@ -2,8 +2,6 @@ package org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
 import java.util.ArrayList;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
@@ -119,6 +117,7 @@ public class MapBackgroundGrid extends MapObjectPositions implements
 		return "Grid with lines in the backround";
 	}
 
+	@Override
 	public boolean isAffectedByRotation() {
 		return false;
 	}

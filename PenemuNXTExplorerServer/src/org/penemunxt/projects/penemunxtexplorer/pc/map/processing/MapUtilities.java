@@ -1,6 +1,7 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.processing;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.*;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
@@ -120,5 +121,15 @@ public class MapUtilities {
 		y /= (index + 1);
 
 		return new Point(x, y);
+	}
+	
+	public static AffineTransform getMapTransform(int centerX, int centerY, float scale, double rotate){
+		AffineTransform mapTransform = new AffineTransform();
+		
+		mapTransform.translate(centerX, centerY);
+		mapTransform.scale(scale, scale);
+		mapTransform.rotate(rotate);
+		
+		return mapTransform;
 	}
 }

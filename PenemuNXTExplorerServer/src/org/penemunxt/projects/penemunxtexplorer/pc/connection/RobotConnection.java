@@ -50,12 +50,12 @@ public class RobotConnection extends Thread implements Runnable {
 		NXTC.ConnectAndStartAll(ConnMode, Name, Address);
 
 		// Setup a data processor
-		PositionDataProcessor SDP = new PositionDataProcessor(DS, NXTC,
+		PositionDataProcessor PDP = new PositionDataProcessor(DS, NXTC,
 				DataFactories);
-		SDP.start();
+		NXTC.getDataRetrievedQueue().addNewItemListeners(PDP);
 
 		while (connectionActive) {
-			this.connectionActive = SDP.Active;
+			this.connectionActive = PDP.Active;
 
 			try {
 				Thread.sleep(200);

@@ -9,7 +9,6 @@ import org.penemunxt.projects.penemunxtexplorer.RobotData;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.IMapProcessor;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapPositionPoints;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.processing.MapUtilities;
-import org.penemunxt.sensors.SensorRanges;
 
 public abstract class MapObjectPositions extends MapSimplePosition implements
 		IMapProcessor {
