@@ -1,7 +1,6 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;
@@ -21,20 +20,22 @@ public class MapTargetPos extends MapSimplePosition implements IMapProcessor {
 	public void processData(ArrayList<RobotData> data, Graphics g) {
 		if (data != null && data.size() > 0) {
 			RobotData LatestData = MapUtilities.getLatestData(data);
-			if (LatestData != null) {
-				MapUtilities.paintOval(LatestData.getTargetPosX(), LatestData.getTargetPosX(), this
-						.getColor(), this.getSize(), g);
+			if (LatestData != null
+					&& !(LatestData.getTargetPosX() == 0 && LatestData
+							.getTargetPosY() == 0)) {
+				MapUtilities.paintOval(LatestData.getTargetPosX(), LatestData
+						.getTargetPosX(), this.getColor(), this.getSize(), g);
 			}
 		}
 	}
 
 	@Override
 	public String getName() {
-		return "Current position";
+		return "Target position";
 	}
 
 	@Override
 	public String getDescription() {
-		return "The current position of the robot.";
+		return "The position the robot is told to head for.";
 	}
 }

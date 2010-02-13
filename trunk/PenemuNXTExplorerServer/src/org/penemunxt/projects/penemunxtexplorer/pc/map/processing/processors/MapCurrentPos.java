@@ -1,7 +1,6 @@
 package org.penemunxt.projects.penemunxtexplorer.pc.map.processing.processors;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import org.penemunxt.projects.penemunxtexplorer.RobotData;

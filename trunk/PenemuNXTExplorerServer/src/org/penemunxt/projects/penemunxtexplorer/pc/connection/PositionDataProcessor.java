@@ -14,7 +14,9 @@ public class PositionDataProcessor extends NXTDataProcessor {
 			NXTCommunication NXTComm) {
 		RobotData PositionDataItem = (RobotData) dataItem;
 
-		DS.NXTRobotData.add(PositionDataItem);
+		synchronized (DS.NXTRobotData) {
+			DS.NXTRobotData.add(PositionDataItem);
+		}
 	}
 
 	public PositionDataProcessor(DataShare ds, NXTCommunication NXTComm,

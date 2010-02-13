@@ -20,7 +20,7 @@ import org.penemunxt.windows.pc.ComponentSpacer;
 import org.penemunxt.windows.pc.DataTableWindow;
 
 public class PenemuNXTExplorerControl extends JPanel implements Runnable,
-		ActionListener, WindowListener, ComponentListener, ChangeListener {
+		ActionListener, WindowListener, ComponentListener, ChangeListener, MouseListener {
 
 	/*
 	 * To do list: - Send commands to Robot - Clear Area: Use Hotspots instead
@@ -50,8 +50,8 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// // Maps
 
 	// None
-	final static String DEFAULT_FOLDER_PATH = "";
-	final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
+	//final static String DEFAULT_FOLDER_PATH = "";
+	//final static String PRELOAD_PENEMUNXT_MAP_PATH = "";
 
 	// PeterF-01
 	// final static String DEFAULT_FOLDER_PATH =
@@ -60,10 +60,10 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	// "C:\\Users\\Peter\\Desktop\\Maps\\Sample_3.penemunxtmap";
 
 	// PeterF-04
-	// final static String DEFAULT_FOLDER_PATH =
-	// "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\";
-	// final static String PRELOAD_PENEMUNXT_MAP_PATH =
-	// "C:\\Documents and Settings\\Peter\\Mina dokument\\Projects\\PenemuNXT\\Data\\Maps\\NXT5.penemunxtmap";
+	 final static String DEFAULT_FOLDER_PATH =
+	 "C:\\Users\\Peter\\Documents\\Projects\\PenemuNXT\\Data\\Maps\\";
+	 final static String PRELOAD_PENEMUNXT_MAP_PATH =
+	 "C:\\Users\\Peter\\Documents\\Projects\\PenemuNXT\\Data\\Maps\\Josef\\100211_2.penemunxtmap";
 
 	// // Scale
 	final static int MAP_INIT_SCALE = 50;
@@ -288,8 +288,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		setupMapProcessors();
 		mapVisulaisation = new MapVisulaisation(MAP_INIT_SCALE, mapProcessors,
 				true);
-		mapVisulaisation.mapCenterChanged = this;
-		mapVisulaisation.mapScaleChanged = this;
+		mapVisulaisation.mapCenterChanged.add(this);
+		mapVisulaisation.mapScaleChanged.add(this);
+		mapVisulaisation.mapMouseClick.add(this);
 
 		// Image logo
 		JPanel logoPanel = new JPanel(new BorderLayout());
@@ -380,9 +381,9 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		mapScaleLabelTable
 				.put(
 						new Integer(
-								(int) (MapVisulaisation.MAP_MAX_SCALE - MapVisulaisation.MAP_MAX_SCALE / 2)),
+								(MapVisulaisation.MAP_MAX_SCALE - MapVisulaisation.MAP_MAX_SCALE / 2)),
 						new JLabel(
-								(int) (MapVisulaisation.MAP_MAX_SCALE - MapVisulaisation.MAP_MAX_SCALE / 2)
+								(MapVisulaisation.MAP_MAX_SCALE - MapVisulaisation.MAP_MAX_SCALE / 2)
 										+ "%"));
 
 		mapScaleLabelTable.put(new Integer(MapVisulaisation.MAP_MAX_SCALE),
@@ -689,6 +690,31 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		RC.start();
 	}
 
+	private void sendTargetData(int x, int y, boolean updateTextBoxes){
+		if(updateTextBoxes){
+			txtTargetPosX.setText(String.valueOf(x));
+			txtTargetPosY.setText(String.valueOf(y));
+		}
+		sendTargetData(x, y);
+	}
+	
+	private void sendTargetData(int x, int y){
+		if (RC!=null && RC.NXTC != null) {
+			RC.NXTC.sendData(new ServerData(x, y, 0));			
+		}
+	}
+	
+	private void sendTargetData(){
+		if (RC!=null && RC.NXTC != null) {
+			try {
+				int x = Integer.parseInt(txtTargetPosX.getText());
+				int y = Integer.parseInt(txtTargetPosY.getText());
+				sendTargetData(x, y);
+			} catch (NumberFormatException e) {
+			}
+		}
+	}
+	
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getSource() == mnuFileExitButton) {
 			exitApp();
@@ -713,22 +739,23 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		} else if (ae.getSource() == mnuMapClearButton) {
 			clearMap();
 		} else if (ae.getSource() == btnSendTargetData) {
-			System.out.println("--");
-			if (RC!=null && RC.NXTC != null) {
-				System.out.println("**");
-				try {
-					int x = Integer.parseInt(txtTargetPosX.getText());
-					System.out.println(x);
-					int y = Integer.parseInt(txtTargetPosY.getText());
-					System.out.println(y);
-					RC.NXTC.sendData(new ServerData(x, y, 0));
-					System.out.println(x + ", " + y);
-				} catch (NumberFormatException e) {
+			sendTargetData();
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(e.getSource()==mapVisulaisation){
+			if (e.getClickCount() == 2) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					sendTargetData(e.getX(), e.getY(), true);
+				}else if(e.getButton() == MouseEvent.BUTTON3){
+					mapVisulaisation.reset();
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void stateChanged(ChangeEvent ce) {
 		if (ce.getSource() == sldMapScale) {
@@ -739,7 +766,7 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 		} else if (ce.getSource() == sldMapRotate) {
 			if (mapVisulaisation != null) {
 				mapVisulaisation.setMapRotate(Math
-						.toRadians((double) sldMapRotate.getValue()));
+						.toRadians(sldMapRotate.getValue()));
 			}
 			refreshMap();
 		} else if (ce.getSource() == MapProcessorsListView) {
@@ -760,6 +787,15 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 	private void timelineChanged() {
 		refreshMap();
 		refreshLatestData();
+//		RobotData LatestData = null;
+//		if (DS != null && DS.NXTRobotData != null) {
+//			LatestData = MapUtilities.getLatestData(DS.NXTRobotData,
+//					0);
+//		}
+//		if(LatestData!=null){
+//			mapVisulaisation.setMapRotate(Math
+//					.toRadians(LatestData.getCompassValues()));
+//		}
 
 		if (DataView != null
 				&& DataView.getWindowState() == DataTableWindow.WINDOW_STATE_OPEN) {
@@ -874,6 +910,22 @@ public class PenemuNXTExplorerControl extends JPanel implements Runnable,
 
 	@Override
 	public void componentShown(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {	
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
 	}
 
 }

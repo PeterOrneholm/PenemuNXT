@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
 import org.penemunxt.projects.penemunxtexplorer.pc.connection.DataShare;
 import org.penemunxt.projects.penemunxtexplorer.pc.map.MapVisulaisation;
 import org.penemunxt.windows.pc.*;

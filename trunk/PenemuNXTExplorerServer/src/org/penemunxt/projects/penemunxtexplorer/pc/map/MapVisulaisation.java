@@ -2,7 +2,11 @@ package org.penemunxt.projects.penemunxtexplorer.pc.map;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.awt.image.VolatileImage;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -33,8 +37,27 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 	int mapCurrentFrame;
 	boolean mapCentered;
 
-	public ChangeListener mapScaleChanged;
-	public ChangeListener mapCenterChanged;
+	public ArrayList<ChangeListener> mapScaleChanged = new ArrayList<ChangeListener>();
+	public ArrayList<ChangeListener> mapCenterChanged = new ArrayList<ChangeListener>();
+	public ArrayList<MouseListener> mapMouseClick = new ArrayList<MouseListener>();
+
+	private void fireMapScaleChanged(ChangeEvent ce) {
+		for (ChangeListener listener : mapScaleChanged) {
+			listener.stateChanged(ce);
+		}
+	}
+
+	private void fireMapCenterChanged(ChangeEvent ce) {
+		for (ChangeListener listener : mapCenterChanged) {
+			listener.stateChanged(ce);
+		}
+	}
+
+	private void fireMapMouseClick(MouseEvent me) {
+		for (MouseListener listener : mapMouseClick) {
+			listener.mouseClicked(me);
+		}
+	}
 
 	public int getMapScale() {
 		return mapScale;
@@ -50,7 +73,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 		this.refresh();
 
 		if (triggerChanged && mapScaleChanged != null) {
-			mapScaleChanged.stateChanged(new ChangeEvent(this));
+			fireMapScaleChanged(new ChangeEvent(this));
 		}
 	}
 
@@ -75,7 +98,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 		this.refresh();
 
 		if (triggerChanged && mapScaleChanged != null) {
-			mapScaleChanged.stateChanged(new ChangeEvent(this));
+			fireMapCenterChanged(new ChangeEvent(this));
 		}
 	}
 
@@ -95,7 +118,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 			this.mapCurrentFrame = mapCurrentFrame;
 		}
 
-		//this.refresh();
+		// this.refresh();
 	}
 
 	public MapProcessors getMapProcessors() {
@@ -182,7 +205,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 	public void resetMapCenter() {
 		Point mapDataCenter;
 		if (this.DS != null) {
-			//mapDataCenter = MapUtilities.getCenterPos(this.DS.NXTRobotData);
+			// mapDataCenter = MapUtilities.getCenterPos(this.DS.NXTRobotData);
 		} else {
 			mapDataCenter = new Point(0, 0);
 		}
@@ -193,6 +216,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 
 	@Override
 	public void paint(Graphics g) {
+
 		if (mapCentered == false && mapCenter.x == 0 && mapCenter.y == 0) {
 			resetMapCenter();
 			mapCentered = true;
@@ -216,17 +240,22 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 					(mapScale * MAP_DEFAULT_SCALE_FACTOR), mapRotate,
 					(int) mapCenter.getX(), (int) mapCenter.getY(), OSIG);
 		}
-
 		g.drawImage(OSI, 0, 0, null);
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		int mapScaleTemp = this.getMapScale();
-		mapScaleTemp += -e.getWheelRotation() * 2;
-		mapScaleTemp = Math.max(mapScaleTemp, MAP_MIN_SCALE);
-		mapScaleTemp = Math.min(mapScaleTemp, MAP_MAX_SCALE);
-		this.setMapScale(mapScaleTemp);
+		if(e.isControlDown()){
+			double mapRotateTemp = Math.toDegrees(this.getMapRotate());
+			mapRotateTemp += -e.getWheelRotation() * 5;
+			this.setMapRotate(Math.toRadians(mapRotateTemp%360));
+		}else{
+			int mapScaleTemp = this.getMapScale();
+			mapScaleTemp += -e.getWheelRotation() * 2;
+			mapScaleTemp = Math.max(mapScaleTemp, MAP_MIN_SCALE);
+			mapScaleTemp = Math.min(mapScaleTemp, MAP_MAX_SCALE);
+			this.setMapScale(mapScaleTemp);
+		}
 
 		refresh();
 	}
@@ -243,11 +272,18 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2) {
-			reset();
+		AffineTransform currentMapTransform = MapUtilities.getMapTransform(
+				(int) mapCenter.getX(), (int) mapCenter.getY(),
+				(mapScale * MAP_DEFAULT_SCALE_FACTOR), mapRotate);
+		if (currentMapTransform != null) {
+			try {
+				Point2D p = currentMapTransform.inverseTransform(
+						e.getPoint(), null);
+				MouseEvent me = new MouseEvent(this, e.getID(), e.getWhen(), e.getModifiers(), (int) p.getX(), (int) p.getY(), e.getClickCount(), e.isPopupTrigger());
+				fireMapMouseClick(me);
+			} catch (NoninvertibleTransformException e1) {
+			}
 		}
-
-		refresh();
 	}
 
 	@Override

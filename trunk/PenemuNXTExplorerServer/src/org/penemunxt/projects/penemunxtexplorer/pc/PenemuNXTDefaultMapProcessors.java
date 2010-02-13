@@ -28,7 +28,7 @@ public class PenemuNXTDefaultMapProcessors {
 	final static Color HEAD_MAP_CIRCLE_COLOR = Color.BLACK;
 	final static Color CLEAR_AREA_LINE_COLOR = Color.WHITE;
 	final static Color BACKGROUND_GRID_LINE_COLOR = Color.WHITE;
-	final static Color TARGET_POS_CIRCLE_COLOR = Color.WHITE;
+	final static Color TARGET_POS_CIRCLE_COLOR = Color.YELLOW;
 
 	final static int DEFAULT_CIRCLE_SIZE = 10;
 	final static int LATEST_POS_CIRCLE_SIZE = 75;
@@ -41,7 +41,7 @@ public class PenemuNXTDefaultMapProcessors {
 	final static int CLEAR_AREA_LINE_SIZE = 25;
 	final static int BACKGROUND_GRID_LINE_SIZE = 2;
 	final static int FIND_WALLS_LINE_SIZE = 5;
-	final static int TARGET_POS_CIRCLE_SIZE = 5;
+	final static int TARGET_POS_CIRCLE_SIZE = 35;
 
 	public static ArrayList<IMapProcessor> getDefaultProcessors() {
 		ArrayList<IMapProcessor> defaultProcessors = new ArrayList<IMapProcessor>();
