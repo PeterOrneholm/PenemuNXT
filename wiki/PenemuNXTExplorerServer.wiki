@@ -3,7 +3,7 @@
 
 = Introduction =
 
-The serverapp [http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTExplorerClient PenemuNXTExplorerClient] that communicates with the [ExplorerRobot], retrieves data and visualizes a map.
+The serverapp [http://code.google.com/p/penemunxt/source/browse/#svn/trunk/PenemuNXTExplorerServer PenemuNXTExplorerServer] that communicates with the [ExplorerRobot], retrieves data and visualizes a map.
 
 == TOC ==
 
