@@ -5,6 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 class NXTDataExchanger extends Thread {
+	private static int[] TIMEOUT_WAIT_MILLISECONDS =  new int[] { 0, 100, 250, 500, 1000, 1500, 2000,
+		2500, 3000, 5000, 7000, 10000 };
+	
 	boolean Active;
 	boolean WriteBeforeRead;
 	int WaitMilliseconds[];
@@ -50,8 +53,7 @@ class NXTDataExchanger extends Thread {
 		this.Active = true;
 		this.DataFactories = DataFactories;
 
-		this.WaitMilliseconds = new int[] { 0, 100, 250, 500, 1000, 1500, 2000,
-				2500, 3000, 5000, 7000, 10000 };
+		this.WaitMilliseconds = TIMEOUT_WAIT_MILLISECONDS;
 	}
 
 	public NXTDataExchanger(boolean WriteBeforeRead, DataOutputStream DataOut,
