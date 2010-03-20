@@ -22,7 +22,7 @@ public class USSclose implements Behavior {
 	
 	final int DISTANCE_THRESHOLD = 30;
 	
-	final int NUMBER_OF_VALUES = 50;
+	final int NUMBER_OF_VALUES = 35;
 	
 	final int GROWING_THRESHOLD = 4;
 

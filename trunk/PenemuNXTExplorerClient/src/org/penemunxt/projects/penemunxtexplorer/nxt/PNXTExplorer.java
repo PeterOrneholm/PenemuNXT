@@ -33,6 +33,10 @@ public class PNXTExplorer implements Runnable {
 	@Override
 	public void run() {
 		Active = true;
+		
+		LCD.clear();
+		LCD.drawString("PenumuNXT", 1, 1);
+		LCD.drawString("Waiting for PC...", 1, 3);
 
 		// Setup data factories
 		NXTCommunicationDataFactories DataFactories = new NXTCommunicationDataFactories(
@@ -43,12 +47,17 @@ public class PNXTExplorer implements Runnable {
 				new NXTDataStreamConnection());
 		NXTC.ConnectAndStartAll(NXTConnectionModes.Bluetooth);
 
+		//When connected
+		LCD.clear();
+		Sound.twoBeeps();
+		
 		DataShare DS = new DataShare();
 
 		// Setup a data processor
 		ServerDataProcessor SMDP = new ServerDataProcessor(DS, NXTC,
 				DataFactories);
-		SMDP.start();
+		NXTC.getDataRetrievedQueue().addNewItemListeners(SMDP);
+
 		// Sensors
 
 		OpticalDistanceSensor ODS = new OpticalDistanceSensor(SensorPort.S1);
