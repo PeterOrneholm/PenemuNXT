@@ -215,7 +215,7 @@ public class MapVisulaisation extends JPanel implements MouseListener,
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	public void paintComponent(Graphics g) {
 
 		if (mapCentered == false && mapCenter.x == 0 && mapCenter.y == 0) {
 			resetMapCenter();
