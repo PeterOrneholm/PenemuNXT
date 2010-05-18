@@ -16,7 +16,7 @@ public class DataShare {
 	public boolean SendData = true;
 
 	
-	final double ISLINEAR_THRESHOLD = 0.1;
+	//final double ISLINEAR_THRESHOLD = 0.1;
 	final int ROBOTDATA_MAX_SIZE = 100;
 
 	public DataShare() {
@@ -34,7 +34,7 @@ public class DataShare {
 		sincelastturn++;
 	}
 	
-	public double isLinear(DataShare dsl, int startpos, int endpos) {
+	public double isLinear(DataShare dsl, int startpos, int endpos, double ISLINEAR_THRESHOLD) {
 
 		double coef = linCoef ( dsl, startpos, endpos);
 

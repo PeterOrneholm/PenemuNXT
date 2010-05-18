@@ -12,16 +12,16 @@ public class RightCorner implements Behavior {
 	DataShare DS;
 	NXTCommunication NXTC;
 	
-	final int MIN_NUMBER_OF_VALUES = 15;
-	final int SINCELASTALIGN_THRESHOLD = 5;
+	final int MIN_NUMBER_OF_VALUES = 20;
+	final int SINCELASTALIGN_THRESHOLD = 20;
 	
-	final int CORNER_STARTING_VALUE = 6;
-	final int CORNER_ENDING_VALUE = 8;
+	final int CORNER_STARTING_VALUE = 14;
+	final int CORNER_ENDING_VALUE = 16;
 	
 	final int SCAN_DIF_MIN = 200;
 	
-	final int OLD_WALL_STARTING_VALUE = 8;
-	final int OLD_WALL_ENDING_VALUE = 12;
+	final int OLD_WALL_STARTING_VALUE = 18;
+	final int OLD_WALL_ENDING_VALUE = 20;
 
 	public RightCorner(SimpleNavigator simnav, DataShare ds,
 			NXTCommunication nxtc) {
@@ -50,7 +50,7 @@ public class RightCorner implements Behavior {
 			if (DS.LatestRobotData.size() > MIN_NUMBER_OF_VALUES && DS.sincelastturn > SINCELASTALIGN_THRESHOLD) {
 				if ((DS.LatestRobotData.get(CORNER_STARTING_VALUE).getHeadDistance() - DS.LatestRobotData
 						.get(CORNER_ENDING_VALUE).getHeadDistance()) > SCAN_DIF_MIN
-						&& DS.isLinear(DS, OLD_WALL_STARTING_VALUE, OLD_WALL_ENDING_VALUE) != 0) {
+						&& DS.isLinear(DS, OLD_WALL_STARTING_VALUE, OLD_WALL_ENDING_VALUE, 0.3) != 0 && DS.LatestRobotData.get(CORNER_ENDING_VALUE).getHeadDistance()< 600) {
 					return true;
 				} else
 					return false;

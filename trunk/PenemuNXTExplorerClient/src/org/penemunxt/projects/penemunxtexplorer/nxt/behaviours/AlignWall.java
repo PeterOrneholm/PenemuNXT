@@ -41,12 +41,12 @@ public class AlignWall implements Behavior {
 					(int) simnav.getX(), (int) simnav.getY(), (int) simnav
 							.getHeading(), 0, 0, 0, 0, 0, 0, 0));
 
-			if (DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE) > 0) {
+			if (DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE, 0.2) > 0) {
 				angle = (int) ((180 / Math.PI) * (Math.atan(DS.isLinear(DS,
-						0, ENDING_VALUE))));
-			} else if (DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE) < 0) {
+						0, ENDING_VALUE, 0.1))));
+			} else if (DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE, 0.1) < 0) {
 				angle = (int) -((180 / Math.PI) * (Math.atan(-DS.isLinear(DS,
-						0, ENDING_VALUE))));
+						0, ENDING_VALUE, 0.1))));
 			}
 
 			simnav.rotate(-angle);
@@ -76,7 +76,7 @@ public class AlignWall implements Behavior {
 							- DS.LatestRobotData.get(ENDING_VALUE).getHeadDistance()) > SCAN_DIF_MIN
 							&& DS.LatestRobotData.get(STARTING_VALUE).getHeadDistance() > SCAN_DISTANCE_MIN
 							&& DS.LatestRobotData.get(STARTING_VALUE).getHeadDistance() < SCAN_DISTANCE_MAX
-							&& DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE) != 0) {
+							&& DS.isLinear(DS, STARTING_VALUE, ENDING_VALUE, 0.1) != 0) {
 						return true;
 					} else
 						return false;
