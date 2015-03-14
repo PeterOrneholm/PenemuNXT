@@ -12,4 +12,9 @@ The project is divided into multiple parts.
 * Server software to process, host and display data (PenemuNXTExplorerServer)
 
 Read more
+---------
 Read more about the project in the [blog](http://penemunxt.blogspot.se/). 
+
+License
+-------
+This project is licensed under the terms of the MIT license.
