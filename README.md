@@ -1,5 +1,9 @@
 # PenemuNXT
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
+[![Twitter Follow](https://img.shields.io/badge/Twitter-@PenemuNXT-blue.svg?logo=twitter)](https://twitter.com/PenemuNXT)
+[![Twitter Follow](https://img.shields.io/badge/Twitter-@PeterOrneholm-blue.svg?logo=twitter)](https://twitter.com/PeterOrneholm)
+
 _NOTE: This project os not activly mainatined but kept for historic reasons. Feel free to have a look at my very first open source project :)_
 
 A [SLAM](http://en.wikipedia.org/wiki/Simultaneous_localization_and_mapping) (Simultaneous Localization and Mapping) implementation using [LEGO Mindstorms NXT](http://www.lego.com/en-us/mindstorms/) and [leJOS](http://www.lejos.org/) (Java).
